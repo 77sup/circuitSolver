@@ -1,1 +1,0 @@
-/opt/rh/devtoolset-8/root/usr/bin/c++    -rdynamic CMakeFiles/test_solver.dir/main.cpp.o CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o CMakeFiles/test_solver.dir/src/log.cpp.o CMakeFiles/test_solver.dir/src/solver.cpp.o  -o test_solver 

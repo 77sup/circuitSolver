@@ -1,3 +1,0 @@
-/home/hkm/CircuitSolver/build/CMakeFiles/rebuild_cache.dir
-/home/hkm/CircuitSolver/build/CMakeFiles/edit_cache.dir
-/home/hkm/CircuitSolver/build/CMakeFiles/test_solver.dir
