@@ -1,4 +1,4 @@
-FILE(REMOVE_RECURSE
+file(REMOVE_RECURSE
   "CMakeFiles/test_solver.dir/main.cpp.o"
   "CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o"
   "CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o"
@@ -9,6 +9,6 @@ FILE(REMOVE_RECURSE
 )
 
 # Per-language clean rules from dependency scanning.
-FOREACH(lang CXX)
-  INCLUDE(CMakeFiles/test_solver.dir/cmake_clean_${lang}.cmake OPTIONAL)
-ENDFOREACH(lang)
+foreach(lang CXX)
+  include(CMakeFiles/test_solver.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

@@ -25,7 +25,10 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	//graph.get_graph_stats();
-    solver CircuitSolver(graph);
+    solver CircuitSolver(graph);    //有参构造实例化对象
+	CircuitSolver.test(graph);
+	//test();
+	
 
     return 0;
 }

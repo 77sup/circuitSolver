@@ -1,4 +1,4 @@
-#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
 
 #IncludeRegexScan: ^.*$
 
@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/hkm/CircuitSolver/CircuitSolver/include/circuit_graph.h
+/home/hkm/circuitSolver/CircuitSolver/include/circuit_graph.h
 string
 -
 cstdint
@@ -24,45 +24,47 @@ unordered_map
 cassert
 -
 log.h
-/home/hkm/CircuitSolver/CircuitSolver/include/log.h
+/home/hkm/circuitSolver/CircuitSolver/include/log.h
 
-/home/hkm/CircuitSolver/CircuitSolver/include/iscas89_parser.h
+/home/hkm/circuitSolver/CircuitSolver/include/iscas89_parser.h
 circuit_graph.h
-/home/hkm/CircuitSolver/CircuitSolver/include/circuit_graph.h
+/home/hkm/circuitSolver/CircuitSolver/include/circuit_graph.h
 iostream
 -
 
-/home/hkm/CircuitSolver/CircuitSolver/include/log.h
+/home/hkm/circuitSolver/CircuitSolver/include/log.h
 ostream
 -
 type_traits
 -
 
-/home/hkm/CircuitSolver/CircuitSolver/include/solver.h
+/home/hkm/circuitSolver/CircuitSolver/include/solver.h
 circuit_graph.h
-/home/hkm/CircuitSolver/CircuitSolver/include/circuit_graph.h
+/home/hkm/circuitSolver/CircuitSolver/include/circuit_graph.h
 iostream
 -
+vector
+-
 
-/home/hkm/CircuitSolver/CircuitSolver/main.cpp
+/home/hkm/circuitSolver/CircuitSolver/main.cpp
 include/solver.h
-/home/hkm/CircuitSolver/CircuitSolver/include/solver.h
+/home/hkm/circuitSolver/CircuitSolver/include/solver.h
 include/iscas89_parser.h
-/home/hkm/CircuitSolver/CircuitSolver/include/iscas89_parser.h
+/home/hkm/circuitSolver/CircuitSolver/include/iscas89_parser.h
 include/circuit_graph.h
-/home/hkm/CircuitSolver/CircuitSolver/include/circuit_graph.h
+/home/hkm/circuitSolver/CircuitSolver/include/circuit_graph.h
 include/log.h
-/home/hkm/CircuitSolver/CircuitSolver/include/log.h
+/home/hkm/circuitSolver/CircuitSolver/include/log.h
 string
 -
 fstream
 -
 
-/home/hkm/CircuitSolver/CircuitSolver/src/circuit_graph.cpp
+/home/hkm/circuitSolver/CircuitSolver/src/circuit_graph.cpp
 ../include/circuit_graph.h
-/home/hkm/CircuitSolver/CircuitSolver/include/circuit_graph.h
+/home/hkm/circuitSolver/CircuitSolver/include/circuit_graph.h
 ../include/log.h
-/home/hkm/CircuitSolver/CircuitSolver/include/log.h
+/home/hkm/circuitSolver/CircuitSolver/include/log.h
 iostream
 -
 sstream
@@ -72,11 +74,11 @@ map
 set
 -
 
-/home/hkm/CircuitSolver/CircuitSolver/src/iscas89_parser.cpp
+/home/hkm/circuitSolver/CircuitSolver/src/iscas89_parser.cpp
 ../include/iscas89_parser.h
-/home/hkm/CircuitSolver/CircuitSolver/include/iscas89_parser.h
+/home/hkm/circuitSolver/CircuitSolver/include/iscas89_parser.h
 ../include/log.h
-/home/hkm/CircuitSolver/CircuitSolver/include/log.h
+/home/hkm/circuitSolver/CircuitSolver/include/log.h
 algorithm
 -
 string
@@ -84,13 +86,17 @@ string
 regex
 -
 
-/home/hkm/CircuitSolver/CircuitSolver/src/log.cpp
+/home/hkm/circuitSolver/CircuitSolver/src/log.cpp
 ../include/log.h
-/home/hkm/CircuitSolver/CircuitSolver/include/log.h
+/home/hkm/circuitSolver/CircuitSolver/include/log.h
 iostream
 -
 
-/home/hkm/CircuitSolver/CircuitSolver/src/solver.cpp
+/home/hkm/circuitSolver/CircuitSolver/src/solver.cpp
 ../include/solver.h
-/home/hkm/CircuitSolver/CircuitSolver/include/solver.h
+/home/hkm/circuitSolver/CircuitSolver/include/solver.h
+../include/circuit_graph.h
+/home/hkm/circuitSolver/CircuitSolver/include/circuit_graph.h
+vector
+-
 
