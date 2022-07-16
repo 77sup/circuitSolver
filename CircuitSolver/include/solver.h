@@ -1,7 +1,7 @@
 #include "circuit_graph.h"
 #include <iostream>
 #include<vector>
-
+#include<queue>
 #ifndef SOLVER_H
 #define SOLVER_H
 
@@ -14,7 +14,7 @@ enum Cat {
 
 class solver{
 public: 
-    //constructor function initialize literals and literal_frequenc;output = 1
+    //constructor function initialize literals and literal_frequency;output = 1
     solver(const CircuitGraph&);
     //solve process
     void solve(const CircuitGraph&);
@@ -25,10 +25,10 @@ private:
     std::unordered_map<std::string,int> lines_status; 
     std::vector<std::string> sort_destination_gates;
     std::vector<std::string> the_name_of_input_line;
-    int DPLL(CircuitGraph&);
-    int BCP(const CircuitGraph&);
-    bool SingleGateReasoning(Gate*,std::string);
+    int DPLL(const CircuitGraph&,std::string );
+    int BCP(const CircuitGraph&,std::string );
+    bool SingleGateReasoning(Gate *current_gate, std::queue<std::string>&bcp_que, std::string reason_line_name);
     std::string FindDecisionTarget(std::unordered_map<std::string,int>& );
-    void show_result();               
+    void show_result(const CircuitGraph&,int );               
 };
 #endif

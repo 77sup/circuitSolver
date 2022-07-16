@@ -7,13 +7,13 @@
 #include <unordered_map>
 #include <cassert>
 
-//include "object_set.h"
 #include "log.h"
 
 
 #ifndef CIRCUIT_GRAPH_H
 #define CIRCUIT_GRAPH_H
 #pragma once
+
 
 
 class Gate;

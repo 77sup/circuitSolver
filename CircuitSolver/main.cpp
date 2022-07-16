@@ -1,6 +1,5 @@
 #include "include/solver.h"
 #include "include/iscas89_parser.h"
-#include "include/circuit_graph.h"
 #include"include/log.h"
 
 #include<string>
@@ -26,9 +25,7 @@ int main(int argc, char* argv[])
 	}
 	//graph.get_graph_stats();
     solver CircuitSolver(graph);    //有参构造实例化对象
-	CircuitSolver.test(graph);
-	//test();
-	
+	CircuitSolver.solve(graph);
 
     return 0;
 }
