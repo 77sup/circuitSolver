@@ -28,7 +28,9 @@ private:
     int DPLL(const CircuitGraph&,std::string );
     int BCP(const CircuitGraph&,std::string );
     bool SingleGateReasoning(Gate *current_gate, std::queue<std::string>&bcp_que, std::string reason_line_name);
+    bool SingleGateReasonBoost(Gate *current_gate, std::queue<std::string>&bcp_que, std::string reason_line_name);
     std::string FindDecisionTarget(std::unordered_map<std::string,int>& );
+
     void show_result(const CircuitGraph&,int );               
 };
 #endif

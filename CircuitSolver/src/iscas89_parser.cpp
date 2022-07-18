@@ -23,7 +23,6 @@ bool Iscas89Parser::match_output(CircuitGraph& graph, const std::string& line)
 	std::regex_match(line, matches, output_regex);
 	if (matches.size() != 2)
 		return false;
-
 	graph.add_output(matches[1]);
 	return true;
 }

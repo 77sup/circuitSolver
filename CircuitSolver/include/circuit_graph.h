@@ -202,6 +202,7 @@ public:
 	const std::unordered_map<std::string, Line*> get_name_to_line() const;
 
 	void get_graph_stats() const;
+	int change_name(std::string) const;
 private:
 	Line* ensure_line(const std::string& name);
 

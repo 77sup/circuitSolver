@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 	//graph.get_graph_stats();
     solver CircuitSolver(graph);    //有参构造实例化对象
 	CircuitSolver.solve(graph);
-
+	//graph.change_name("G235gate");
     return 0;
 }
 

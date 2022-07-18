@@ -265,6 +265,36 @@ void CircuitGraph::get_graph_stats() const
 	}
 	std::cout<<ss.str()<<std::endl;
 }
+int CircuitGraph::change_name(std::string str_name) const
+{
+	int str_len=str_name.size();
+	int i=0;
+	int j=0;
+	while (i < str_len)
+	{
+		if (str_name[i] >= '0'&& str_name[i] <= '9')
+		{
+			j = i;
+			int len = 0;
+			while (str_name[i] >= '0'&& str_name[i] <= '9')
+			{
+				i++;
+				len++;
+			}
+			std::string num_name = str_name.substr(j, len);//获取子串
+            int num=0;//数字字符串转换为整型数字
+			std::stringstream s1(num_name);
+			s1 >> num;
+			std::cout<<num<<std::endl;
+	        return num;
+		}
+		else
+		{
+			i++;
+		}
+	}
+
+}
 
 Line* CircuitGraph::ensure_line(const std::string& name)
 {
@@ -285,3 +315,4 @@ Line* CircuitGraph::ensure_line(const std::string& name)
 
 	return &line;
 }
+
