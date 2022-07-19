@@ -128,7 +128,8 @@ std::string Gate::get_str() const
 
 Line* CircuitGraph::add_input(const std::string& name)
 {
-	Line* p_line = ensure_line(name);
+	int temp=change_name(name);
+	Line* p_line = ensure_line(temp);
 
 	assert(p_line);
 
@@ -138,7 +139,7 @@ Line* CircuitGraph::add_input(const std::string& name)
 
 Line* CircuitGraph::add_output(const std::string& name)
 {
-	Line* p_line = ensure_line(name);
+	Line* p_line = ensure_line(change_name(name));
 
 	assert(p_line);
 
@@ -155,12 +156,12 @@ Gate* CircuitGraph::add_gate(Gate::Type type, const std::vector<std::string>& in
 
 	std::vector<Line*> inputs;
 	for (size_t i = 0; i < input_names.size(); ++i) {
-		const std::string input_name = input_names.at(i);
+		int input_name = change_name(input_names.at(i));
 		Line* p_input = ensure_line(input_name);
 		inputs.push_back(p_input);
 	}
 
-	Line* p_output = ensure_line(output_name);
+	Line* p_output = ensure_line(change_name(output_name));
 
 	m_gates.emplace_back(*this, type, p_output, std::move(inputs));
 	Gate& gate = m_gates.back();
@@ -194,7 +195,7 @@ Gate* CircuitGraph::add_gate(Gate::Type type, const std::vector<std::string>& in
 	return &gate;
 }
 
-Line* CircuitGraph::get_line(const std::string& name)
+Line* CircuitGraph::get_line(const int& name)
 {
 	auto it = m_name_to_line.find(name);
 
@@ -205,7 +206,7 @@ Line* CircuitGraph::get_line(const std::string& name)
 	return nullptr;
 }
 
-const Line* CircuitGraph::get_line(const std::string& name) const
+const Line* CircuitGraph::get_line(const int& name) const
 {
 	auto it = m_name_to_line.find(name);
 
@@ -235,7 +236,7 @@ const std::deque<Line>& CircuitGraph::get_lines() const
 {
 	return m_lines;
 }
-const std::unordered_map<std::string, Line*> CircuitGraph::get_name_to_line() const
+const std::unordered_map<int, Line*> CircuitGraph::get_name_to_line() const
 {
 	return m_name_to_line;
 }
@@ -265,39 +266,10 @@ void CircuitGraph::get_graph_stats() const
 	}
 	std::cout<<ss.str()<<std::endl;
 }
-int CircuitGraph::change_name(std::string str_name) const
-{
-	int str_len=str_name.size();
-	int i=0;
-	int j=0;
-	while (i < str_len)
-	{
-		if (str_name[i] >= '0'&& str_name[i] <= '9')
-		{
-			j = i;
-			int len = 0;
-			while (str_name[i] >= '0'&& str_name[i] <= '9')
-			{
-				i++;
-				len++;
-			}
-			std::string num_name = str_name.substr(j, len);//获取子串
-            int num=0;//数字字符串转换为整型数字
-			std::stringstream s1(num_name);
-			s1 >> num;
-			std::cout<<num<<std::endl;
-	        return num;
-		}
-		else
-		{
-			i++;
-		}
-	}
 
-}
-
-Line* CircuitGraph::ensure_line(const std::string& name)
+Line* CircuitGraph::ensure_line(const int& name)
 {
+	// std::cout<<"ensure_line li mian de xian de name:"<<name<<std::endl;
 	auto it = m_name_to_line.find(name);
 
 	if (it != m_name_to_line.end()) {
@@ -307,7 +279,7 @@ Line* CircuitGraph::ensure_line(const std::string& name)
 	m_lines.emplace_back(line_make_id());
 	Line& line = m_lines.back();
 
-	line.name = name;
+	line.num_name = name;
 
 	m_name_to_line[name] = &line;
 

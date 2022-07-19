@@ -179,8 +179,8 @@ CMakeFiles/test_solver.dir/main.cpp.o: ../main.cpp \
   /usr/include/c++/9/bits/unordered_map.h \
   /usr/include/c++/9/cassert \
   /usr/include/assert.h \
-  ../include/log.h \
-  /usr/include/c++/9/ostream \
+  /usr/include/c++/9/sstream \
+  /usr/include/c++/9/istream \
   /usr/include/c++/9/ios \
   /usr/include/c++/9/bits/ios_base.h \
   /usr/include/c++/9/bits/locale_classes.h \
@@ -199,20 +199,22 @@ CMakeFiles/test_solver.dir/main.cpp.o: ../main.cpp \
   /usr/include/x86_64-linux-gnu/c++/9/bits/ctype_inline.h \
   /usr/include/c++/9/bits/locale_facets.tcc \
   /usr/include/c++/9/bits/basic_ios.tcc \
+  /usr/include/c++/9/ostream \
   /usr/include/c++/9/bits/ostream.tcc \
-  /usr/include/c++/9/iostream \
-  /usr/include/c++/9/istream \
   /usr/include/c++/9/bits/istream.tcc \
-  /usr/include/c++/9/queue \
-  /usr/include/c++/9/bits/stl_heap.h \
-  /usr/include/c++/9/bits/stl_queue.h \
-  ../include/iscas89_parser.h \
-  ../include/log.h \
+  /usr/include/c++/9/bits/sstream.tcc \
   /usr/include/c++/9/fstream \
   /usr/include/c++/9/bits/codecvt.h \
   /usr/include/x86_64-linux-gnu/c++/9/bits/basic_file.h \
   /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
-  /usr/include/c++/9/bits/fstream.tcc
+  /usr/include/c++/9/bits/fstream.tcc \
+  /usr/include/c++/9/iostream \
+  ../include/log.h \
+  /usr/include/c++/9/queue \
+  /usr/include/c++/9/bits/stl_heap.h \
+  /usr/include/c++/9/bits/stl_queue.h \
+  ../include/iscas89_parser.h \
+  ../include/log.h
 
 CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o: ../src/circuit_graph.cpp \
   /usr/include/stdc-predef.h \
@@ -391,8 +393,8 @@ CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o: ../src/circuit_graph.cpp \
   /usr/include/c++/9/bits/unordered_map.h \
   /usr/include/c++/9/cassert \
   /usr/include/assert.h \
-  ../include/log.h \
-  /usr/include/c++/9/ostream \
+  /usr/include/c++/9/sstream \
+  /usr/include/c++/9/istream \
   /usr/include/c++/9/ios \
   /usr/include/c++/9/bits/ios_base.h \
   /usr/include/c++/9/bits/locale_classes.h \
@@ -411,13 +413,18 @@ CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o: ../src/circuit_graph.cpp \
   /usr/include/x86_64-linux-gnu/c++/9/bits/ctype_inline.h \
   /usr/include/c++/9/bits/locale_facets.tcc \
   /usr/include/c++/9/bits/basic_ios.tcc \
+  /usr/include/c++/9/ostream \
   /usr/include/c++/9/bits/ostream.tcc \
-  ../include/log.h \
-  /usr/include/c++/9/iostream \
-  /usr/include/c++/9/istream \
   /usr/include/c++/9/bits/istream.tcc \
-  /usr/include/c++/9/sstream \
   /usr/include/c++/9/bits/sstream.tcc \
+  /usr/include/c++/9/fstream \
+  /usr/include/c++/9/bits/codecvt.h \
+  /usr/include/x86_64-linux-gnu/c++/9/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
+  /usr/include/c++/9/bits/fstream.tcc \
+  /usr/include/c++/9/iostream \
+  ../include/log.h \
+  ../include/log.h \
   /usr/include/c++/9/map \
   /usr/include/c++/9/bits/stl_map.h \
   /usr/include/c++/9/bits/stl_multimap.h
@@ -600,8 +607,8 @@ CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: ../src/iscas89_parser.cpp \
   /usr/include/c++/9/bits/unordered_map.h \
   /usr/include/c++/9/cassert \
   /usr/include/assert.h \
-  ../include/log.h \
-  /usr/include/c++/9/ostream \
+  /usr/include/c++/9/sstream \
+  /usr/include/c++/9/istream \
   /usr/include/c++/9/ios \
   /usr/include/c++/9/bits/ios_base.h \
   /usr/include/c++/9/bits/locale_classes.h \
@@ -620,10 +627,17 @@ CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: ../src/iscas89_parser.cpp \
   /usr/include/x86_64-linux-gnu/c++/9/bits/ctype_inline.h \
   /usr/include/c++/9/bits/locale_facets.tcc \
   /usr/include/c++/9/bits/basic_ios.tcc \
+  /usr/include/c++/9/ostream \
   /usr/include/c++/9/bits/ostream.tcc \
-  /usr/include/c++/9/iostream \
-  /usr/include/c++/9/istream \
   /usr/include/c++/9/bits/istream.tcc \
+  /usr/include/c++/9/bits/sstream.tcc \
+  /usr/include/c++/9/fstream \
+  /usr/include/c++/9/bits/codecvt.h \
+  /usr/include/x86_64-linux-gnu/c++/9/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
+  /usr/include/c++/9/bits/fstream.tcc \
+  /usr/include/c++/9/iostream \
+  ../include/log.h \
   ../include/log.h \
   /usr/include/c++/9/algorithm \
   /usr/include/c++/9/bits/stl_algo.h \
@@ -641,7 +655,6 @@ CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: ../src/iscas89_parser.cpp \
   /usr/include/x86_64-linux-gnu/c++/9/bits/time_members.h \
   /usr/include/x86_64-linux-gnu/c++/9/bits/messages_members.h \
   /usr/include/libintl.h \
-  /usr/include/c++/9/bits/codecvt.h \
   /usr/include/c++/9/bits/locale_facets_nonio.tcc \
   /usr/include/c++/9/bits/locale_conv.h \
   /usr/include/c++/9/bits/unique_ptr.h \
@@ -656,8 +669,6 @@ CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: ../src/iscas89_parser.cpp \
   /usr/include/c++/9/bits/atomic_base.h \
   /usr/include/c++/9/bits/atomic_lockfree_defines.h \
   /usr/include/c++/9/backward/auto_ptr.h \
-  /usr/include/c++/9/sstream \
-  /usr/include/c++/9/bits/sstream.tcc \
   /usr/include/c++/9/stack \
   /usr/include/c++/9/bits/stl_stack.h \
   /usr/include/c++/9/map \
@@ -1031,8 +1042,8 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: ../src/solver.cpp \
   /usr/include/c++/9/bits/unordered_map.h \
   /usr/include/c++/9/cassert \
   /usr/include/assert.h \
-  ../include/log.h \
-  /usr/include/c++/9/ostream \
+  /usr/include/c++/9/sstream \
+  /usr/include/c++/9/istream \
   /usr/include/c++/9/ios \
   /usr/include/c++/9/bits/ios_base.h \
   /usr/include/c++/9/bits/locale_classes.h \
@@ -1051,10 +1062,17 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: ../src/solver.cpp \
   /usr/include/x86_64-linux-gnu/c++/9/bits/ctype_inline.h \
   /usr/include/c++/9/bits/locale_facets.tcc \
   /usr/include/c++/9/bits/basic_ios.tcc \
+  /usr/include/c++/9/ostream \
   /usr/include/c++/9/bits/ostream.tcc \
-  /usr/include/c++/9/iostream \
-  /usr/include/c++/9/istream \
   /usr/include/c++/9/bits/istream.tcc \
+  /usr/include/c++/9/bits/sstream.tcc \
+  /usr/include/c++/9/fstream \
+  /usr/include/c++/9/bits/codecvt.h \
+  /usr/include/x86_64-linux-gnu/c++/9/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
+  /usr/include/c++/9/bits/fstream.tcc \
+  /usr/include/c++/9/iostream \
+  ../include/log.h \
   /usr/include/c++/9/queue \
   /usr/include/c++/9/bits/stl_heap.h \
   /usr/include/c++/9/bits/stl_queue.h
@@ -1466,11 +1484,15 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: ../src/solver.cpp \
 
 /usr/include/assert.h:
 
-/usr/include/c++/9/bits/basic_string.tcc:
+/usr/include/c++/9/typeinfo:
 
-../include/log.h:
+/usr/include/x86_64-linux-gnu/bits/timesize.h:
 
-/usr/include/c++/9/ostream:
+/usr/include/c++/9/bits/atomic_lockfree_defines.h:
+
+/usr/include/c++/9/sstream:
+
+/usr/include/c++/9/istream:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
 
@@ -1502,7 +1524,19 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: ../src/solver.cpp \
 
 /usr/include/c++/9/bits/streambuf_iterator.h:
 
-/usr/include/c++/9/istream:
+/usr/include/c++/9/ostream:
+
+/usr/include/c++/9/bits/sstream.tcc:
+
+/usr/include/features.h:
+
+/usr/include/c++/9/bits/codecvt.h:
+
+/usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h:
+
+/usr/include/c++/9/bits/basic_string.tcc:
+
+../include/log.h:
 
 /usr/include/c++/9/queue:
 
@@ -1512,25 +1546,9 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: ../src/solver.cpp \
 
 /usr/include/c++/9/bits/stl_heap.h:
 
-/usr/include/features.h:
-
-/usr/include/c++/9/bits/codecvt.h:
-
-/usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h:
-
 /usr/include/c++/9/iostream:
 
 ../src/circuit_graph.cpp:
-
-/usr/include/c++/9/typeinfo:
-
-/usr/include/x86_64-linux-gnu/bits/timesize.h:
-
-/usr/include/c++/9/bits/atomic_lockfree_defines.h:
-
-/usr/include/c++/9/sstream:
-
-/usr/include/c++/9/bits/sstream.tcc:
 
 /usr/include/c++/9/bits/stl_iterator.h:
 

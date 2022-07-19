@@ -23,13 +23,14 @@ public:
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
     std::unordered_map<std::string,int> lines_status; 
-    std::vector<std::string> sort_destination_gates;
-    std::vector<std::string> the_name_of_input_line;
-    int DPLL(const CircuitGraph&,std::string );
-    int BCP(const CircuitGraph&,std::string );
-    bool SingleGateReasoning(Gate *current_gate, std::queue<std::string>&bcp_que, std::string reason_line_name);
-    bool SingleGateReasonBoost(Gate *current_gate, std::queue<std::string>&bcp_que, std::string reason_line_name);
-    std::string FindDecisionTarget(std::unordered_map<std::string,int>& );
+    std::unordered_map<int,int> lines_status_num; 
+    std::vector<int> sort_destination_gates;
+    std::vector<int> the_name_of_input_line;
+    int DPLL(const CircuitGraph&,int );
+    int BCP(const CircuitGraph&,int );
+    bool SingleGateReasoning(Gate *current_gate, std::queue<int>&bcp_que, int reason_line_name);
+    bool SingleGateReasonBoost(Gate *current_gate, std::queue<int>&bcp_que, int reason_line_name);
+    int FindDecisionTarget(std::unordered_map<int,int>& );
 
     void show_result(const CircuitGraph&,int );               
 };
