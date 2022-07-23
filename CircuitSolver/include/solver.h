@@ -30,7 +30,7 @@ private:
     int BCP(const CircuitGraph&,int );
     bool SingleGateReasoning(Gate *current_gate, std::queue<int>&bcp_que, int reason_line_name);
     bool SingleGateReasonBoost(Gate *current_gate, std::queue<int>&bcp_que, int reason_line_name);
-    int FindDecisionTarget(std::unordered_map<int,int>& );
+    int FindDecisionTarget(std::unordered_map<int,int>&,const CircuitGraph &graph );
 
     void show_result(const CircuitGraph&,int );               
 };

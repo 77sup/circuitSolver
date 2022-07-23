@@ -9,7 +9,6 @@ solver::solver(const CircuitGraph &graph)
     std::vector<int> output;          // store PIs
     std::cout<<"the number of all lins:";
     std::cout << graph.get_name_to_line().size() << std::endl;
-    //std::cout<<"graph.get_lines().size():"<<graph.get_lines().size()<<std::endl;
     for (int i = 0; i < graph.get_lines().size(); i++)
     {
         if (graph.get_lines()[i].is_output)
@@ -20,14 +19,9 @@ solver::solver(const CircuitGraph &graph)
         {
             noPO_lines_name.push_back(graph.get_lines()[i].num_name);
         }
-        //std::cout<<"graph.get_lines()[i].num_name"<<graph.get_lines()[i].num_name<<std::endl;
     }
-    std::cout<<"noPO_lines_name.size():  "<<noPO_lines_name.size()<<std::endl;
-    std::cout<<"output.size():  "<<output.size()<<std::endl;
-    //std::cout<<"graph.get_name_to_line().size():  "<<graph.get_name_to_line().size()<<std::endl;
     for (int i = 0; i < noPO_lines_name.size(); i++)
     {
-        //std::cout<<noPI_lines_name[i]<<std::endl;
         lines_status_num.insert(std::make_pair(noPO_lines_name[i], -1));
         // find PIs to store
         if (!graph.get_name_to_line().at(noPO_lines_name[i])->source)
@@ -35,99 +29,87 @@ solver::solver(const CircuitGraph &graph)
             the_name_of_input_line.push_back(noPO_lines_name[i]);
         }
     }
-    // print the_name_of_input_line
-    /* for (int i = 0; i < the_name_of_input_line.size(); i++)
-    {
-        std::cout << "the_name_of_input_line:" << the_name_of_input_line[i] << std::endl;
-    } */
     // assign POs to 1
     for (int i = 0; i < output.size(); i++)
     {
         lines_status_num.insert(std::make_pair(output[i], 1));
     }
-    // test,print line's assign status
-    /* std::cout << std::endl;
-    for (auto it = lines_status.begin(); it != lines_status.end(); it++)
-    {
-        std::cout << "the_status_of_line:" << (*it).first << "    " << (*it).second << std::endl;
-    } */
+    
     // according to fan_outs numbers to order(max---min)
-    int change;
-    for (int i = 0; i < noPO_lines_name.size() - 1; i++)
-    {
-        for (int j = i + 1; j < noPO_lines_name.size(); j++)
+    int noPO_lines_name_size=noPO_lines_name.size();
+    for (int i = 0; i < noPO_lines_name_size; i++)
+    {    //put (fanouts>3 || inputs) lines into sort_destination_gates
+        if((graph.get_name_to_line().at(noPO_lines_name[i])->destination_gates.size()>3)||
+        (!graph.get_name_to_line().at(noPO_lines_name[i])->source))
         {
-            if (graph.get_name_to_line().at(noPO_lines_name[i])->destination_gates.size() < graph.get_name_to_line().at(noPO_lines_name[j])->destination_gates.size())
-            {
-                change = noPO_lines_name[i];
-                noPO_lines_name[i] = noPO_lines_name[j];
-                noPO_lines_name[j] = change;
-            }
+            sort_destination_gates.push_back(noPO_lines_name[i]);
         }
     }
-    // store ordered noPO_lines
-    for (int i = 0; i < noPO_lines_name.size(); i++)
-    {
-        sort_destination_gates.push_back(noPO_lines_name[i]);
-    }
-    // test
-    /* for (int i = 0; i < sort_destination_gates.size(); i++)
-    {
-        std::cout << "sort_line_name:" << sort_destination_gates[i] << " num:  " << graph.get_name_to_line().at(sort_destination_gates[i])->destination_gates.size() << std::endl;
-    } */
 }
 // choose a line to assign(decision),according to ordered fan_outs numbers
-int solver::FindDecisionTarget(std::unordered_map<int, int> &lines_status_num)
+int solver::FindDecisionTarget(std::unordered_map<int, int> &lines_status_num,const CircuitGraph &graph)
 {
-    int Target;
+    int Target=-1;
+    int max_fanouts=0;
     for (int i = 0; i < sort_destination_gates.size(); i++)
     {
-        if (lines_status_num[sort_destination_gates[i]] == -1)
+        if(lines_status_num.at(sort_destination_gates[i])==-1 && graph.get_name_to_line().at(sort_destination_gates[i])->destination_gates.size()>max_fanouts)
         {
-            Target = sort_destination_gates[i];
-            return Target;
+            Target=sort_destination_gates[i];
+            max_fanouts=graph.get_name_to_line().at(sort_destination_gates[i])->destination_gates.size();
+
         }
     }
-    return -1;
-}
-void solver::test(const CircuitGraph &graph)
-{
-    this->lines_status_num.at(graph.get_lines()[2].num_name) = 0;
-    std::cout << "Decision line name:   " << graph.get_lines()[2].name << std::endl;
-    std::cout << "Decision line value:   " << lines_status_num.at(graph.get_lines()[2].num_name)<< std::endl;
-    //std::vector<Gate *> line_connection_gates;
-    std::cout<<BCP(graph,graph.get_lines()[2].num_name)<<std::endl;
-    for (int i = 0; i < graph.get_lines().size(); i++)
-    {
-        std::cout << "line name:" << graph.get_lines()[i].name << "   assigned as:" << lines_status_num.at(graph.get_lines()[i].num_name)<< std::endl;
-    }
+    return Target;
 }
 void solver::solve(const CircuitGraph& graph)
 {
-    for(int i=0;i<graph.get_outputs().size();i++)
+    int bcp_result;
+    for (int i = 0; i < graph.get_outputs().size(); i++)
     {
-        BCP(graph,graph.get_outputs()[i]->num_name);
-        //std::cout<<BCP(graph,graph.get_outputs()[i]->name)<<std::endl<<std::endl;
+        bcp_result=BCP(graph, graph.get_outputs()[i]->num_name);
+        if(bcp_result==0) break;
     }
-    int dpll_result=DPLL(graph,-1);
-    if(!dpll_result) show_result(graph,0);
+    std::cout<<"bcp_result: "<<bcp_result<<std::endl;
+    std::cout << "solve2" << std::endl;
+    if(bcp_result==1)
+    {
+        int dpll_result = DPLL(graph,-1);
+        if (!dpll_result)
+        show_result(graph, 0);
+    }
+    std::cout << "solve3" << std::endl;
 }
+
 int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsat;return 1---sat,but this not related to solver's solution
 {
     int bcp_result=BCP(graph,decision_line);
     if(bcp_result==0)  return 0;
-    int next_decision_line=FindDecisionTarget(lines_status_num);
+    int next_decision_line=FindDecisionTarget(lines_status_num,graph);
     if(next_decision_line==-1)   //all nodes were assigned
     {
         show_result(graph,1);
         return 1;  //solution is SAT
     }
+    int flag=rand()%2;
     for(int i=0;i<2;i++)  //Traverse two child nodes
     {
-        solver CircuitSolver=*this;  //kao bei yi ge duixiang
-        CircuitSolver.lines_status_num.at(next_decision_line)=i; //update kao bei duixiang information
-        int DPLL_result=CircuitSolver.DPLL(graph,next_decision_line);  
-        if(DPLL_result) return 1;   //solution is SAT
+        int flag2;
+        if(flag)
+        {
+            if(i) flag2 = 0;
+            else flag2 = 1;
+        }
+        else
+        {
+            if(i) flag2 = 1;
+            else flag2 = 0;
+        }
+        solver CircuitSolver = *this;
+        CircuitSolver.lines_status_num.at(next_decision_line) = flag2;
+        int dpll_result = CircuitSolver.DPLL(graph, next_decision_line);
+        if (dpll_result == 1)
+            return 1;
     }
     return 0;  //solution is UNSAT
 }

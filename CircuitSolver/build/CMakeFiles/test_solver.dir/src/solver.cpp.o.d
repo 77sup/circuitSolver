@@ -1,8 +1,8 @@
 CMakeFiles/test_solver.dir/src/solver.cpp.o: \
- /home/hkm/circuitSolver/CircuitSolver/src/solver.cpp \
+ /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/solver.cpp \
  /usr/include/stdc-predef.h \
- /home/hkm/circuitSolver/CircuitSolver/src/../include/solver.h \
- /home/hkm/circuitSolver/CircuitSolver/src/../include/circuit_graph.h \
+ /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/../include/solver.h \
+ /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/../include/circuit_graph.h \
  /usr/include/c++/9/string \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h \
@@ -162,6 +162,6 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/9/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
  /usr/include/c++/9/bits/fstream.tcc /usr/include/c++/9/iostream \
- /home/hkm/circuitSolver/CircuitSolver/src/../include/log.h \
+ /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/../include/log.h \
  /usr/include/c++/9/queue /usr/include/c++/9/bits/stl_heap.h \
  /usr/include/c++/9/bits/stl_queue.h

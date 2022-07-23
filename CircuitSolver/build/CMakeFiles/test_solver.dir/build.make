@@ -53,10 +53,10 @@ RM = /snap/cmake/1088/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/hkm/circuitSolver/CircuitSolver
+CMAKE_SOURCE_DIR = /home/hkm/circuitSolver/circuitSolver/CircuitSolver
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/hkm/circuitSolver/CircuitSolver/build
+CMAKE_BINARY_DIR = /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/test_solver.dir/depend.make
@@ -72,72 +72,72 @@ include CMakeFiles/test_solver.dir/flags.make
 CMakeFiles/test_solver.dir/main.cpp.o: CMakeFiles/test_solver.dir/flags.make
 CMakeFiles/test_solver.dir/main.cpp.o: ../main.cpp
 CMakeFiles/test_solver.dir/main.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_solver.dir/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/main.cpp.o -MF CMakeFiles/test_solver.dir/main.cpp.o.d -o CMakeFiles/test_solver.dir/main.cpp.o -c /home/hkm/circuitSolver/CircuitSolver/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_solver.dir/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/main.cpp.o -MF CMakeFiles/test_solver.dir/main.cpp.o.d -o CMakeFiles/test_solver.dir/main.cpp.o -c /home/hkm/circuitSolver/circuitSolver/CircuitSolver/main.cpp
 
 CMakeFiles/test_solver.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/CircuitSolver/main.cpp > CMakeFiles/test_solver.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/circuitSolver/CircuitSolver/main.cpp > CMakeFiles/test_solver.dir/main.cpp.i
 
 CMakeFiles/test_solver.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/main.cpp -o CMakeFiles/test_solver.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/circuitSolver/CircuitSolver/main.cpp -o CMakeFiles/test_solver.dir/main.cpp.s
 
 CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: CMakeFiles/test_solver.dir/flags.make
 CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: ../src/iscas89_parser.cpp
 CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o -MF CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o.d -o CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o -c /home/hkm/circuitSolver/CircuitSolver/src/iscas89_parser.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o -MF CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o.d -o CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o -c /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/iscas89_parser.cpp
 
 CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/CircuitSolver/src/iscas89_parser.cpp > CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/iscas89_parser.cpp > CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.i
 
 CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/src/iscas89_parser.cpp -o CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/iscas89_parser.cpp -o CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.s
 
 CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o: CMakeFiles/test_solver.dir/flags.make
 CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o: ../src/circuit_graph.cpp
 CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o -MF CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o.d -o CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o -c /home/hkm/circuitSolver/CircuitSolver/src/circuit_graph.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o -MF CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o.d -o CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o -c /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/circuit_graph.cpp
 
 CMakeFiles/test_solver.dir/src/circuit_graph.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/circuit_graph.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/CircuitSolver/src/circuit_graph.cpp > CMakeFiles/test_solver.dir/src/circuit_graph.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/circuit_graph.cpp > CMakeFiles/test_solver.dir/src/circuit_graph.cpp.i
 
 CMakeFiles/test_solver.dir/src/circuit_graph.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/circuit_graph.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/src/circuit_graph.cpp -o CMakeFiles/test_solver.dir/src/circuit_graph.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/circuit_graph.cpp -o CMakeFiles/test_solver.dir/src/circuit_graph.cpp.s
 
 CMakeFiles/test_solver.dir/src/log.cpp.o: CMakeFiles/test_solver.dir/flags.make
 CMakeFiles/test_solver.dir/src/log.cpp.o: ../src/log.cpp
 CMakeFiles/test_solver.dir/src/log.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/test_solver.dir/src/log.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/log.cpp.o -MF CMakeFiles/test_solver.dir/src/log.cpp.o.d -o CMakeFiles/test_solver.dir/src/log.cpp.o -c /home/hkm/circuitSolver/CircuitSolver/src/log.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/test_solver.dir/src/log.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/log.cpp.o -MF CMakeFiles/test_solver.dir/src/log.cpp.o.d -o CMakeFiles/test_solver.dir/src/log.cpp.o -c /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/log.cpp
 
 CMakeFiles/test_solver.dir/src/log.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/log.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/CircuitSolver/src/log.cpp > CMakeFiles/test_solver.dir/src/log.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/log.cpp > CMakeFiles/test_solver.dir/src/log.cpp.i
 
 CMakeFiles/test_solver.dir/src/log.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/log.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/src/log.cpp -o CMakeFiles/test_solver.dir/src/log.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/log.cpp -o CMakeFiles/test_solver.dir/src/log.cpp.s
 
 CMakeFiles/test_solver.dir/src/solver.cpp.o: CMakeFiles/test_solver.dir/flags.make
 CMakeFiles/test_solver.dir/src/solver.cpp.o: ../src/solver.cpp
 CMakeFiles/test_solver.dir/src/solver.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/test_solver.dir/src/solver.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/solver.cpp.o -MF CMakeFiles/test_solver.dir/src/solver.cpp.o.d -o CMakeFiles/test_solver.dir/src/solver.cpp.o -c /home/hkm/circuitSolver/CircuitSolver/src/solver.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/test_solver.dir/src/solver.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/solver.cpp.o -MF CMakeFiles/test_solver.dir/src/solver.cpp.o.d -o CMakeFiles/test_solver.dir/src/solver.cpp.o -c /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/solver.cpp
 
 CMakeFiles/test_solver.dir/src/solver.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/solver.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/CircuitSolver/src/solver.cpp > CMakeFiles/test_solver.dir/src/solver.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/solver.cpp > CMakeFiles/test_solver.dir/src/solver.cpp.i
 
 CMakeFiles/test_solver.dir/src/solver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/solver.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/src/solver.cpp -o CMakeFiles/test_solver.dir/src/solver.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/solver.cpp -o CMakeFiles/test_solver.dir/src/solver.cpp.s
 
 # Object files for target test_solver
 test_solver_OBJECTS = \
@@ -157,7 +157,7 @@ test_solver: CMakeFiles/test_solver.dir/src/log.cpp.o
 test_solver: CMakeFiles/test_solver.dir/src/solver.cpp.o
 test_solver: CMakeFiles/test_solver.dir/build.make
 test_solver: CMakeFiles/test_solver.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable test_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable test_solver"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_solver.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -169,6 +169,6 @@ CMakeFiles/test_solver.dir/clean:
 .PHONY : CMakeFiles/test_solver.dir/clean
 
 CMakeFiles/test_solver.dir/depend:
-	cd /home/hkm/circuitSolver/CircuitSolver/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/hkm/circuitSolver/CircuitSolver /home/hkm/circuitSolver/CircuitSolver /home/hkm/circuitSolver/CircuitSolver/build /home/hkm/circuitSolver/CircuitSolver/build /home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles/test_solver.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/hkm/circuitSolver/circuitSolver/CircuitSolver /home/hkm/circuitSolver/circuitSolver/CircuitSolver /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles/test_solver.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/test_solver.dir/depend
 

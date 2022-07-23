@@ -1,7 +1,7 @@
 CMakeFiles/test_solver.dir/src/log.cpp.o: \
- /home/hkm/circuitSolver/CircuitSolver/src/log.cpp \
+ /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/log.cpp \
  /usr/include/stdc-predef.h \
- /home/hkm/circuitSolver/CircuitSolver/src/../include/log.h \
+ /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/../include/log.h \
  /usr/include/c++/9/ostream /usr/include/c++/9/ios \
  /usr/include/c++/9/iosfwd \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
