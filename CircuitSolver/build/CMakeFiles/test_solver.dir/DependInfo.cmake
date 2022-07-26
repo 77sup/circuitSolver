@@ -8,11 +8,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/hkm/circuitSolver/circuitSolver/CircuitSolver/main.cpp" "CMakeFiles/test_solver.dir/main.cpp.o" "gcc" "CMakeFiles/test_solver.dir/main.cpp.o.d"
-  "/home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/circuit_graph.cpp" "CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o.d"
-  "/home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/iscas89_parser.cpp" "CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o.d"
-  "/home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/log.cpp" "CMakeFiles/test_solver.dir/src/log.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/log.cpp.o.d"
-  "/home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/solver.cpp" "CMakeFiles/test_solver.dir/src/solver.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/solver.cpp.o.d"
+  "/home/hkm/circuitSolver/CircuitSolver/main.cpp" "CMakeFiles/test_solver.dir/main.cpp.o" "gcc" "CMakeFiles/test_solver.dir/main.cpp.o.d"
+  "/home/hkm/circuitSolver/CircuitSolver/src/circuit_graph.cpp" "CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o.d"
+  "/home/hkm/circuitSolver/CircuitSolver/src/cnf.cpp" "CMakeFiles/test_solver.dir/src/cnf.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/cnf.cpp.o.d"
+  "/home/hkm/circuitSolver/CircuitSolver/src/iscas89_parser.cpp" "CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o.d"
+  "/home/hkm/circuitSolver/CircuitSolver/src/log.cpp" "CMakeFiles/test_solver.dir/src/log.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/log.cpp.o.d"
+  "/home/hkm/circuitSolver/CircuitSolver/src/solver.cpp" "CMakeFiles/test_solver.dir/src/solver.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/solver.cpp.o.d"
   )
 
 # Targets to which this target links.

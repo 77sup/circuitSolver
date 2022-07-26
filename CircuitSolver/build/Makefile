@@ -57,10 +57,10 @@ RM = /snap/cmake/1088/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/hkm/circuitSolver/circuitSolver/CircuitSolver
+CMAKE_SOURCE_DIR = /home/hkm/circuitSolver/CircuitSolver
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build
+CMAKE_BINARY_DIR = /home/hkm/circuitSolver/CircuitSolver/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles /home/hkm/circuitSolver/CircuitSolver/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hkm/circuitSolver/circuitSolver/CircuitSolver/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -176,6 +176,30 @@ src/circuit_graph.s: src/circuit_graph.cpp.s
 src/circuit_graph.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/circuit_graph.cpp.s
 .PHONY : src/circuit_graph.cpp.s
+
+src/cnf.o: src/cnf.cpp.o
+.PHONY : src/cnf.o
+
+# target to build an object file
+src/cnf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnf.cpp.o
+.PHONY : src/cnf.cpp.o
+
+src/cnf.i: src/cnf.cpp.i
+.PHONY : src/cnf.i
+
+# target to preprocess a source file
+src/cnf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnf.cpp.i
+.PHONY : src/cnf.cpp.i
+
+src/cnf.s: src/cnf.cpp.s
+.PHONY : src/cnf.s
+
+# target to generate assembly for a file
+src/cnf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnf.cpp.s
+.PHONY : src/cnf.cpp.s
 
 src/iscas89_parser.o: src/iscas89_parser.cpp.o
 .PHONY : src/iscas89_parser.o
@@ -264,6 +288,9 @@ help:
 	@echo "... src/circuit_graph.o"
 	@echo "... src/circuit_graph.i"
 	@echo "... src/circuit_graph.s"
+	@echo "... src/cnf.o"
+	@echo "... src/cnf.i"
+	@echo "... src/cnf.s"
 	@echo "... src/iscas89_parser.o"
 	@echo "... src/iscas89_parser.i"
 	@echo "... src/iscas89_parser.s"

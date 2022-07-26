@@ -1,5 +1,6 @@
 #include "../include/solver.h"
 #include "../include/circuit_graph.h"
+#include"../include/cnf.h"
 #include <vector>
 #include<queue>
 solver::solver(const CircuitGraph &graph)

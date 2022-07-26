@@ -1,8 +1,8 @@
 CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: \
- /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/iscas89_parser.cpp \
+ /home/hkm/circuitSolver/CircuitSolver/src/iscas89_parser.cpp \
  /usr/include/stdc-predef.h \
- /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/../include/iscas89_parser.h \
- /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/../include/circuit_graph.h \
+ /home/hkm/circuitSolver/CircuitSolver/src/../include/iscas89_parser.h \
+ /home/hkm/circuitSolver/CircuitSolver/src/../include/circuit_graph.h \
  /usr/include/c++/9/string \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h \
@@ -162,8 +162,8 @@ CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/9/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
  /usr/include/c++/9/bits/fstream.tcc /usr/include/c++/9/iostream \
- /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/../include/log.h \
- /home/hkm/circuitSolver/circuitSolver/CircuitSolver/src/../include/log.h \
+ /home/hkm/circuitSolver/CircuitSolver/src/../include/log.h \
+ /home/hkm/circuitSolver/CircuitSolver/src/../include/log.h \
  /usr/include/c++/9/algorithm /usr/include/c++/9/bits/stl_algo.h \
  /usr/include/c++/9/bits/algorithmfwd.h \
  /usr/include/c++/9/bits/stl_heap.h /usr/include/c++/9/bits/stl_tempbuf.h \

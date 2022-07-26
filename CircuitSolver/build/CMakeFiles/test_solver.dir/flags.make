@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/hkm/circuitSolver/circuitSolver/CircuitSolver/include
+CXX_INCLUDES = -I/home/hkm/circuitSolver/CircuitSolver/include
 
 CXX_FLAGS = 
 
