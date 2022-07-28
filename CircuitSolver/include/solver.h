@@ -1,4 +1,5 @@
 #include "circuit_graph.h"
+#include "cnf.h"
 #include <iostream>
 #include<vector>
 #include<queue>
@@ -26,6 +27,7 @@ private:
     std::unordered_map<int,int> lines_status_num; 
     std::vector<int> sort_destination_gates;
     std::vector<int> the_name_of_input_line;
+    cnf_bcp cnfbcp;
     int DPLL(const CircuitGraph&,int );
     int BCP(const CircuitGraph&,int );
     bool SingleGateReasoning(Gate *current_gate, std::queue<int>&bcp_que, int reason_line_name);

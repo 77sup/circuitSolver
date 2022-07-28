@@ -27,14 +27,16 @@ public:
 class cnf_bcp
 {
 public:
+  Formula formula;          // the initial formula given as input
+
   void initialize();
   cnf_bcp() {}
   void test();
- 
+  int cnf_BCP(Formula &);
+  
 private:                     
   int literal_count;                   // the number of variables in the formula
   int clause_count;                    // the number of clauses in the formula
-  Formula formula;          // the initial formula given as input
   int unit_propagate(Formula &);       // performs unit propagation
   int apply_transform(Formula &, int); // applies the value of the literal in
   void show(int );

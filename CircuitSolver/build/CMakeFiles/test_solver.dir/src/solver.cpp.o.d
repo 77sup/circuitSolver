@@ -163,6 +163,7 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
  /usr/include/c++/9/bits/fstream.tcc /usr/include/c++/9/iostream \
  /home/hkm/circuitSolver/CircuitSolver/src/../include/log.h \
+ /home/hkm/circuitSolver/CircuitSolver/src/../include/cnf.h \
  /usr/include/c++/9/queue /usr/include/c++/9/bits/stl_heap.h \
  /usr/include/c++/9/bits/stl_queue.h \
  /home/hkm/circuitSolver/CircuitSolver/src/../include/cnf.h

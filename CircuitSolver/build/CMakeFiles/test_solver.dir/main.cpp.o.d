@@ -163,6 +163,7 @@ CMakeFiles/test_solver.dir/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
  /usr/include/c++/9/bits/fstream.tcc /usr/include/c++/9/iostream \
  /home/hkm/circuitSolver/CircuitSolver/include/log.h \
+ /home/hkm/circuitSolver/CircuitSolver/include/cnf.h \
  /usr/include/c++/9/queue /usr/include/c++/9/bits/stl_heap.h \
  /usr/include/c++/9/bits/stl_queue.h \
  /home/hkm/circuitSolver/CircuitSolver/include/iscas89_parser.h \

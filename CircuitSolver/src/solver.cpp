@@ -46,6 +46,7 @@ solver::solver(const CircuitGraph &graph)
             sort_destination_gates.push_back(noPO_lines_name[i]);
         }
     }
+    cnfbcp.initialize();
 }
 // choose a line to assign(decision),according to ordered fan_outs numbers
 int solver::FindDecisionTarget(std::unordered_map<int, int> &lines_status_num,const CircuitGraph &graph)
@@ -121,10 +122,11 @@ int solver::BCP(const CircuitGraph &graph,int decision_line)
     std::queue<int>bcp_que;              
     bcp_que.push(decision_line);
     int head_line_que=bcp_que.front();
-    //SingleGateReasoning(Gate *current_gate, std::string reason_line_name);
     std::vector<Gate*> line_connection_gates;  
     while (!bcp_que.empty())
     {
+        cnfbcp.cnf_BCP(cnfbcp.formula);
+        
         line_connection_gates.clear();
         //add the source gate
         if(graph.get_name_to_line().at(head_line_que)->source)
@@ -591,4 +593,10 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
     }
 
 }
+}
+
+void solver::test(const CircuitGraph& graph)
+{
+    std::cout<<"cnf bcp call in solver"<<std::endl;
+    cnfbcp.test();
 }

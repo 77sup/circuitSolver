@@ -26,13 +26,11 @@ int main(int argc, char *argv[])
 		log_error() << "can't parse file" << argv[1];
 		return 1;
 	}
-	// solver CircuitSolver(graph);    //有参构造实例化对象
-	// CircuitSolver.solve(graph);
-	cnf_bcp bcp;
-	bcp.initialize();
-	//bcp.unit_propagate(bcp.formula);
-	bcp.test();
-	std::cout<<"  1234567   "<<std::endl;
+
+	//solver CircuitSolver(graph);    //有参构造实例化对象
+	//CircuitSolver.solve(graph);
+	solver solver(graph);
+	solver.solve(graph);
 	
 	return 0;
 }

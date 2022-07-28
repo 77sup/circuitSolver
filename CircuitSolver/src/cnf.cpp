@@ -5,8 +5,8 @@
 
 void cnf_bcp::initialize()
 {
-     char c;   // store first character
-  std::string s; // dummy string
+     //char c;   // store first character
+  //std::string s; // dummy string
   /*c 3 variables, 6 clauses
   p cnf 3 6
   1 2 0
@@ -39,22 +39,21 @@ void cnf_bcp::initialize()
   formula.literal_frequency.resize(literal_count, 0);
   formula.literal_polarity.clear();
   formula.literal_polarity.resize(literal_count, 0);
-
-  int literal;                           // store the incoming literal value
+  int literal;
   for (int i = 0; i < clause_count; i++) // iterate over the clauses
   {
     while (true) // while the ith clause gets more literals
     {
-      std::cin >> literal;
-      if (literal > 0) // if the variable has positive polarity
+      std::cin>>literal;   //store the incoming literal value
+      if (literal > 0) // variable has positive polarity
       {
         formula.clauses[i].push_back(literal); 
-        formula.literal_frequency[literal - 1]++;        // increment frequency and polarity of the literal
+        formula.literal_frequency[literal - 1]++;  // increment frequency and polarity of the literal
         formula.literal_polarity[literal - 1]++;
       }
-      else if (literal < 0) // if the variable has negative polarity
+      else if (literal < 0) // variable has negative polarity
       {
-        formula.clauses[i].push_back(literal); // store it in the form 2n+1
+        formula.clauses[i].push_back(literal); 
         formula.literal_frequency[-1 - literal]++;    // increment frequency and decrement polarity of the literal
         formula.literal_polarity[-1 - literal]--;
       }
@@ -69,11 +68,10 @@ void cnf_bcp::initialize()
 
 int cnf_bcp::unit_propagate(Formula &f)
 {
-    bool unit_clause_found = false; //whether the current iteration found a unit clause
+  bool unit_clause_found = false; //whether the current iteration found a unit clause
   if (f.clauses.size() == 0) return 1;//formula contains no clauses, it is vacuously satisfied
   do
   {
-    std::cout<<"hello"<<std::endl;
     unit_clause_found = false;
     for (int i = 0; i < f.clauses.size(); i++)  // iterate over the clauses in f
     {                             
@@ -99,7 +97,6 @@ int cnf_bcp::unit_propagate(Formula &f)
       }
       else if (f.clauses[i].size() == 0) // if a given clause is empty
       {
-        std::cout<<"2222"<<std::endl;
         return 0;  // the formula is unsatisfiable in this branch
       }
     }
@@ -159,4 +156,8 @@ void cnf_bcp::test()
 {
     int result=unit_propagate(formula);
     show(result);
+}
+int cnf_bcp::cnf_BCP(Formula& f)
+{
+  return unit_propagate(f);
 }

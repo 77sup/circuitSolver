@@ -210,6 +210,7 @@ CMakeFiles/test_solver.dir/main.cpp.o: ../main.cpp \
   /usr/include/c++/9/bits/fstream.tcc \
   /usr/include/c++/9/iostream \
   ../include/log.h \
+  ../include/cnf.h \
   /usr/include/c++/9/queue \
   /usr/include/c++/9/bits/stl_heap.h \
   /usr/include/c++/9/bits/stl_queue.h \
@@ -1295,6 +1296,7 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: ../src/solver.cpp \
   /usr/include/c++/9/bits/fstream.tcc \
   /usr/include/c++/9/iostream \
   ../include/log.h \
+  ../include/cnf.h \
   /usr/include/c++/9/queue \
   /usr/include/c++/9/bits/stl_heap.h \
   /usr/include/c++/9/bits/stl_queue.h \
@@ -1797,15 +1799,15 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: ../src/solver.cpp \
 
 ../include/log.h:
 
+../include/cnf.h:
+
+/usr/include/c++/9/bits/uniform_int_dist.h:
+
 /usr/include/c++/9/bits/alloc_traits.h:
 
 /usr/include/c++/9/bits/basic_ios.tcc:
 
 /usr/include/c++/9/bits/stl_heap.h:
-
-../include/cnf.h:
-
-/usr/include/c++/9/bits/uniform_int_dist.h:
 
 /usr/include/c++/9/iostream:
 
