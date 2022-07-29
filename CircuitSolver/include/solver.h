@@ -23,16 +23,20 @@ public:
 
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
-    std::unordered_map<std::string,int> lines_status; 
     std::unordered_map<int,int> lines_status_num; 
     std::vector<int> sort_destination_gates;
     std::vector<int> the_name_of_input_line;
-    cnf_bcp cnfbcp;
+    cnf m_cnf;
+    //common solving operations both cnf and circuit
+    int FindDecisionTarget(std::unordered_map<int,int>&,const CircuitGraph &graph );
     int DPLL(const CircuitGraph&,int );
     int BCP(const CircuitGraph&,int );
-    bool SingleGateReasoning(Gate *current_gate, std::queue<int>&bcp_que, int reason_line_name);
+    // only for circuit solving 
     bool SingleGateReasonBoost(Gate *current_gate, std::queue<int>&bcp_que, int reason_line_name);
-    int FindDecisionTarget(std::unordered_map<int,int>&,const CircuitGraph &graph );
+    // only for cnf solving 
+    int unit_propagate(cnf &f, std::queue<int>&bcp_que,int reason_line_name);  //performs unit propagation
+    int apply_transform(cnf &f, std::queue<int>&bcp_que,int reason_line_name); // applies the value of the literal in
+
 
     void show_result(const CircuitGraph&,int );               
 };

@@ -1,5 +1,5 @@
-CMakeFiles/test_solver.dir/src/solver.cpp.o: \
- /home/hkm/circuitSolver/CircuitSolver/src/solver.cpp \
+CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o: \
+ /home/hkm/circuitSolver/CircuitSolver/src/circuitsolver.cpp \
  /usr/include/stdc-predef.h \
  /home/hkm/circuitSolver/CircuitSolver/src/../include/solver.h \
  /home/hkm/circuitSolver/CircuitSolver/src/../include/circuit_graph.h \
@@ -166,14 +166,4 @@ CMakeFiles/test_solver.dir/src/solver.cpp.o: \
  /home/hkm/circuitSolver/CircuitSolver/src/../include/cnf.h \
  /usr/include/c++/9/queue /usr/include/c++/9/bits/stl_heap.h \
  /usr/include/c++/9/bits/stl_queue.h \
- /home/hkm/circuitSolver/CircuitSolver/src/../include/cnf.h \
- /usr/include/c++/9/cmath /usr/include/math.h \
- /usr/include/x86_64-linux-gnu/bits/math-vector.h \
- /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
- /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
- /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
- /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
- /usr/include/x86_64-linux-gnu/bits/iscanonical.h
+ /home/hkm/circuitSolver/CircuitSolver/src/../include/cnf.h

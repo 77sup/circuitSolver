@@ -3,12 +3,12 @@
 #include"../include/cnf.h"
 #include <vector>
 #include<queue>
+#include <cmath>
 solver::solver(const CircuitGraph &graph)
 {
-    // std::vector<std::string> noPI_lines_name; // store no-PIs
     std::vector<int> noPO_lines_name;  // store no-PIs
     std::vector<int> output;          // store PIs
-    std::cout<<"the number of all lins:";
+    std::cout<<"the number of all lines:";
     std::cout << graph.get_name_to_line().size() << std::endl;
     for (int i = 0; i < graph.get_lines().size(); i++)
     {
@@ -46,7 +46,7 @@ solver::solver(const CircuitGraph &graph)
             sort_destination_gates.push_back(noPO_lines_name[i]);
         }
     }
-    cnfbcp.initialize();
+    m_cnf.initialize();
 }
 // choose a line to assign(decision),according to ordered fan_outs numbers
 int solver::FindDecisionTarget(std::unordered_map<int, int> &lines_status_num,const CircuitGraph &graph)
@@ -73,14 +73,12 @@ void solver::solve(const CircuitGraph& graph)
         if(bcp_result==0) break;
     }
     std::cout<<"bcp_result: "<<bcp_result<<std::endl;
-    std::cout << "solve2" << std::endl;
     if(bcp_result==1)
     {
         int dpll_result = DPLL(graph,-1);
         if (!dpll_result)
         show_result(graph, 0);
     }
-    std::cout << "solve3" << std::endl;
 }
 
 int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsat;return 1---sat,but this not related to solver's solution
@@ -93,11 +91,11 @@ int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsa
         show_result(graph,1);
         return 1;  //solution is SAT
     }
-    int flag=rand()%2;
+    int flag=rand()%2;  //randomly choose left or right node to decide assignment
     for(int i=0;i<2;i++)  //Traverse two child nodes
     {
         int flag2;
-        if(flag)
+        if(flag)  //1,right node
         {
             if(i) flag2 = 0;
             else flag2 = 1;
@@ -123,10 +121,13 @@ int solver::BCP(const CircuitGraph &graph,int decision_line)
     bcp_que.push(decision_line);
     int head_line_que=bcp_que.front();
     std::vector<Gate*> line_connection_gates;  
+    //std::cout<<"1111"<<std::endl;
+    apply_transform(m_cnf, bcp_que,head_line_que);
+    //std::cout<<"2222"<<std::endl;
+    
     while (!bcp_que.empty())
     {
-        cnfbcp.cnf_BCP(cnfbcp.formula);
-        
+        unit_propagate(m_cnf,bcp_que,head_line_que);
         line_connection_gates.clear();
         //add the source gate
         if(graph.get_name_to_line().at(head_line_que)->source)
@@ -161,442 +162,6 @@ void solver::show_result(const CircuitGraph& graph, int dpll_result)
         else
             std::cout<<"UNSAT"<<std::endl;
     }
-//design for multiple inputs gates
-bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, int reason_line_name)
-{
-    Gate::Type GateType = current_gate->get_type();
-    std::vector<std::pair<int, int>> all_lines_current_gate;
-    for(int i=0;i<current_gate->get_inputs().size();i++)
-    {
-        int input=current_gate->inputs()[i]->num_name;
-        all_lines_current_gate.push_back(std::make_pair(input,lines_status_num.at(input)));
-    }
-    all_lines_current_gate.push_back(std::make_pair(current_gate->get_output()->num_name,lines_status_num.at(current_gate->get_output()->num_name)));
-    int number_lineOfGate=all_lines_current_gate.size();
-    //respectively record input line's 0 1 x number 
-    int input_line_status[3]={0,0,0};
-    for(int i=0;i<number_lineOfGate-1;i++)
-    {
-        if(all_lines_current_gate[i].second==0)
-        {
-            input_line_status[0]++;
-        }
-        else if(all_lines_current_gate[i].second==1)
-        {
-            input_line_status[1]++;
-        }
-        else{
-            input_line_status[2]++;
-        }
-    }
-    int output_line_status=all_lines_current_gate[number_lineOfGate-1].second;
-    switch (GateType)
-    {
-    case Gate::Type::And:
-    {
-        if((output_line_status==0&&input_line_status[1]==number_lineOfGate-1)||(output_line_status==1&&input_line_status[0]>0))
-        {
-            return false;  //conflict
-        }
-        else if(output_line_status==0&&input_line_status[2]==1&&input_line_status[1]==number_lineOfGate-2)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first)=0;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
-        }
-        else if(output_line_status==1&&input_line_status[2]>0)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first)=1;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
 
-        }
-        else if(output_line_status==-1&&input_line_status[0]>0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(output_line_status==-1&&input_line_status[1]==number_lineOfGate-1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else
-        {
-            return true; //nothing can be reasoned
-        }
-    }
-    case Gate::Type::Nand:
-    {
-        if((output_line_status==1&&input_line_status[1]==number_lineOfGate-1)
-        ||(output_line_status==0&&input_line_status[0]>0))
-        {
-            return false;  //conflict
-        }
-        else if(output_line_status==1&&input_line_status[2]==1&&input_line_status[1]==number_lineOfGate-2)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first)=0;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
-        }
-        else if(output_line_status==0&&input_line_status[2]>0)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first)=1;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
-        }
-        else if(output_line_status==-1&&input_line_status[0]>0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(output_line_status==-1&&input_line_status[1]==number_lineOfGate-1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else
-        {
-            return true; //nothing can be reasoned
-        }
-    case Gate::Type::Or:
-    {
-        if((output_line_status==0&&input_line_status[1]>0)||
-        (output_line_status==1&&input_line_status[0]==number_lineOfGate-1))
-        {
-            return false;  //conflict
-        }
-        else if(output_line_status==0&&input_line_status[2]>0)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first)=0;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                }
-            }
-            return true;
-        }
-        else if(output_line_status==1&&input_line_status[0]==number_lineOfGate-2&&input_line_status[2]==1)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first)=1;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
 
-        }
-        else if(output_line_status==-1&&input_line_status[0]==number_lineOfGate-1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(output_line_status==-1&&input_line_status[1]>0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    case Gate::Type::Nor:
-    {
-        if((output_line_status==1&&input_line_status[1]>0)
-        ||(output_line_status==0&&input_line_status[0]==number_lineOfGate-1))
-        {
-            return false;  //conflict
-        }
-        else if(output_line_status==0&&input_line_status[0]==number_lineOfGate-2&&input_line_status[2]==1)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first)=1;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
 
-        }
-        else if(output_line_status==1&&input_line_status[2]>0)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first)=0;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                }
-            }
-                    return true;
-        }
-        else if(output_line_status==-1&&input_line_status[0]==number_lineOfGate-1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(output_line_status==-1&&input_line_status[1]>0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    case Gate::Type::Xor:  //two inputs
-    {
-        if((output_line_status==0&&input_line_status[0]>0&&input_line_status[1]>0)||
-        (output_line_status==1&&(input_line_status[0]==2||input_line_status[1]==2)))
-        {
-            return false;
-        }
-        else if(output_line_status==0&&input_line_status[2]==1)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    if(input_line_status[0]>0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first)=0;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                    if(input_line_status[1]>0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first)=1;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                }
-            }
-
-        }
-        else if(output_line_status==1&&input_line_status[2]==1)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    if(input_line_status[0]>0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first)=1;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                    if(input_line_status[1]>0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first)=0;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                }
-            }
-
-        }
-        else if(output_line_status==-1&&input_line_status[0]>0&&input_line_status[1]>0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(output_line_status==-1&&(input_line_status[0]==2||input_line_status[1]==2))
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else
-        {
-            return true;
-        }
-        
-    }
-    case Gate::Type::Xnor:  //two inputs
-    {
-        if((output_line_status==1&&input_line_status[0]>0&&input_line_status[1]>0)||
-        (output_line_status==0&&(input_line_status[0]==2||input_line_status[1]==2)))
-        {
-            return false;
-        }
-        else if(output_line_status==1&&input_line_status[2]==1)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    if(input_line_status[0]>0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first)=0;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                    if(input_line_status[1]>0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first)=1;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                }
-            }
-
-        }
-        else if(output_line_status==0&&input_line_status[2]==1)
-        {
-            for(int i=0;i<number_lineOfGate-2;i++)
-            {
-                if(all_lines_current_gate[i].second==-1)
-                {
-                    if(input_line_status[0]>0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first)=1;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                    if(input_line_status[1]>0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first)=0;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                }
-            }
-
-        }
-        else if(output_line_status==-1&&input_line_status[0]>0&&input_line_status[1]>0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(output_line_status==-1&&(input_line_status[0]==2||input_line_status[1]==2))
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else
-        {
-            return true;
-        }
-        
-    }
-    case Gate::Type::Not:
-    {
-        if((input_line_status[0]==1&&output_line_status==0)
-        ||(input_line_status[1]==1&&output_line_status==1))
-        {
-            return false;
-        }
-        else if(input_line_status[0]==1&&output_line_status==-1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(input_line_status[1]==1&&output_line_status==-1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(input_line_status[2]==1)
-        {
-            lines_status_num.at(all_lines_current_gate[0].first)=1-all_lines_current_gate[1].second;
-            bcp_que.push(all_lines_current_gate[0].first);
-            return true;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    case Gate::Type::Buff:
-    {
-         if((input_line_status[0]==1&&output_line_status==1)
-         ||(input_line_status[1]==1&&output_line_status==0))
-        {
-            return false;
-        }
-        else if(input_line_status[0]==1&&output_line_status==-1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(input_line_status[1]==1&&output_line_status==-1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate-1].first)=1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate-1].first);
-            return true;
-        }
-        else if(input_line_status[2]==1)
-        {
-            lines_status_num.at(all_lines_current_gate[0].first)=all_lines_current_gate[1].second;
-            bcp_que.push(all_lines_current_gate[0].first);
-            return true;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    case Gate::Type::Undefined:
-    {
-        
-        return true;
-    }
-    default:
-        return true;
-    }
-
-}
-}
-
-void solver::test(const CircuitGraph& graph)
-{
-    std::cout<<"cnf bcp call in solver"<<std::endl;
-    cnfbcp.test();
-}

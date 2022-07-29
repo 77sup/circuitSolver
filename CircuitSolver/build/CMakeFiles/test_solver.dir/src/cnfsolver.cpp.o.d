@@ -1,5 +1,5 @@
-CMakeFiles/test_solver.dir/src/solver.cpp.o: \
- /home/hkm/circuitSolver/CircuitSolver/src/solver.cpp \
+CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o: \
+ /home/hkm/circuitSolver/CircuitSolver/src/cnfsolver.cpp \
  /usr/include/stdc-predef.h \
  /home/hkm/circuitSolver/CircuitSolver/src/../include/solver.h \
  /home/hkm/circuitSolver/CircuitSolver/src/../include/circuit_graph.h \

@@ -163,8 +163,9 @@ CMakeFiles/test_solver.dir/src/cnf.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++io.h \
  /usr/include/c++/9/bits/fstream.tcc /usr/include/c++/9/iostream \
  /home/hkm/circuitSolver/CircuitSolver/src/../include/log.h \
- /usr/include/c++/9/cmath /usr/include/math.h \
- /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+ /usr/include/c++/9/queue /usr/include/c++/9/bits/stl_heap.h \
+ /usr/include/c++/9/bits/stl_queue.h /usr/include/c++/9/cmath \
+ /usr/include/math.h /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
