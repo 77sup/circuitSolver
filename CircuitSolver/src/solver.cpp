@@ -75,10 +75,12 @@ void solver::solve(const CircuitGraph& graph)
     std::cout<<"bcp_result: "<<bcp_result<<std::endl;
     if(bcp_result==1)
     {
+        std::cout<<"when bcp_result equal to 1, enter DPLL"<<std::endl;
         int dpll_result = DPLL(graph,-1);
         if (!dpll_result)
         show_result(graph, 0);
     }
+    std::cout<<"after DPLL operation"<<std::endl;
 }
 
 int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsat;return 1---sat,but this not related to solver's solution
@@ -123,8 +125,8 @@ int solver::BCP(const CircuitGraph &graph,int decision_line)
     std::vector<Gate*> line_connection_gates;  
     //std::cout<<"1111"<<std::endl;
     apply_transform(m_cnf, bcp_que,head_line_que);
-    //std::cout<<"2222"<<std::endl;
-    
+   // std::cout<<"2222"<<std::endl;
+
     while (!bcp_que.empty())
     {
         unit_propagate(m_cnf,bcp_que,head_line_que);

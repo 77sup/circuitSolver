@@ -24,7 +24,7 @@ int solver::unit_propagate(cnf &f, std::queue<int>&bcp_que,int reason_line_name)
         }
         else if(f.clauses[i][0]<0)
         {
-            lines_status_num.at(f.clauses[i][0])=0;
+            lines_status_num.at(abs(f.clauses[i][0]))=0;
             bcp_que.push(abs(f.clauses[i][0]));
         }
        // f.literal_frequency[abs(f.clauses[i][0])-1] = -1;         // once assigned, reset the frequency to mark it closed
