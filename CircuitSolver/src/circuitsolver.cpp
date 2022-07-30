@@ -43,7 +43,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==0&&input_line_status[2]==1&&input_line_status[1]==number_lineOfGate-2)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -55,7 +55,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==1&&input_line_status[2]>0)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -92,7 +92,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==1&&input_line_status[2]==1&&input_line_status[1]==number_lineOfGate-2)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -104,7 +104,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==0&&input_line_status[2]>0)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -139,7 +139,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==0&&input_line_status[2]>0)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -151,7 +151,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==1&&input_line_status[0]==number_lineOfGate-2&&input_line_status[2]==1)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -188,7 +188,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==0&&input_line_status[0]==number_lineOfGate-2&&input_line_status[2]==1)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -201,7 +201,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==1&&input_line_status[2]>0)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -237,7 +237,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==0&&input_line_status[2]==1)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -259,7 +259,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==1&&input_line_status[2]==1)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -306,7 +306,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==1&&input_line_status[2]==1)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {
@@ -328,7 +328,7 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         }
         else if(output_line_status==0&&input_line_status[2]==1)
         {
-            for(int i=0;i<number_lineOfGate-2;i++)
+            for(int i=0;i<number_lineOfGate-1;i++)
             {
                 if(all_lines_current_gate[i].second==-1)
                 {

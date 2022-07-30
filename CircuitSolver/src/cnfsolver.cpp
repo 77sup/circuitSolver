@@ -21,6 +21,7 @@ int solver::unit_propagate(cnf &f, std::queue<int>&bcp_que,int reason_line_name)
         {
             lines_status_num.at(f.clauses[i][0])=1;
             bcp_que.push(abs(f.clauses[i][0]));
+           
         }
         else if(f.clauses[i][0]<0)
         {
@@ -48,6 +49,7 @@ int solver::unit_propagate(cnf &f, std::queue<int>&bcp_que,int reason_line_name)
 int solver::apply_transform(cnf &f, std::queue<int>&bcp_que,int reason_line_name)
 {
      int value_to_apply = lines_status_num.at(reason_line_name); //the value to apply,1 -if true, 0 - if false
+  
   for (int i = 0; i < f.clauses.size(); i++)         // iterate over the clauses in f
   {
     for (int j = 0; j < f.clauses[i].size(); j++) // iterate over the variables in the clause
@@ -58,9 +60,11 @@ int solver::apply_transform(cnf &f, std::queue<int>&bcp_que,int reason_line_name
         j--;                                          // reset the iterator
         if (f.clauses[i].size() == 0)          // if the clause is empty, the formula is unsatisfiable currently
         {
-          std::cout<<"  empty clause   "<<std::endl;
-          return -1;         //unsatisfied,cnf_bcp fail
+          std::cout<<"empty clause confilict: "<<
+          reason_line_name<<"  assigned: "<<value_to_apply<<std::endl;
+          return -1;         //unsatisfied, cnf_bcp fail
         }
+
         break;  // move to the next clause
       }
       else if (reason_line_name == abs(f.clauses[i][j])) // same polarity

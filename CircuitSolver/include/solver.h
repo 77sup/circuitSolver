@@ -38,6 +38,7 @@ private:
     int apply_transform(cnf &f, std::queue<int>&bcp_que,int reason_line_name); // applies the value of the literal in
 
 
-    void show_result(const CircuitGraph&,int );               
+    void show_result(const CircuitGraph&,int );     
+    void print_lines_status_num(const CircuitGraph&);  
 };
 #endif

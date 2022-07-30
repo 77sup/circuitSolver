@@ -40,7 +40,7 @@ solver::solver(const CircuitGraph &graph)
     int noPO_lines_name_size=noPO_lines_name.size();
     for (int i = 0; i < noPO_lines_name_size; i++)
     {    //put (fanouts>3 || inputs) lines into sort_destination_gates
-        if((graph.get_name_to_line().at(noPO_lines_name[i])->destination_gates.size()>3)||
+        if((graph.get_name_to_line().at(noPO_lines_name[i])->destination_gates.size()>6)||
         (!graph.get_name_to_line().at(noPO_lines_name[i])->source))
         {
             sort_destination_gates.push_back(noPO_lines_name[i]);
@@ -70,12 +70,15 @@ void solver::solve(const CircuitGraph& graph)
     for (int i = 0; i < graph.get_outputs().size(); i++)
     {
         bcp_result=BCP(graph, graph.get_outputs()[i]->num_name);
-        if(bcp_result==0) break;
+        std::cout<<"output decision : "<<graph.get_outputs()[i]->num_name<<
+        " assigned: "<<lines_status_num.at(graph.get_outputs()[i]->num_name)<<std::endl;
+        //print_lines_status_num(graph);
+        if(bcp_result==0) {show_result(graph, 0); break;}
     }
     std::cout<<"bcp_result: "<<bcp_result<<std::endl;
     if(bcp_result==1)
     {
-        std::cout<<"when bcp_result equal to 1, enter DPLL"<<std::endl;
+        std::cout<<"bcp_result equal to 1, enter DPLL"<<std::endl;
         int dpll_result = DPLL(graph,-1);
         if (!dpll_result)
         show_result(graph, 0);
@@ -85,9 +88,12 @@ void solver::solve(const CircuitGraph& graph)
 
 int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsat;return 1---sat,but this not related to solver's solution
 {
+    //int decision_num=0;
     int bcp_result=BCP(graph,decision_line);
+    //print_lines_status_num(graph);
     if(bcp_result==0)  return 0;
     int next_decision_line=FindDecisionTarget(lines_status_num,graph);
+
     if(next_decision_line==-1)   //all nodes were assigned
     {
         show_result(graph,1);
@@ -109,6 +115,8 @@ int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsa
         }
         solver CircuitSolver = *this;
         CircuitSolver.lines_status_num.at(next_decision_line) = flag2;
+        std::cout<<"decision line: "<<next_decision_line<<" assigned: "<<flag2<<std::endl;
+        //decision_num++;
         int dpll_result = CircuitSolver.DPLL(graph, next_decision_line);
         if (dpll_result == 1)
             return 1;
@@ -116,20 +124,29 @@ int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsa
     return 0;  //solution is UNSAT
 }
 
-int solver::BCP(const CircuitGraph &graph,int decision_line)
+int solver::BCP(const CircuitGraph &graph,int decision_line)  //decision_line_names
 {
     if(decision_line==-1) return 1;
+
     std::queue<int>bcp_que;              
     bcp_que.push(decision_line);
     int head_line_que=bcp_que.front();
-    std::vector<Gate*> line_connection_gates;  
-    //std::cout<<"1111"<<std::endl;
-    apply_transform(m_cnf, bcp_que,head_line_que);
-   // std::cout<<"2222"<<std::endl;
 
+    std::vector<Gate*> line_connection_gates;
+
+    int result=apply_transform(m_cnf, bcp_que,head_line_que);
+    if(result==-1)
+    {
+        return 0;
+    }
     while (!bcp_que.empty())
     {
-        unit_propagate(m_cnf,bcp_que,head_line_que);
+        int res1=unit_propagate(m_cnf,bcp_que,head_line_que);
+        if(res1==0) 
+        {
+            std::cout<<"unit propagation empty clasue"<<std::endl;
+            return 0;
+        }
         line_connection_gates.clear();
         //add the source gate
         if(graph.get_name_to_line().at(head_line_que)->source)
@@ -143,10 +160,17 @@ int solver::BCP(const CircuitGraph &graph,int decision_line)
         }
         for(int j=0;j<line_connection_gates.size();j++)
         {
-            if(!SingleGateReasonBoost(line_connection_gates[j], bcp_que, head_line_que)) return 0; //SingleGateReasoning fail
+            if(!SingleGateReasonBoost(line_connection_gates[j], bcp_que, head_line_que)) 
+            {
+                 std::cout<<"SingleGateReasonBoost conflict: "<<head_line_que<<
+            " assigned: "<<lines_status_num.at(head_line_que)  <<std::endl;
+                return 0; //SingleGateReasoning fail
+            }
         }
         bcp_que.pop();
         head_line_que=bcp_que.front();
+        //std::cout<<"circuit bcp end"<<std::endl;
+
     }
     return 1; 
 }
@@ -164,6 +188,13 @@ void solver::show_result(const CircuitGraph& graph, int dpll_result)
         else
             std::cout<<"UNSAT"<<std::endl;
     }
-
+void solver::print_lines_status_num(const CircuitGraph& graph)
+{
+    for(int i=0;i<lines_status_num.size();i++)
+    {
+        std::cout<<graph.get_lines()[i].num_name<<"   "<<lines_status_num.at(graph.get_lines()[i].num_name)
+        <<std::endl;
+    }
+}
 
 
