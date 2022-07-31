@@ -39,6 +39,11 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
     {
         if((output_line_status==0&&input_line_status[1]==number_lineOfGate-1)||(output_line_status==1&&input_line_status[0]>0))
         {
+            for(int i=0;i<all_lines_current_gate.size();i++)
+            {
+                std::cout<<all_lines_current_gate[i].first<<" conflict  :  "<<
+                all_lines_current_gate[i].second<<std::endl;
+            }
             return false;  //conflict
         }
         else if(output_line_status==0&&input_line_status[2]==1&&input_line_status[1]==number_lineOfGate-2)
@@ -88,6 +93,12 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         if((output_line_status==1&&input_line_status[1]==number_lineOfGate-1)
         ||(output_line_status==0&&input_line_status[0]>0))
         {
+            for(int i=0;i<all_lines_current_gate.size();i++)
+            {
+                std::cout<<all_lines_current_gate[i].first<<" conflict  :  "<<
+                all_lines_current_gate[i].second<<std::endl;
+            }
+            return false;  //conflict
             return false;  //conflict
         }
         else if(output_line_status==1&&input_line_status[2]==1&&input_line_status[1]==number_lineOfGate-2)
@@ -135,6 +146,11 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         if((output_line_status==0&&input_line_status[1]>0)||
         (output_line_status==1&&input_line_status[0]==number_lineOfGate-1))
         {
+            for(int i=0;i<all_lines_current_gate.size();i++)
+            {
+                std::cout<<all_lines_current_gate[i].first<<" conflict  :  "<<
+                all_lines_current_gate[i].second<<std::endl;
+            }
             return false;  //conflict
         }
         else if(output_line_status==0&&input_line_status[2]>0)
@@ -184,6 +200,11 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         if((output_line_status==1&&input_line_status[1]>0)
         ||(output_line_status==0&&input_line_status[0]==number_lineOfGate-1))
         {
+            for(int i=0;i<all_lines_current_gate.size();i++)
+            {
+                std::cout<<all_lines_current_gate[i].first<<" conflict  :  "<<
+                all_lines_current_gate[i].second<<std::endl;
+            }
             return false;  //conflict
         }
         else if(output_line_status==0&&input_line_status[0]==number_lineOfGate-2&&input_line_status[2]==1)
@@ -233,6 +254,11 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         if((output_line_status==0&&input_line_status[0]>0&&input_line_status[1]>0)||
         (output_line_status==1&&(input_line_status[0]==2||input_line_status[1]==2)))
         {
+            for(int i=0;i<all_lines_current_gate.size();i++)
+            {
+                std::cout<<all_lines_current_gate[i].first<<" conflict  :  "<<
+                all_lines_current_gate[i].second<<std::endl;
+            }
             return false;
         }
         else if(output_line_status==0&&input_line_status[2]==1)
@@ -302,6 +328,11 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         if((output_line_status==1&&input_line_status[0]>0&&input_line_status[1]>0)||
         (output_line_status==0&&(input_line_status[0]==2||input_line_status[1]==2)))
         {
+            for(int i=0;i<all_lines_current_gate.size();i++)
+            {
+                std::cout<<all_lines_current_gate[i].first<<" conflict  :  "<<
+                all_lines_current_gate[i].second<<std::endl;
+            }
             return false;
         }
         else if(output_line_status==1&&input_line_status[2]==1)
@@ -371,6 +402,11 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
         if((input_line_status[0]==1&&output_line_status==0)
         ||(input_line_status[1]==1&&output_line_status==1))
         {
+            for(int i=0;i<all_lines_current_gate.size();i++)
+            {
+                std::cout<<all_lines_current_gate[i].first<<"  conflict :  "<<
+                all_lines_current_gate[i].second<<std::endl;
+            }
             return false;
         }
         else if(input_line_status[0]==1&&output_line_status==-1)
@@ -401,6 +437,11 @@ bool solver::SingleGateReasonBoost(Gate* current_gate,std::queue<int>&bcp_que, i
          if((input_line_status[0]==1&&output_line_status==1)
          ||(input_line_status[1]==1&&output_line_status==0))
         {
+            for(int i=0;i<all_lines_current_gate.size();i++)
+            {
+                std::cout<<all_lines_current_gate[i].first<<" conflict :  "<<
+                all_lines_current_gate[i].second<<std::endl;
+            }
             return false;
         }
         else if(input_line_status[0]==1&&output_line_status==-1)

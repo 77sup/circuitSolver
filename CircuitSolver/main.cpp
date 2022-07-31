@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 	//CircuitSolver.solve(graph);
 	solver solver(graph);
 	solver.solve(graph);
+	//solver.testmap();
 	
 	return 0;
 }

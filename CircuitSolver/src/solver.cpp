@@ -72,10 +72,10 @@ void solver::solve(const CircuitGraph& graph)
         bcp_result=BCP(graph, graph.get_outputs()[i]->num_name);
         std::cout<<"output decision : "<<graph.get_outputs()[i]->num_name<<
         " assigned: "<<lines_status_num.at(graph.get_outputs()[i]->num_name)<<std::endl;
-        //print_lines_status_num(graph);
         if(bcp_result==0) {show_result(graph, 0); break;}
     }
     std::cout<<"bcp_result: "<<bcp_result<<std::endl;
+    print_lines_status_num(graph);
     if(bcp_result==1)
     {
         std::cout<<"bcp_result equal to 1, enter DPLL"<<std::endl;
@@ -88,9 +88,8 @@ void solver::solve(const CircuitGraph& graph)
 
 int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsat;return 1---sat,but this not related to solver's solution
 {
-    //int decision_num=0;
     int bcp_result=BCP(graph,decision_line);
-    //print_lines_status_num(graph);
+    print_lines_status_num(graph);
     if(bcp_result==0)  return 0;
     int next_decision_line=FindDecisionTarget(lines_status_num,graph);
 
@@ -116,7 +115,6 @@ int solver::DPLL(const CircuitGraph& graph,int decision_line ) //return 0---unsa
         solver CircuitSolver = *this;
         CircuitSolver.lines_status_num.at(next_decision_line) = flag2;
         std::cout<<"decision line: "<<next_decision_line<<" assigned: "<<flag2<<std::endl;
-        //decision_num++;
         int dpll_result = CircuitSolver.DPLL(graph, next_decision_line);
         if (dpll_result == 1)
             return 1;
@@ -197,4 +195,36 @@ void solver::print_lines_status_num(const CircuitGraph& graph)
     }
 }
 
+// void solver::testmap()
+// {
+//     std::unordered_map<int,std::vector<int>>decision_bcp; 
+//     std::vector<int> v1;
+//     std::vector<int> v2;
+//     std::vector<int> v3;
+//     for(int i=0;i<3;i++)
+//     {
+//         v1.push_back(i);
+//     }
+//     for(int i=3;i<7;i++)
+//     {
+//         v2.push_back(i);
+//     }
+//     for(int i=7;i<10;i++)
+//     {
+//         v3.push_back(i);
+//     }
+//     decision_bcp.insert(std::make_pair(2,v1));
+//     decision_bcp.insert(std::make_pair(6,v2));
+//     decision_bcp.insert(std::make_pair(9,v3));
+//     for(auto it=decision_bcp.begin();it!=decision_bcp.end();it++)
+//     {
+//         std::cout<<"decison line: "<<(*it).first<<std::endl;
+//         for(int i=0;i<(*it).second.size();i++)
+//         {
+//             std::cout<<(*it).second[i]<<"  ";
+//         }
+//         std::cout<<std::endl;
+//     }
 
+
+//}

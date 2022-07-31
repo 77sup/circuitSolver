@@ -20,6 +20,7 @@ public:
     //solve process
     void solve(const CircuitGraph&);
     void test(const CircuitGraph&);
+    void testmap();
 
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
