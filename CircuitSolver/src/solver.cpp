@@ -257,12 +257,13 @@ int solver::CDCLsolver(const CircuitGraph &graph)
         int bcp_result = now_solver.BCP(graph, decision_line);
         if (bcp_result == 0) // find conflict
         {
+            decision_line = now_solver.conflict_backtrack(decisioh_solver, decision_variable_information);
             if (decisioh_solver.size() == 0) // UNSAT
             {
                 show_result(graph, 0);
                 return 0;
             }
-            now_solver.conflict_backtrack(decisioh_solver, decision_variable_information);
+            now_solver = decisioh_solver.back();
         }
         else // bcp normally exit,enter into next decision
         {
@@ -271,6 +272,13 @@ int solver::CDCLsolver(const CircuitGraph &graph)
                 show_result(graph, 1);
                 return 1; // SAT, all lines have been assigned
             }
+            // next decision
+            decisioh_solver.push_back(now_solver);
+            //now_solver=decisioh_solver.back();
+            decision_line = now_solver.FindDecisionTarget(now_solver.lines_status_num);
+            int flag = rand() % 2; // randomly choose left or right node to decide assignment
+            now_solver.lines_status_num.at(decision_line).assign = flag;
+            decision_variable_information.push_back(std::make_pair(decision_line, 1));
         }
     }
 }
@@ -278,6 +286,7 @@ int solver::CDCLsolver(const CircuitGraph &graph)
 int solver::conflict_backtrack(std::vector<solver> &decisioh_solver, std::vector<std::pair<int, int>> &decision_variable_information)
 {
     std::vector<int> learnt_clause;
+    int decision_line = -1;
     learnt_clause.push_back(-1); // flag bit
     // first--conflict line name; second--source line name
     for (int it = 0; it < the_name_of_conflict_line.size(); it++)
@@ -312,11 +321,12 @@ int solver::conflict_backtrack(std::vector<solver> &decisioh_solver, std::vector
     int i;
     for (i = decision_variable_information.size() - 1; i > -1; i--)
     {
-        if (decision_variable_information[i].second == 2) //decision line both left and right node have been assigned
+        if (decision_variable_information[i].second == 2) // decision line both left and right node have been assigned
         {
             if (i == 0) // root node
             {
-                return -1;
+                decisioh_solver.clear();
+                return -2; // special flag; UNSAT,backtrack to root node
             }
             else
             {
@@ -334,6 +344,6 @@ int solver::conflict_backtrack(std::vector<solver> &decisioh_solver, std::vector
             break;
         }
     }
-    if (i == 0)
-        return 0;
+    decision_line = decision_variable_information[i].first;
+    return decision_line;
 }

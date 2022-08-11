@@ -34,6 +34,7 @@ public:
     solver(const CircuitGraph &);
     // solve process
     void solve(const CircuitGraph &);
+    int CDCLsolver(const CircuitGraph &);
     void test(const CircuitGraph &);
 
 private:
@@ -49,7 +50,6 @@ private:
 
     int DPLL(const CircuitGraph &, int);
     int BCP(const CircuitGraph &, int);
-    int CDCLsolver(const CircuitGraph &);
 
     // only for circuit solving
     bool SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que, int reason_line_name, int origin_decision);
