@@ -1,36 +1,46 @@
 #include "include/solver.h"
 #include "include/iscas89_parser.h"
-#include "include/circuit_graph.h"
-#include"include/log.h"
+#include "include/cnf.h"
+#include "include/Time.h"
+#include <string>
+#include <fstream>
 
-#include<string>
-#include<fstream>
-
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	if (argc < 2) {
+	if (argc < 2)
+	{
 		log_error() << "no input file specified";
 		return 1;
 	}
 	std::ifstream ifs(argv[1]);
-	if (!ifs.good()) {
+	if (!ifs.good())
+	{
 		log_error() << "can't open file" << argv[1];
 		return 1;
 	}
+	auto Parser = 0;
+	auto Structure = 0;
+	auto Solver = 0;
+	ElapsedTimer t(true);
 	CircuitGraph graph;
 	Iscas89Parser parser;
-	if (!parser.parse(ifs, graph)) {
+	if (!parser.parse(ifs, graph))
+	{
 		log_error() << "can't parse file" << argv[1];
 		return 1;
 	}
-	//graph.get_graph_stats();
-    solver CircuitSolver(graph);    //有参构造实例化对象
-	CircuitSolver.test(graph);
-	//test();
+	Parser =  t.get_elapsed_us();
+	solver solver(graph);
+	Structure =  t.get_elapsed_us();
+
+	solver.solve(graph);
+	Solver = t.get_elapsed_us();
+	std::cout << "the time of parser:   " << 1.0 * Parser/1000 << "  ms" << std :: endl;
+	std::cout << "the time of structure:" << 1.0 * (Structure - Parser)/1000 << "  ms" << std :: endl;
+	std::cout << "the time of solver:   " << 1.0 * (Solver - Structure)/1000 << "  ms" << std :: endl;
+	
 	
 
-    return 0;
+
+	return 0;
 }
-
-

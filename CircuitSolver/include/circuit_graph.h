@@ -6,15 +6,16 @@
 #include <set>
 #include <unordered_map>
 #include <cassert>
+#include <sstream>
+#include <fstream>
+#include <iostream>
 
-//include "object_set.h"
+
 #include "log.h"
-
 
 #ifndef CIRCUIT_GRAPH_H
 #define CIRCUIT_GRAPH_H
 #pragma once
-
 
 class Gate;
 class CircuitGraph;
@@ -22,13 +23,13 @@ class CircuitGraph;
 struct Line
 {
 	Line(size_t id, bool is_generated = false)
-		: is_generated(is_generated)
-		, id(id)
-	{}
+		: is_generated(is_generated), id(id)
+	{
+	}
 
-	Line(const Line&) = delete;
+	Line(const Line &) = delete;
 
-	void connect_as_input(Gate* gate, size_t input_idx)
+	void connect_as_input(Gate *gate, size_t input_idx)
 	{
 		destinations.emplace_back();
 		destinations.back().gate = gate;
@@ -41,29 +42,30 @@ struct Line
 		return destinations.size() != destination_gates.size();
 	}
 
-	Gate* source = nullptr; // nullptr means input port
+	Gate *source = nullptr; // nullptr means input port
 	struct Connection
 	{
-		Gate* gate = nullptr;
+		Gate *gate = nullptr;
 		size_t input_idx = std::numeric_limits<size_t>::max();
 
-		bool operator==(const Connection& other) const
+		bool operator==(const Connection &other) const
 		{
 			return std::tie(gate, input_idx) == std::tie(other.gate, other.input_idx);
 		}
 
-		bool operator!=(const Connection& other) const
+		bool operator!=(const Connection &other) const
 		{
 			return !operator==(other);
 		}
 	};
 	std::vector<Connection> destinations;
-	std::set<Gate*> destination_gates;
+	std::set<Gate *> destination_gates;
 
 	bool is_output = false;
 	bool is_generated = false;
 
 	std::string name;
+	int num_name;
 	size_t id = 0;
 };
 
@@ -71,7 +73,7 @@ class IdMaker
 {
 public:
 	IdMaker() = default;
-	IdMaker(const IdMaker&) = delete;
+	IdMaker(const IdMaker &) = delete;
 
 	size_t line_id_end() const { return m_line_id; }
 	size_t line_make_id() { return m_line_id++; }
@@ -87,7 +89,7 @@ private:
 class Gate
 {
 public:
-	enum class Type: uint32_t
+	enum class Type : uint32_t
 	{
 		And,
 		Nand,
@@ -101,34 +103,34 @@ public:
 		Undefined,
 	};
 
-	Gate(IdMaker& id_maker, Type type, Line* output, std::vector<Line*>&& inputs);
+	Gate(IdMaker &id_maker, Type type, Line *output, std::vector<Line *> &&inputs);
 
-	Gate(const Gate&) = delete;
+	Gate(const Gate &) = delete;
 
 	Type get_type() const { return m_type; }
-	Type& type() { return m_type; }
+	Type &type() { return m_type; }
 
-	const std::vector<Line*>& get_inputs() const { return m_inputs; }
-	std::vector<Line*>& inputs() { return m_inputs; }
+	const std::vector<Line *> &get_inputs() const { return m_inputs; }
+	std::vector<Line *> &inputs() { return m_inputs; }
 
-	const std::vector<Gate*>& get_expanded() const;
+	const std::vector<Gate *> &get_expanded() const;
 	std::string get_str() const;
 
-	Line* get_output() const { return m_output; }
-	Line*& output() { return m_output; }
+	Line *get_output() const { return m_output; }
+	Line *&output() { return m_output; }
 
 	size_t get_id() const { return m_id; }
-	const IdMaker& get_id_maker() const { return m_id_maker; }
+	const IdMaker &get_id_maker() const { return m_id_maker; }
 
 private:
-	IdMaker& m_id_maker;
+	IdMaker &m_id_maker;
 	Type m_type = Type::Undefined;
-	std::vector<Line*> m_inputs;
-	Line* m_output = nullptr;
+	std::vector<Line *> m_inputs;
+	Line *m_output = nullptr;
 
 	size_t m_id = std::numeric_limits<size_t>::max();
 
-	std::vector<Gate*> m_expanded_gate_ptrs;
+	std::vector<Gate *> m_expanded_gate_ptrs;
 
 	std::deque<Gate> m_expanded_gate;
 	std::deque<Line> m_expanded_lines;
@@ -185,34 +187,64 @@ private:
 class CircuitGraph : public IdMaker
 {
 public:
-	Line* add_input(const std::string& name);
-	Line* add_output(const std::string& name);
+	Line *add_input(const std::string &name);
+	Line *add_output(const std::string &name);
 
-	Gate* add_gate(Gate::Type type, const std::vector<std::string>& input_names, const std::string& output_name);
+	Gate *add_gate(Gate::Type type, const std::vector<std::string> &input_names, const std::string &output_name);
 
-	Line* get_line(const std::string& name);
+	Line *get_line(const int &name);
 
-	const Line* get_line(const std::string& name) const;
+	const Line *get_line(const int &name) const;
 
-	const std::vector<Line*>& get_inputs() const;
-	const std::vector<Line*>& get_outputs() const;
+	const std::vector<Line *> &get_inputs() const;
+	const std::vector<Line *> &get_outputs() const;
 
-	const std::deque<Gate>& get_gates() const;
-	const std::deque<Line>& get_lines() const;
-	const std::unordered_map<std::string, Line*> get_name_to_line() const;
-
+	const std::deque<Gate> &get_gates() const;
+	const std::deque<Line> &get_lines() const;
+	//const std::unordered_map<int, Line *> get_name_to_line() const;
+	std::unordered_map<int, Line *> m_name_to_line;
 	void get_graph_stats() const;
+	//int change_name(std::string) const;
+	int change_name(const std::string name) 
+	{
+		int str_len = name.size();
+		int i = 0;
+		int j = 0;
+		//std::cout<<"the name before change : "<<name<<std::endl;
+		while (i < str_len)
+		{
+			if (name[i] >= '0' && name[i] <= '9')
+			{
+				j = i;
+				int len = 0;
+				while (name[i] >= '0' && name[i] <= '9')
+				{
+					i++;
+					len++;
+				}
+				std::string num_name = name.substr(j, len); //获取子串
+				int change_name = 0;						//数字字符串转换为整型数字
+				std::stringstream s1(num_name);
+				s1 >> change_name;
+				//std::cout<<"the name after change : ";
+				//std::cout<<change_name<<std::endl;
+				return change_name;
+			}
+			else
+			{
+				i++;
+			}
+		}
+	}
 private:
-	Line* ensure_line(const std::string& name);
-
+	Line *ensure_line(const int &name);
 	// We need to avoid relocations on element addition, hence deque
 	std::deque<Line> m_lines;
 	std::deque<Gate> m_gates;
 
-	std::vector<Line*> m_inputs;
-	std::vector<Line*> m_outputs;
+	std::vector<Line *> m_inputs;
+	std::vector<Line *> m_outputs;
 
-	std::unordered_map<std::string, Line*> m_name_to_line;
 };
 
 #endif

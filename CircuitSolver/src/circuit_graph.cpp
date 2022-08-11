@@ -5,16 +5,7 @@
 #include <map>
 #include <set>
 
-int lut[8][4][3] = {    //look-up table
-   /*与门*/  {{0,-1,0},{-1,0,0},{1,1,1}},
- /*与非门*/  {{0,-1,1},{-1,0,1},{1,1,0}},
-/*或门*/     {{0,0,0},{-1,1,1},{1,-1,1}},
-/*或非门*/   {{0,0,1},{-1,1,0},{1,-1,0}},
-/*异或门*/   {{0,0,0},{0,1,1},{1,0,1},{1,1,0}},
-/*同或门*/   {{0,0,1},{0,1,0},{1,0,0},{1,1,1}},
-/*非门*/     {{0,1},{1,0}},
-/*缓冲器*/   {{0,0},{1,1}},
-};
+
 
 const char* make_gate_name(Gate::Type type)
 {
@@ -137,7 +128,8 @@ std::string Gate::get_str() const
 
 Line* CircuitGraph::add_input(const std::string& name)
 {
-	Line* p_line = ensure_line(name);
+	int temp=change_name(name);
+	Line* p_line = ensure_line(temp);
 
 	assert(p_line);
 
@@ -147,7 +139,7 @@ Line* CircuitGraph::add_input(const std::string& name)
 
 Line* CircuitGraph::add_output(const std::string& name)
 {
-	Line* p_line = ensure_line(name);
+	Line* p_line = ensure_line(change_name(name));
 
 	assert(p_line);
 
@@ -164,12 +156,12 @@ Gate* CircuitGraph::add_gate(Gate::Type type, const std::vector<std::string>& in
 
 	std::vector<Line*> inputs;
 	for (size_t i = 0; i < input_names.size(); ++i) {
-		const std::string input_name = input_names.at(i);
+		int input_name = change_name(input_names.at(i));
 		Line* p_input = ensure_line(input_name);
 		inputs.push_back(p_input);
 	}
 
-	Line* p_output = ensure_line(output_name);
+	Line* p_output = ensure_line(change_name(output_name));
 
 	m_gates.emplace_back(*this, type, p_output, std::move(inputs));
 	Gate& gate = m_gates.back();
@@ -203,7 +195,7 @@ Gate* CircuitGraph::add_gate(Gate::Type type, const std::vector<std::string>& in
 	return &gate;
 }
 
-Line* CircuitGraph::get_line(const std::string& name)
+Line* CircuitGraph::get_line(const int& name)
 {
 	auto it = m_name_to_line.find(name);
 
@@ -214,7 +206,7 @@ Line* CircuitGraph::get_line(const std::string& name)
 	return nullptr;
 }
 
-const Line* CircuitGraph::get_line(const std::string& name) const
+const Line* CircuitGraph::get_line(const int& name) const
 {
 	auto it = m_name_to_line.find(name);
 
@@ -244,10 +236,10 @@ const std::deque<Line>& CircuitGraph::get_lines() const
 {
 	return m_lines;
 }
-const std::unordered_map<std::string, Line*> CircuitGraph::get_name_to_line() const
+/*const std::unordered_map<int, Line*> CircuitGraph::get_name_to_line() const
 {
 	return m_name_to_line;
-}
+}*/
 void CircuitGraph::get_graph_stats() const
 {
 	std::stringstream ss;
@@ -275,8 +267,9 @@ void CircuitGraph::get_graph_stats() const
 	std::cout<<ss.str()<<std::endl;
 }
 
-Line* CircuitGraph::ensure_line(const std::string& name)
+Line* CircuitGraph::ensure_line(const int& name)
 {
+	// std::cout<<"ensure_line li mian de xian de name:"<<name<<std::endl;
 	auto it = m_name_to_line.find(name);
 
 	if (it != m_name_to_line.end()) {
@@ -286,7 +279,7 @@ Line* CircuitGraph::ensure_line(const std::string& name)
 	m_lines.emplace_back(line_make_id());
 	Line& line = m_lines.back();
 
-	line.name = name;
+	line.num_name = name;
 
 	m_name_to_line[name] = &line;
 
@@ -294,3 +287,4 @@ Line* CircuitGraph::ensure_line(const std::string& name)
 
 	return &line;
 }
+
