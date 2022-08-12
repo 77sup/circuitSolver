@@ -226,8 +226,7 @@ int solver::CDCLsolver(const CircuitGraph &graph)
     for (int i = 0; i < graph.get_outputs().size(); i++)
     {
         bcp_result = BCP(graph, graph.get_outputs()[i]->num_name);
-        std::cout<<"decision line: "<<graph.get_outputs()[i]->num_name<<" assigned: "<<lines_status_num.
-        at(graph.get_outputs()[i]->num_name).assign<<std::endl;
+        std::cout << "decision line: " << graph.get_outputs()[i]->num_name << " assigned: " << lines_status_num.at(graph.get_outputs()[i]->num_name).assign << std::endl;
         print_lines_source(graph);
         if (bcp_result == 0)
         {
@@ -248,7 +247,6 @@ int solver::CDCLsolver(const CircuitGraph &graph)
     decision_solver.push_back(decision_solver.back());
     decision_line = decision_solver.back().FindDecisionTarget(decision_solver.back().lines_status_num);
     decision_variable_information.push_back(std::make_pair(decision_line, 1));
-
     if (decision_line == -1)
     {
         show_result(graph, 1);
@@ -259,12 +257,11 @@ int solver::CDCLsolver(const CircuitGraph &graph)
     decision_solver.back().lines_status_num.at(decision_line).source = decision_line;
     decision_variable_information.push_back(std::make_pair(decision_line, 1));
     solver new_solver = decision_solver.back();
- 
     while (true)
     {
         int bcp_result = new_solver.BCP(graph, decision_line);
-        std::cout<<"decision line: "<<decision_line<<" assigned: "<<lines_status_num.at(decision_line).assign<<std::endl;
-        print_lines_source(graph);
+        std::cout << "decision line: " << decision_line << " assigned: " << new_solver.lines_status_num.at(decision_line).assign << std::endl;
+        new_solver.print_lines_source(graph);
         if (bcp_result == 0) // find conflict
         {
             decision_line = new_solver.conflict_backtrack(graph, decision_solver, decision_variable_information);
@@ -297,18 +294,16 @@ int solver::CDCLsolver(const CircuitGraph &graph)
 // conflict analysis,add learnt clause,and backtrack
 int solver::conflict_backtrack(const CircuitGraph &graph, std::vector<solver> &decisioh_solver, std::vector<std::pair<int, int>> &decision_variable_information)
 {
-    std::cout<<"conflict_backtrack-------1"<<std::endl;
     std::vector<int> learnt_clause;
     int decision_line = -1;
     learnt_clause.push_back(-1); // flag bit
-    //conflict line name
+    // conflict line name
     for (int it = 0; it < the_name_of_conflict_line.size(); it++)
     {
         int learnt_literal = 0;
-        std::cout<<"the_name_of_conflict_line[it]"<<the_name_of_conflict_line[it]<<std::endl;
+        std::cout << "the_name_of_conflict_line[it]" << the_name_of_conflict_line[it] << std::endl;
         if (graph.m_name_to_line.at(the_name_of_conflict_line[it])->is_output)
             continue;
-        std::cout<<"conflict_backtrack-------2"<<std::endl;
         if (lines_status_num.at(the_name_of_conflict_line[it]).source != -1 && lines_status_num.at(the_name_of_conflict_line[it]).assign != -1)
         {
             int source = lines_status_num.at(the_name_of_conflict_line[it]).source;
@@ -318,77 +313,57 @@ int solver::conflict_backtrack(const CircuitGraph &graph, std::vector<solver> &d
         else
             continue; // conflict line unassigned
         int i;
-        std::cout<<"conflict_backtrack-------3"<<std::endl;
-        //Delete the duplicate text of the study sentence
+        // Delete the duplicate text of the study sentence
         for (i = 1; i < learnt_clause.size(); i++)
         {
             if (learnt_literal == learnt_clause[i])
                 break;
         }
-        std::cout<<"conflict_backtrack-------4"<<std::endl;
         if (i == learnt_clause.size())
         {
             learnt_clause.push_back(learnt_literal);
         }
     }
     // update cnf
-    std::cout<<"conflict_backtrack-------5"<<std::endl;
     if (learnt_clause.size() > 1)
     {
         origin_cnf.insert(origin_cnf.begin(), learnt_clause);
-        std::cout<<"decisioh_solver.size()"<<decisioh_solver.size()<<std::endl;
+        std::cout << "decisioh_solver.size()" << decisioh_solver.size() << std::endl;
         for (int i = 0; i < decisioh_solver.size(); i++)
         {
-            std::cout<<"conflict_backtrack-------6"<<std::endl;
             decisioh_solver[i].m_cnf.clauses.insert(decisioh_solver[i].m_cnf.clauses.begin(), learnt_clause);
-            std::cout<<"conflict_backtrack-------61"<<std::endl;
         }
-        std::cout<<"conflict_backtrack-------7"<<std::endl;
     }
     // unset assignments
     int i;
-    std::cout<<"conflict_backtrack-------8"<<std::endl;
     for (i = decision_variable_information.size() - 1; i > -1; i--)
     {
-        //hui su
+        // hui su
         if (decision_variable_information[i].second == 2) // decision line both left and right node have been assigned
         {
             if (i == 1) // root node
             {
-                std::cout<<"conflict_backtrack-------9"<<std::endl;
                 decisioh_solver.clear();
-                std::cout<<"conflict_backtrack-------91"<<std::endl;
                 decision_variable_information.clear();
-                std::cout<<"conflict_backtrack-------92"<<std::endl;
                 return -2; // special flag; UNSAT,backtrack to root node
             }
             else
             {
-                std::cout<<"conflict_backtrack-------10"<<std::endl;
                 decisioh_solver.pop_back();
                 decision_variable_information.pop_back();
-                std::cout<<"conflict_backtrack-------11"<<std::endl;
             }
         }
-        else //fan zhuan
+        else // fan zhuan
         {
             // i=0 || i>0
-            std::cout<<"conflict_backtrack-------12"<<std::endl;
             int assign = lines_status_num.at(decision_variable_information[i].first).assign;
             int convert = 1 - assign;
-            std::cout<<"conflict_backtrack-------12"<<std::endl;
             lines_status_num.at(decision_variable_information[i].first).assign = convert;
-            std::cout<<"conflict_backtrack-------13"<<std::endl;
             decision_variable_information[i].second = 2;
-            std::cout<<"conflict_backtrack-------14"<<std::endl;
-            decisioh_solver.push_back(decisioh_solver[i-1]);
-            std::cout<<"conflict_backtrack-------15"<<std::endl;
+            decisioh_solver.push_back(decisioh_solver[i - 1]);
             break;
         }
     }
-    std::cout<<"conflict_backtrack-------16"<<std::endl;
     decision_line = decision_variable_information[i].first;
-    std::cout<<"conflict_backtrack-------17"<<std::endl;
     return decision_line;
 }
-
