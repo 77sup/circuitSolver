@@ -36,8 +36,7 @@ public:
     void solve(const CircuitGraph &);
     int CDCLsolver(const CircuitGraph &);
     void test(const CircuitGraph &);
-
-private:
+//private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
     std::unordered_map<int, line_information> lines_status_num;
     std::vector<int> sort_destination_gates;
@@ -46,7 +45,7 @@ private:
     cnf m_cnf;
     // common solving operations both cnf and circuit
     int FindDecisionTarget(std::unordered_map<int, line_information> &);
-    int conflict_backtrack(std::vector<solver> &,std::vector<std::pair<int,int>>&);
+    int conflict_backtrack(const CircuitGraph &graph,std::vector<solver> &,std::vector<std::pair<int,int>>&);
 
     int DPLL(const CircuitGraph &, int);
     int BCP(const CircuitGraph &, int);

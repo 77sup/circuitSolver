@@ -15,23 +15,22 @@ int solver::unit_propagate(cnf &f, std::queue<int>&bcp_que,int reason_line_name)
     unit_clause_found = false;
     for (int i = 0; i < f.clauses.size(); i++)  // iterate over the clauses in f
     {  
-      
       if (f.clauses[i].size() == 2 && f.clauses[i][0]!=1)   //it is a unit clause
       {
         unit_clause_found = true;
         if(f.clauses[i][1]>0)
         {
-            lines_status_num.at(f.clauses[i][1]).assign=1;
-            lines_status_num.at(f.clauses[i][1]).source=reason_line_name;
-            f.clauses[i][0]=1;
-            bcp_que.push(abs(f.clauses[i][1]));
+          lines_status_num.at(f.clauses[i][1]).assign=1;
+          lines_status_num.at(f.clauses[i][1]).source=reason_line_name;
+          f.clauses[i][0]=1;
+          bcp_que.push(abs(f.clauses[i][1]));
         }
         else if(f.clauses[i][1]<0)
         {
-            lines_status_num.at(abs(f.clauses[i][1])).assign=0;
-            lines_status_num.at(abs(f.clauses[i][1])).source=reason_line_name;
-            f.clauses[i][0]=1;
-            bcp_que.push(abs(f.clauses[i][1]));
+          lines_status_num.at(abs(f.clauses[i][1])).assign=0;
+          lines_status_num.at(abs(f.clauses[i][1])).source=reason_line_name;
+          f.clauses[i][0]=1;
+          bcp_que.push(abs(f.clauses[i][1]));
         }
        // f.literal_frequency[abs(f.clauses[i][0])-1] = -1;   
              // once assigned, reset the frequency to mark it closed
@@ -39,10 +38,6 @@ int solver::unit_propagate(cnf &f, std::queue<int>&bcp_que,int reason_line_name)
         //if this caused the formula to be either satisfied or unsatisfied,
         if (result == -1)
         { // return the result flag
-          for(int t=1;t<origin_cnf[i].size();t++)
-          {
-            the_name_of_conflict_line.push_back(origin_cnf[i][t]);
-          }
           return result;
         }
         break; // exit the loop to check for another unit clause from the start
@@ -77,7 +72,7 @@ int solver::apply_transform(cnf &f, std::queue<int>&bcp_que,int reason_line_name
           f.clauses[i][0]=0;
           for(int t=1;t<origin_cnf[i].size();t++)
           {
-            the_name_of_conflict_line.push_back(origin_cnf[i][t]);
+            the_name_of_conflict_line.push_back(abs(origin_cnf[i][t]));
           }
           return -1;         //unsatisfied, cnf_bcp fail`
         }
@@ -96,7 +91,5 @@ int solver::apply_transform(cnf &f, std::queue<int>&bcp_que,int reason_line_name
       }
     }
   }
-  //for(int i = 0; i<f.clauses.size();i++) std::cout<<"  "<<f.clauses[i][0]<<"  ";
-  //std::cout<<"flag_sat_clause num:"<<flag_sat_clause<<std::endl;
   return 1; // if reached here, the function is exiting normally
 }
