@@ -44,8 +44,11 @@ int main(int argc, char *argv[])
 		for(int j=0;j<origin_cnf[i].size();j++) std::cout<<origin_cnf[i][j]<<" ";
 		std::cout<<std::endl;
 	}
-	
-
+	/*std::cout<<"output name:"<<std::endl;
+	for(int i=0;i<graph.get_outputs().size();i++)
+	{
+		std::cout<<graph.get_outputs()[i]->num_name;
+	}*/
 
 	return 0;
 }

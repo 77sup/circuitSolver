@@ -40,13 +40,11 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((output_line_status == 0 && input_line_status[1] == number_lineOfGate - 1) || (output_line_status == 1 && input_line_status[0] > 0))
         {
+            std::cout<<"and"<<std::endl;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
-                //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
-                //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
             }
-            //std::cout<<"------And-----" << std::endl;
             return false; // conflict
         }
         else if (output_line_status == 0 && input_line_status[2] == 1 && input_line_status[1] == number_lineOfGate - 2)
@@ -99,8 +97,10 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((output_line_status == 1 && input_line_status[1] == number_lineOfGate - 1) || (output_line_status == 0 && input_line_status[0] > 0))
         {
+            std::cout<<"nand"<<std::endl;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
+                std::cout<<"all_lines_current_gate[i].first:"<<all_lines_current_gate[i].first<<std::endl;
                 //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
                 //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<<std::endl;
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
@@ -159,6 +159,7 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         if ((output_line_status == 0 && input_line_status[1] > 0) ||
             (output_line_status == 1 && input_line_status[0] == number_lineOfGate - 1))
         {
+            std::cout<<"or"<<std::endl;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
                 //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
@@ -218,6 +219,7 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((output_line_status == 1 && input_line_status[1] > 0) || (output_line_status == 0 && input_line_status[0] == number_lineOfGate - 1))
         {
+            std::cout<<"nor"<<std::endl;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
                 //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
@@ -278,6 +280,7 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         if ((output_line_status == 0 && input_line_status[0] > 0 && input_line_status[1] > 0) ||
             (output_line_status == 1 && (input_line_status[0] == 2 || input_line_status[1] == 2)))
         {
+            std::cout<<"xor"<<std::endl;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
                  //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
@@ -358,6 +361,7 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         if ((output_line_status == 1 && input_line_status[0] > 0 && input_line_status[1] > 0) ||
             (output_line_status == 0 && (input_line_status[0] == 2 || input_line_status[1] == 2)))
         {
+            std::cout<<"xnor"<<std::endl;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
                 //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
@@ -437,13 +441,11 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((input_line_status[0] == 1 && output_line_status == 0) || (input_line_status[1] == 1 && output_line_status == 1))
         {
+            std::cout<<"not"<<std::endl;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
-                //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
-                //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
             }
-            //std::cout<<"------Not-----" << std::endl;
             return false;
         }
         else if (input_line_status[0] == 1 && output_line_status == -1)
@@ -477,13 +479,11 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((input_line_status[0] == 1 && output_line_status == 1) || (input_line_status[1] == 1 && output_line_status == 0))
         {
+            std::cout<<"buff"<<std::endl;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
-                 //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
-                //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
             }
-            //std::cout<<"------Buff-----" << std::endl;
             return false;
         }
         else if (input_line_status[0] == 1 && output_line_status == -1)
@@ -515,7 +515,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     }
     case Gate::Type::Undefined:
     {
-
         return true;
     }
     default:

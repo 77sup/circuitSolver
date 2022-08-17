@@ -19,11 +19,16 @@ public:
     int assign;
     int source;
     int weight;
+    int level;
+    // only output and Conflict lines caused by a single decision
+    bool is_definite_value;
     line_information()
     {
         this->assign = -1;
         this->source = -1;
         this->weight = -1;
+        this->level  = -10;
+        this->is_definite_value = false;
     }
 };
 
