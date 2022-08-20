@@ -1,18 +1,34 @@
 #include "../include/solver.h"
 #include "../include/circuit_graph.h"
-#include "../include/cnf.h"
 #include <vector>
 #include <queue>
 
 // design for multiple inputs gates
-bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que, int reason_line_name, int origin_decision)
+bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que, int decision_line)
 {
+    int decision_level = lines_status_num.at(decision_line).level;
     Gate::Type GateType = current_gate->get_type();
     std::vector<std::pair<int, int>> all_lines_current_gate;
-    for (int i = 0; i < current_gate->get_inputs().size(); i++)
+    if ((*current_gate).get_is_learnt_gate()) //is learnt gate
     {
-        int input = current_gate->inputs()[i]->num_name;
-        all_lines_current_gate.push_back(std::make_pair(input, lines_status_num.at(input).assign));
+        for (int i = 0; i < current_gate->get_inputs().size(); i++)
+        {
+            int input = current_gate->inputs()[i]->num_name;
+            if (lines_status_num.at(input).assign!=-1 && current_gate->get_inputs_polarity()[i]==0)
+            {
+                int convert=lines_status_num.at(input).assign;
+                lines_status_num.at(input).assign=1-convert;
+            }
+            all_lines_current_gate.push_back(std::make_pair(input, lines_status_num.at(input).assign));
+        }
+    }
+    else  //nomal gate, is not learnt gate
+    {
+        for (int i = 0; i < current_gate->get_inputs().size(); i++)
+        {
+            int input = current_gate->inputs()[i]->num_name;
+            all_lines_current_gate.push_back(std::make_pair(input, lines_status_num.at(input).assign));
+        }
     }
     all_lines_current_gate.push_back(std::make_pair(current_gate->get_output()->num_name, lines_status_num.at(current_gate->get_output()->num_name).assign));
     int number_lineOfGate = all_lines_current_gate.size();
@@ -40,10 +56,28 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((output_line_status == 0 && input_line_status[1] == number_lineOfGate - 1) || (output_line_status == 1 && input_line_status[0] > 0))
         {
-            std::cout<<"and"<<std::endl;
-            for (int i = 0; i < all_lines_current_gate.size(); i++)
+            if (output_line_status == 0)
             {
-                the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
+                for (int i = 0; i < number_lineOfGate; i++)
+                {
+                    if (!lines_status_num.at(all_lines_current_gate[i].first).is_fixed_value)
+                    {
+                        the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
+                    }
+                }
+            }
+            else if (output_line_status == 1)
+            {
+                the_name_of_conflict_line.push_back(current_gate->get_output()->num_name);
+                for (int i = 0; i < number_lineOfGate; i++)
+                {
+                    if (all_lines_current_gate[i].second == 0)
+                    {
+                        the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
+                        break;
+                        ;
+                    }
+                }
             }
             return false; // conflict
         }
@@ -54,7 +88,9 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                 if (all_lines_current_gate[i].second == -1)
                 {
                     lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                    lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
+                    lines_status_num.at(all_lines_current_gate[i].first).level = decision_level;
+                    // update source
+
                     bcp_que.push(all_lines_current_gate[i].first);
                     return true;
                 }
@@ -67,7 +103,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                 if (all_lines_current_gate[i].second == -1)
                 {
                     lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                    lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                     bcp_que.push(all_lines_current_gate[i].first);
                     return true;
                 }
@@ -76,20 +111,17 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         else if (output_line_status == -1 && input_line_status[0] > 0)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (output_line_status == -1 && input_line_status[1] == number_lineOfGate - 1)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else
         {
-            lines_status_num.at(origin_decision).source=origin_decision;
             return true; // nothing can be reasoned
         }
     }
@@ -97,15 +129,15 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((output_line_status == 1 && input_line_status[1] == number_lineOfGate - 1) || (output_line_status == 0 && input_line_status[0] > 0))
         {
-            std::cout<<"nand"<<std::endl;
-            for (int i = 0; i < all_lines_current_gate.size(); i++)
+            std::cout << "nand" << std::endl;
+            conflict_gate = current_gate;
+            for (int i = 0; i < number_lineOfGate; i++)
             {
-                std::cout<<"all_lines_current_gate[i].first:"<<all_lines_current_gate[i].first<<std::endl;
-                //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
-                //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<<std::endl;
-                the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
+                if (all_lines_current_gate[i].second != -1)
+                {
+                    the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
+                }
             }
-            //std::cout<<"------Nand-----" << std::endl;
             return false; // conflict
         }
         else if (output_line_status == 1 && input_line_status[2] == 1 && input_line_status[1] == number_lineOfGate - 2)
@@ -115,7 +147,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                 if (all_lines_current_gate[i].second == -1)
                 {
                     lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                    lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                     bcp_que.push(all_lines_current_gate[i].first);
                     return true;
                 }
@@ -128,7 +159,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                 if (all_lines_current_gate[i].second == -1)
                 {
                     lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                    lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                     bcp_que.push(all_lines_current_gate[i].first);
                     return true;
                 }
@@ -137,36 +167,34 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         else if (output_line_status == -1 && input_line_status[0] > 0)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (output_line_status == -1 && input_line_status[1] == number_lineOfGate - 1)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else
         {
-             lines_status_num.at(origin_decision).source=origin_decision;
             return true; // nothing can be reasoned
         }
     case Gate::Type::Or:
     {
-        
+
         if ((output_line_status == 0 && input_line_status[1] > 0) ||
             (output_line_status == 1 && input_line_status[0] == number_lineOfGate - 1))
         {
-            std::cout<<"or"<<std::endl;
+            std::cout << "or" << std::endl;
+            conflict_gate = current_gate;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
-                //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
+                // std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
                 //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
             }
-            //std::cout<<"------Or-----" << std::endl;
+            // std::cout<<"------Or-----" << std::endl;
             return false; // conflict
         }
         else if (output_line_status == 0 && input_line_status[2] > 0)
@@ -176,7 +204,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                 if (all_lines_current_gate[i].second == -1)
                 {
                     lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                     lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                     bcp_que.push(all_lines_current_gate[i].first);
                 }
             }
@@ -189,7 +216,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                 if (all_lines_current_gate[i].second == -1)
                 {
                     lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                    lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                     bcp_que.push(all_lines_current_gate[i].first);
                     return true;
                 }
@@ -198,20 +224,17 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         else if (output_line_status == -1 && input_line_status[0] == number_lineOfGate - 1)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (output_line_status == -1 && input_line_status[1] > 0)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else
         {
-            lines_status_num.at(origin_decision).source=origin_decision;
             return true;
         }
     }
@@ -219,14 +242,15 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((output_line_status == 1 && input_line_status[1] > 0) || (output_line_status == 0 && input_line_status[0] == number_lineOfGate - 1))
         {
-            std::cout<<"nor"<<std::endl;
+            std::cout << "nor" << std::endl;
+            conflict_gate = current_gate;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
-                //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
+                // std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
                 //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
             }
-            //std::cout<<"------Nor-----" << std::endl;
+            // std::cout<<"------Nor-----" << std::endl;
             return false; // conflict
         }
         else if (output_line_status == 0 && input_line_status[0] == number_lineOfGate - 2 && input_line_status[2] == 1)
@@ -236,7 +260,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                 if (all_lines_current_gate[i].second == -1)
                 {
                     lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                    lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                     bcp_que.push(all_lines_current_gate[i].first);
                     return true;
                 }
@@ -249,7 +272,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                 if (all_lines_current_gate[i].second == -1)
                 {
                     lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                    lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                     bcp_que.push(all_lines_current_gate[i].first);
                 }
             }
@@ -258,20 +280,17 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         else if (output_line_status == -1 && input_line_status[0] == number_lineOfGate - 1)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (output_line_status == -1 && input_line_status[1] > 0)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else
         {
-            lines_status_num.at(origin_decision).source=origin_decision;
             return true;
         }
     }
@@ -280,14 +299,15 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         if ((output_line_status == 0 && input_line_status[0] > 0 && input_line_status[1] > 0) ||
             (output_line_status == 1 && (input_line_status[0] == 2 || input_line_status[1] == 2)))
         {
-            std::cout<<"xor"<<std::endl;
+            std::cout << "xor" << std::endl;
+            conflict_gate = current_gate;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
-                 //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
+                // std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
                 //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
             }
-            //std::cout<<"------Xor-----" << std::endl;
+            // std::cout<<"------Xor-----" << std::endl;
             return false;
         }
         else if (output_line_status == 0 && input_line_status[2] == 1)
@@ -299,14 +319,12 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                     if (input_line_status[0] > 0)
                     {
                         lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                        lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                         bcp_que.push(all_lines_current_gate[i].first);
                         return true;
                     }
                     if (input_line_status[1] > 0)
                     {
                         lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                        lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                         bcp_que.push(all_lines_current_gate[i].first);
                         return true;
                     }
@@ -322,14 +340,12 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                     if (input_line_status[0] > 0)
                     {
                         lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                        lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                         bcp_que.push(all_lines_current_gate[i].first);
                         return true;
                     }
                     if (input_line_status[1] > 0)
                     {
                         lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                        lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                         bcp_que.push(all_lines_current_gate[i].first);
                         return true;
                     }
@@ -339,20 +355,17 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         else if (output_line_status == -1 && input_line_status[0] > 0 && input_line_status[1] > 0)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (output_line_status == -1 && (input_line_status[0] == 2 || input_line_status[1] == 2))
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else
         {
-            lines_status_num.at(origin_decision).source=origin_decision;
             return true;
         }
     }
@@ -361,14 +374,15 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         if ((output_line_status == 1 && input_line_status[0] > 0 && input_line_status[1] > 0) ||
             (output_line_status == 0 && (input_line_status[0] == 2 || input_line_status[1] == 2)))
         {
-            std::cout<<"xnor"<<std::endl;
+            std::cout << "xnor" << std::endl;
+            conflict_gate = current_gate;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
-                //std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
+                // std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
                 //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
             }
-            //std::cout<<"------Xnor-----" << std::endl;
+            // std::cout<<"------Xnor-----" << std::endl;
             return false;
         }
         else if (output_line_status == 1 && input_line_status[2] == 1)
@@ -380,14 +394,12 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                     if (input_line_status[0] > 0)
                     {
                         lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                        lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                         bcp_que.push(all_lines_current_gate[i].first);
                         return true;
                     }
                     if (input_line_status[1] > 0)
                     {
                         lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                        lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                         bcp_que.push(all_lines_current_gate[i].first);
                         return true;
                     }
@@ -403,14 +415,12 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                     if (input_line_status[0] > 0)
                     {
                         lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                        lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                         bcp_que.push(all_lines_current_gate[i].first);
                         return true;
                     }
                     if (input_line_status[1] > 0)
                     {
                         lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                        lines_status_num.at(all_lines_current_gate[i].first).source=origin_decision;
                         bcp_que.push(all_lines_current_gate[i].first);
                         return true;
                     }
@@ -420,20 +430,17 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         else if (output_line_status == -1 && input_line_status[0] > 0 && input_line_status[1] > 0)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (output_line_status == -1 && (input_line_status[0] == 2 || input_line_status[1] == 2))
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else
         {
-            lines_status_num.at(origin_decision).source=origin_decision;
             return true;
         }
     }
@@ -441,7 +448,8 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((input_line_status[0] == 1 && output_line_status == 0) || (input_line_status[1] == 1 && output_line_status == 1))
         {
-            std::cout<<"not"<<std::endl;
+            std::cout << "not" << std::endl;
+            conflict_gate = current_gate;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
@@ -451,27 +459,23 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         else if (input_line_status[0] == 1 && output_line_status == -1)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (input_line_status[1] == 1 && output_line_status == -1)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (input_line_status[2] == 1)
         {
             lines_status_num.at(all_lines_current_gate[0].first).assign = 1 - all_lines_current_gate[1].second;
-            lines_status_num.at(all_lines_current_gate[0].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[0].first);
             return true;
         }
         else
         {
-            lines_status_num.at(origin_decision).source=origin_decision;
             return true;
         }
     }
@@ -479,7 +483,8 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     {
         if ((input_line_status[0] == 1 && output_line_status == 1) || (input_line_status[1] == 1 && output_line_status == 0))
         {
-            std::cout<<"buff"<<std::endl;
+            std::cout << "buff" << std::endl;
+            conflict_gate = current_gate;
             for (int i = 0; i < all_lines_current_gate.size(); i++)
             {
                 the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
@@ -489,27 +494,23 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         else if (input_line_status[0] == 1 && output_line_status == -1)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (input_line_status[1] == 1 && output_line_status == -1)
         {
             lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).source=origin_decision; 
             bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
             return true;
         }
         else if (input_line_status[2] == 1)
         {
             lines_status_num.at(all_lines_current_gate[0].first).assign = all_lines_current_gate[1].second;
-            lines_status_num.at(all_lines_current_gate[0].first).source=origin_decision;
             bcp_que.push(all_lines_current_gate[0].first);
             return true;
         }
         else
         {
-            lines_status_num.at(origin_decision).source=origin_decision;
             return true;
         }
     }

@@ -58,6 +58,9 @@
         "complex": "cpp",
         "list": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "strstream": "cpp",
+        "iomanip": "cpp",
+        "cfenv": "cpp"
     }
 }

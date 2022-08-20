@@ -5,8 +5,6 @@
 #include <map>
 #include <set>
 
-
-
 const char* make_gate_name(Gate::Type type)
 {
 	int flag = -1;
@@ -43,76 +41,11 @@ const char* make_gate_name(Gate::Type type)
 	return "???";
 }
 
-Gate::Gate(IdMaker& id_maker, Gate::Type type, Line* output, std::vector<Line*>&& inputs)
-	: m_id_maker(id_maker)
-	, m_type(type)
-	, m_inputs(inputs)
-	, m_output(output)
-	, m_id(id_maker.gate_make_id())
+Gate::Gate(Gate::Type type, Line* output, std::vector<Line*>&& inputs): m_type(type), m_inputs(inputs), m_output(output)
 {
-
-	bool is_expandable = inputs.size() > 2;
-	if (!is_expandable) {
-		m_expanded_gate_ptrs = { this };
-	} else {
-		Type top_gate = Type::Undefined;
-		Type other_gates = Type::Undefined;
-		switch (m_type) {
-			case Type::And:
-				top_gate = Type::And;
-				other_gates = Type::And;
-				break;
-			case Type::Nand:
-				top_gate = Type::Nand;
-				other_gates = Type::And;
-				break;
-			case Type::Or:
-				top_gate = Type::Or;
-				other_gates = Type::Or;
-				break;
-			case Type::Nor:
-				top_gate = Type::Nor;
-				other_gates = Type::Or;
-				break;
-			default:
-				assert(false);
-				break;
-		}
-
-		Line* second_input = m_inputs.back();
-		for (auto it = m_inputs.rbegin() + 1; it != m_inputs.rend(); ++it) {
-			bool is_top_gate = it == m_inputs.rend() - 1;
-
-			Line* first_input = *it;
-
-			Type type = is_top_gate ? top_gate : other_gates;
-
-			Line* output = nullptr;
-			if (is_top_gate) {
-				output = m_output;
-			} else {
-				m_expanded_lines.emplace_back(id_maker.line_make_id(), true);
-				Line& line = m_expanded_lines.back();
-				line.name = m_output->name;
-				line.name += "_E_";
-				line.name += std::to_string(std::distance(m_inputs.rbegin(), it));
-				output = &line;
-			}
-
-			m_expanded_gate.emplace_back(id_maker, type, output, std::vector<Line*>{first_input, second_input});
-			Gate& gate = m_expanded_gate.back();
-
-			m_expanded_gate_ptrs.push_back(&gate);
-
-			second_input = gate.get_output();
-		}
-	}
+	
 }
 
-const std::vector<Gate*>& Gate::get_expanded() const
-{
-	return m_expanded_gate_ptrs;
-}
 
 std::string Gate::get_str() const
 {
@@ -155,7 +88,8 @@ Gate* CircuitGraph::add_gate(Gate::Type type, const std::vector<std::string>& in
 {
 
 	std::vector<Line*> inputs;
-	for (size_t i = 0; i < input_names.size(); ++i) {
+	for (size_t i = 0; i < input_names.size(); ++i) 
+	{
 		int input_name = change_name(input_names.at(i));
 		Line* p_input = ensure_line(input_name);
 		inputs.push_back(p_input);
@@ -163,13 +97,13 @@ Gate* CircuitGraph::add_gate(Gate::Type type, const std::vector<std::string>& in
 
 	Line* p_output = ensure_line(change_name(output_name));
 
-	m_gates.emplace_back(*this, type, p_output, std::move(inputs));
+	m_gates.emplace_back(type, p_output, std::move(inputs));
 	Gate& gate = m_gates.back();
 
 	p_output->source = &gate;
 
 	for (size_t i = 0; i < gate.get_inputs().size(); ++i) {
-		gate.get_inputs().at(i)->connect_as_input(&gate, i);
+		gate.get_inputs().at(i)->connect_as_input(&gate);
 	}
 
 	// Gate validation
@@ -236,6 +170,7 @@ const std::deque<Line>& CircuitGraph::get_lines() const
 {
 	return m_lines;
 }
+
 /*const std::unordered_map<int, Line*> CircuitGraph::get_name_to_line() const
 {
 	return m_name_to_line;
@@ -276,7 +211,7 @@ Line* CircuitGraph::ensure_line(const int& name)
 		return it->second;
 	}
 
-	m_lines.emplace_back(line_make_id());
+	m_lines.emplace_back();
 	Line& line = m_lines.back();
 
 	line.num_name = name;

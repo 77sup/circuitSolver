@@ -1,6 +1,5 @@
 #include "include/solver.h"
 #include "include/iscas89_parser.h"
-#include "include/cnf.h"
 #include "include/Time.h"
 #include <string>
 #include <fstream>
@@ -22,13 +21,14 @@ int main(int argc, char *argv[])
 	auto Structure = 0;
 	auto Solver = 0;
 	ElapsedTimer t(true);
-	CircuitGraph graph;
+	CircuitGraph m_graph;
 	Iscas89Parser parser;
-	if (!parser.parse(ifs, graph))
+	if (!parser.parse(ifs, m_graph))
 	{
 		log_error() << "can't parse file" << argv[1];
 		return 1;
 	}
+	CircuitGraph graph(m_graph);
 	Parser =  t.get_elapsed_us();
 	solver solver(graph);
 	Structure =  t.get_elapsed_us();

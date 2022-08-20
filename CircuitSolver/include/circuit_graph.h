@@ -9,8 +9,6 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
-
-
 #include "log.h"
 
 #ifndef CIRCUIT_GRAPH_H
@@ -22,68 +20,23 @@ class CircuitGraph;
 
 struct Line
 {
-	Line(size_t id, bool is_generated = false)
-		: is_generated(is_generated), id(id)
+	void connect_as_input(Gate *gate)
 	{
-	}
-
-	Line(const Line &) = delete;
-
-	void connect_as_input(Gate *gate, size_t input_idx)
-	{
-		destinations.emplace_back();
-		destinations.back().gate = gate;
-		destinations.back().input_idx = input_idx;
 		destination_gates.insert(gate);
 	}
-
-	bool has_multiple_outputs_to_gate() const
+	Line(int output_name, bool be_output)
 	{
-		return destinations.size() != destination_gates.size();
+		num_name=output_name;
+		is_output=be_output;
 	}
-
-	Gate *source = nullptr; // nullptr means input port
-	struct Connection
-	{
-		Gate *gate = nullptr;
-		size_t input_idx = std::numeric_limits<size_t>::max();
-
-		bool operator==(const Connection &other) const
-		{
-			return std::tie(gate, input_idx) == std::tie(other.gate, other.input_idx);
-		}
-
-		bool operator!=(const Connection &other) const
-		{
-			return !operator==(other);
-		}
-	};
-	std::vector<Connection> destinations;
+	Gate *source = nullptr;   // nullptr means input port
 	std::set<Gate *> destination_gates;
 
 	bool is_output = false;
-	bool is_generated = false;
 
 	std::string name;
 	int num_name;
-	size_t id = 0;
-};
 
-class IdMaker
-{
-public:
-	IdMaker() = default;
-	IdMaker(const IdMaker &) = delete;
-
-	size_t line_id_end() const { return m_line_id; }
-	size_t line_make_id() { return m_line_id++; }
-
-	size_t gate_id_end() const { return m_gate_id; }
-	size_t gate_make_id() { return m_gate_id++; }
-
-private:
-	size_t m_gate_id = 0;
-	size_t m_line_id = 0;
 };
 
 class Gate
@@ -103,7 +56,7 @@ public:
 		Undefined,
 	};
 
-	Gate(IdMaker &id_maker, Type type, Line *output, std::vector<Line *> &&inputs);
+	Gate(Type type, Line *output, std::vector<Line *> &&inputs);
 
 	Gate(const Gate &) = delete;
 
@@ -113,79 +66,25 @@ public:
 	const std::vector<Line *> &get_inputs() const { return m_inputs; }
 	std::vector<Line *> &inputs() { return m_inputs; }
 
-	const std::vector<Gate *> &get_expanded() const;
 	std::string get_str() const;
 
 	Line *get_output() const { return m_output; }
 	Line *&output() { return m_output; }
+	//new add
+	bool get_is_learnt_gate() const { return is_learn_gate;}
+	const std::vector<int> &get_inputs_polarity() const { return inputs_polarity; }
+	std::vector<int> &change_inputs_polarity() { return inputs_polarity; }
 
-	size_t get_id() const { return m_id; }
-	const IdMaker &get_id_maker() const { return m_id_maker; }
 
 private:
-	IdMaker &m_id_maker;
 	Type m_type = Type::Undefined;
 	std::vector<Line *> m_inputs;
 	Line *m_output = nullptr;
-
-	size_t m_id = std::numeric_limits<size_t>::max();
-
-	std::vector<Gate *> m_expanded_gate_ptrs;
-
-	std::deque<Gate> m_expanded_gate;
-	std::deque<Line> m_expanded_lines;
+	bool is_learn_gate = false;
+	std::vector<int> inputs_polarity;
 };
 
-// template<typename Func>
-// void walk_gates_breadth_first(const std::vector<const Gate*>& from, Func func, bool toward_outputs = true, bool expand_gates = false)
-// {
-// 	if (from.empty()) {
-// 		return;
-// 	}
-
-// 	IdObjectSet<const Gate*> walked_gates(from.front()->get_id_maker().gate_id_end());
-
-// 	std::deque<const Gate*> queue;
-
-// 	auto add_to_walk = [&walked_gates, &queue](const Gate* gate) {
-// 		if (!gate || walked_gates.count(gate)) {
-// 			return;
-// 		}
-// 		walked_gates.insert(gate);
-// 		queue.push_back(gate);
-// 	};
-
-// 	for (const Gate* gate : from) {
-// 		assert(gate);
-// 		add_to_walk(gate);
-// 	}
-// 	while (!queue.empty()) {
-// 		const Gate* gate = queue.front();
-// 		queue.pop_front();
-
-// 		if (!expand_gates) {
-// 			func(gate);
-// 		} else {
-// 			for (const Gate* expanded_gate : gate->get_expanded()) {
-// 				func(expanded_gate);
-// 			}
-// 		}
-
-// 		if (toward_outputs) {
-// 			for (const Gate* dest : gate->get_output()->destination_gates) {
-// 				add_to_walk(dest);
-// 			}
-// 		} else {
-// 			for (const Line* input : gate->get_inputs()) {
-// 				assert(input);
-// 				add_to_walk(input->source);
-// 			}
-// 		}
-// 	}
-// }
-
-class CircuitGraph : public IdMaker
-{
+class CircuitGraph{
 public:
 	Line *add_input(const std::string &name);
 	Line *add_output(const std::string &name);
@@ -244,7 +143,6 @@ private:
 
 	std::vector<Line *> m_inputs;
 	std::vector<Line *> m_outputs;
-
 };
 
 #endif
