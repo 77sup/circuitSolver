@@ -216,7 +216,7 @@ int solver::CDCLsolver(const CircuitGraph &graph)
             int bcp_result = solver.BCP(graph, decision_line); //？
             if (bcp_result == 0)                               // find conflict
             {
-                decision_line = conflict_backtrack(decision_line);
+                decision_line = conflict_backtrack(decision_line,  graph);
                 if (lines_status_num.at(decision_line).level == 0) // UNSAT
                 {
                     show_result(graph, 0);
@@ -231,7 +231,7 @@ int solver::CDCLsolver(const CircuitGraph &graph)
     }
 }
 // conflict analysis,add learnt clause,and backtrack
-int solver::conflict_backtrack(int decision_line)
+int solver::conflict_backtrack(int decision_line,CircuitGraph & graph)
 {
     int decision_level = lines_status_num.at(decision_line).level;
     // learnt gate initialized with origin conflict gate
@@ -274,24 +274,40 @@ int solver::conflict_backtrack(int decision_line)
         {
             learnt_gate.erase(learnt_gate.begin() + i);
         }
-        int origin_assign=lines_status_num.at(learnt_gate[i]).assign;//???
-        lines_status_num.at(learnt_gate[i]).assign=1-origin_assign; //???
     }
 
     // add learnt gate to the graph
-    if(learnt_gate.size()==1)  //set is_fixed_value, backtrack to level 0
+    if (learnt_gate.size() == 1) // set is_fixed_value, backtrack to level 0
     {
-        lines_status_num.at(learnt_gate[0]).is_fixed_value=true;
+        lines_status_num.at(learnt_gate[0]).is_fixed_value = true;
     }
     else
     {
-        Line();
-        Gate add_learnt_gate=Gate(or, Line *output, learnt_gate);
+        //add output to graph
+        learnt_gate_num++;
+        Line output_line(-abs(learnt_gate_num), true);
+        graph.ensure_line(-abs(learnt_gate_num));
+        Line *output=graph.add_learnt_output(-abs(learnt_gate_num));
+        //add input lines to graph
+        std::vector<Line *> m_learnt_inputs;
+        
+        for (int i = 0; i < learnt_gate.size(); i++)
+        {
+                m_learnt_inputs.push_back(graph.m_name_to_line.find(learnt_gate[i])->second );
+        }
+        //construct  a learnt Gate
+        Gate learntGate(Gate::Type::Or, output,  m_learnt_inputs);
 
+        //add complete learnt_gate into graph
+
+        
     }
 
     // backtrack
+
 }
+
+
 // update learnt gate
 std::vector<int> &solver::update_learnt_gate(std::vector<int> &update_gate, int trace_line)
 {

@@ -88,6 +88,7 @@ class CircuitGraph{
 public:
 	Line *add_input(const std::string &name);
 	Line *add_output(const std::string &name);
+	Line *add_learnt_output(const int &name);
 
 	Gate *add_gate(Gate::Type type, const std::vector<std::string> &input_names, const std::string &output_name);
 
@@ -100,9 +101,9 @@ public:
 
 	const std::deque<Gate> &get_gates() const;
 	const std::deque<Line> &get_lines() const;
-	//const std::unordered_map<int, Line *> get_name_to_line() const;
 	std::unordered_map<int, Line *> m_name_to_line;
 	void get_graph_stats() const;
+	Line *ensure_line(const int &name);
 	//int change_name(std::string) const;
 	int change_name(const std::string name) 
 	{
@@ -136,7 +137,6 @@ public:
 		}
 	}
 private:
-	Line *ensure_line(const int &name);
 	// We need to avoid relocations on element addition, hence deque
 	std::deque<Line> m_lines;
 	std::deque<Gate> m_gates;

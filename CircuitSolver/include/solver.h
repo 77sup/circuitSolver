@@ -34,6 +34,7 @@ public:
 class solver
 {
 public:
+	int learnt_gate_num=0;
     // constructor function initialize literals and literal_frequency;output = 1
     solver(const CircuitGraph &);
     // solve process
@@ -50,7 +51,7 @@ private:
     Gate* conflict_gate;
     // common solving operations both cnf and circuit
     int FindDecisionTarget(std::unordered_map<int, line_information> &);
-    int conflict_backtrack(int);
+    int conflict_backtrack(int,CircuitGraph &);
 
     int DPLL(const CircuitGraph &, int);
     int BCP(const CircuitGraph &, int);
