@@ -45,6 +45,12 @@ const char *make_gate_name(Gate::Type type)
 Gate::Gate(Gate::Type type, Line *output, std::vector<Line *> &&inputs) : m_type(type), m_inputs(inputs), m_output(output)
 {
 }
+// for learnt gate
+Gate::Gate(Line *output, std::vector<Line *> &inputs)
+{
+	m_inputs = inputs;
+	m_output = output;
+}
 
 std::string Gate::get_str() const
 {
@@ -138,6 +144,42 @@ Gate *CircuitGraph::add_gate(Gate::Type type, const std::vector<std::string> &in
 		assert(false);
 	}
 
+	return &gate;
+}
+Gate *CircuitGraph::add_learnt_gate(const std::vector<int> &input_names, const int &output_name)
+{
+	std::vector<Line *> inputs;
+	for (int i = 0; i < input_names.size(); ++i)
+	{
+		Line *p_input = ensure_line(input_names[i]);
+		inputs.push_back(p_input);
+	}
+
+	Line *p_output = ensure_line(output_name);
+	Gate::Type type = Gate::Type::Or;
+	m_gates.emplace_back(type, p_output, std::move(inputs));
+	Gate &gate = m_gates.back();
+
+	p_output->source = &gate;
+
+	for (size_t i = 0; i < gate.get_inputs().size(); ++i)
+	{
+		gate.get_inputs().at(i)->connect_as_input(&gate);
+	}
+	return &gate;
+}
+Gate *CircuitGraph::add_learnt_gate( std::vector<Line *> input_names,  Line *output_name)
+{
+	Gate::Type type = Gate::Type::Or;
+	m_gates.emplace_back(type, output_name, std::move(input_names));
+	Gate &gate = m_gates.back();
+
+	output_name->source = &gate;
+
+	for (size_t i = 0; i < gate.get_inputs().size(); ++i)
+	{
+		gate.get_inputs().at(i)->connect_as_input(&gate);
+	}
 	return &gate;
 }
 

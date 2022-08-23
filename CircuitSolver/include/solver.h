@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include<limits.h>
 #include <algorithm>
 #ifndef SOLVER_H
 #define SOLVER_H
@@ -16,8 +17,8 @@ enum Cat
 class line_information
 {
 public:
-    int assign ;
-    int weight ;
+    int assign;
+    int weight;
     int level;
     // only circuit output and conflict gate's output and learnt gate is one line
     bool is_fixed_value;
@@ -26,7 +27,7 @@ public:
     {
         this->assign = -1;
         this->weight = -1;
-        this->level  = -10;
+        this->level = -10;
         this->is_fixed_value = false;
     }
 };
@@ -34,31 +35,34 @@ public:
 class solver
 {
 public:
-	int learnt_gate_num=0;
+    int learnt_gate_num = 0;
     // constructor function initialize literals and literal_frequency;output = 1
-    solver(const CircuitGraph &);
+    solver(CircuitGraph &);
     // solve process
-    void solve(const CircuitGraph &);
-    int CDCLsolver(const CircuitGraph &);
-    void test(const CircuitGraph &);
+    void solve(CircuitGraph &);
+    int CDCLsolver(CircuitGraph &);
+    void test(CircuitGraph &);
+
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
     std::unordered_map<int, line_information> lines_status_num;
     std::vector<int> sort_destination_gates;
     std::vector<int> the_name_of_input_line;
     std::vector<int> the_name_of_conflict_line; // conflict line's name
-    int previous_conflict;  //record conflict gate address
-    Gate* conflict_gate;
+    int previous_conflict;                      // record conflict gate address
+    Gate *conflict_gate;
     // common solving operations both cnf and circuit
     int FindDecisionTarget(std::unordered_map<int, line_information> &);
-    int conflict_backtrack(int,CircuitGraph &);
+    int conflict_backtrack(int, CircuitGraph &);
+    int second_maxDecision_level(int *a,int size);
 
-    int DPLL(const CircuitGraph &, int);
-    int BCP(const CircuitGraph &, int);
+
+    int DPLL(CircuitGraph &, int);
+    int BCP(CircuitGraph &, int);
 
     // only for circuit solving
-    bool SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,int decision_line);
-    int change_lines_information(int line_name,int level,std::vector<int>source_lines);
+    bool SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
+    int change_lines_information(int line_name, int level, std::vector<int> source_lines);
     std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line);
 
     // only for cnf solving
@@ -69,7 +73,5 @@ private:
     void show_result(const CircuitGraph &, int);
     void print_lines_source(const CircuitGraph &);
 };
-
-
 
 #endif

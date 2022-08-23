@@ -11,7 +11,7 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     std::vector<std::pair<int, int>> all_lines_current_gate;
     if ((*current_gate).get_is_learnt_gate()) //is learnt gate
     {
-        GateType =or;
+        //GateType =Gate::Type::Or;
         //traverse, and change line's polarity
         for (int i = 0; i < current_gate->get_inputs().size(); i++)
         {
@@ -77,7 +77,6 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
                     {
                         the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
                         break;
-                        ;
                     }
                 }
             }

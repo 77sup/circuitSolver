@@ -57,6 +57,8 @@ public:
 	};
 
 	Gate(Type type, Line *output, std::vector<Line *> &&inputs);
+	Gate(Line *output, std::vector<Line *> &inputs);
+
 
 	Gate(const Gate &) = delete;
 
@@ -91,6 +93,9 @@ public:
 	Line *add_learnt_output(const int &name);
 
 	Gate *add_gate(Gate::Type type, const std::vector<std::string> &input_names, const std::string &output_name);
+	Gate *add_learnt_gate(const std::vector<int> &input_names,  const int &output_name);
+	Gate *add_learnt_gate( std::vector<Line *> input_names,   Line * output_name);
+
 
 	Line *get_line(const int &name);
 
