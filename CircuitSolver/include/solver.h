@@ -7,6 +7,7 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 extern std::vector<std::vector<int>> origin_cnf;
+extern int number;
 enum Cat
 {
     unsatisfied, // 0, when no satisfying assignment has been found after exhaustively searching,
@@ -48,20 +49,21 @@ private:
     std::unordered_map<int, line_information> lines_status_num;
     std::vector<int> sort_destination_gates;
     std::vector<int> the_name_of_input_line;
-    std::vector<int> the_name_of_conflict_line; // conflict line's name
+    std::vector<int> conflict_line; // conflict line's name
     int previous_conflict;                      // record conflict gate address
     Gate *conflict_gate;
     // common solving operations both cnf and circuit
     int FindDecisionTarget(std::unordered_map<int, line_information> &);
-    int conflict_backtrack(int, CircuitGraph &);
-    int second_maxDecision_level(int *a,int size);
+    int conflict_backtrack(int, CircuitGraph &,std::vector<solver> &);
+    int second_maxDecision_line(std::vector<Line*> &);
 
 
     int DPLL(CircuitGraph &, int);
     int BCP(CircuitGraph &, int);
 
     // only for circuit solving
-    bool SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
+    bool SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
+    bool LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
     int change_lines_information(int line_name, int level, std::vector<int> source_lines);
     std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line);
 

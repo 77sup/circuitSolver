@@ -2,123 +2,83 @@
 #include "../include/circuit_graph.h"
 #include <vector>
 #include <queue>
-
+int number = 0;
 // design for multiple inputs gates
-bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que, int decision_line)
+bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line)
 {
-    int decision_level = lines_status_num.at(decision_line).level;
+    number++;
+    int number_lineOfGate = 1 + current_gate->get_inputs().size();
+    int level = lines_status_num.at(decision_line).level;
     Gate::Type GateType = current_gate->get_type();
-    std::vector<std::pair<int, int>> all_lines_current_gate;
-    if ((*current_gate).get_is_learnt_gate()) //is learnt gate
+    std::vector<std::vector<int>> inputs_lines_assign(3);
+    for (int i = 0; i < current_gate->get_inputs().size(); i++)
     {
-        //GateType =Gate::Type::Or;
-        //traverse, and change line's polarity
-        for (int i = 0; i < current_gate->get_inputs().size(); i++)
+        int input = current_gate->inputs()[i]->num_name;
+        int assign = lines_status_num.at(input).assign;
+        if (assign != -1)
         {
-            int input = current_gate->inputs()[i]->num_name;
-            if (lines_status_num.at(input).assign!=-1 && current_gate->get_inputs_polarity()[i]==0)
-            {
-                int convert=lines_status_num.at(input).assign;
-                lines_status_num.at(input).assign=1-convert;
-            }
-            all_lines_current_gate.push_back(std::make_pair(input, lines_status_num.at(input).assign));
-        }
-    }
-    else  //nomal gate, is not learnt gate
-    {
-        for (int i = 0; i < current_gate->get_inputs().size(); i++)
-        {
-            int input = current_gate->inputs()[i]->num_name;
-            all_lines_current_gate.push_back(std::make_pair(input, lines_status_num.at(input).assign));
-        }
-    }
-    all_lines_current_gate.push_back(std::make_pair(current_gate->get_output()->num_name, lines_status_num.at(current_gate->get_output()->num_name).assign));
-    int number_lineOfGate = all_lines_current_gate.size();
-    // respectively record input line's 0 1 x number
-    int input_line_status[3] = {0, 0, 0};
-    for (int i = 0; i < number_lineOfGate - 1; i++)
-    {
-        if (all_lines_current_gate[i].second == 0)
-        {
-            input_line_status[0]++;
-        }
-        else if (all_lines_current_gate[i].second == 1)
-        {
-            input_line_status[1]++;
+            inputs_lines_assign[assign].push_back(input);
         }
         else
         {
-            input_line_status[2]++;
+            inputs_lines_assign[2].push_back(input);
         }
     }
-    int output_line_status = all_lines_current_gate[number_lineOfGate - 1].second;
+    int output_name = current_gate->get_output()->num_name;
+    int output_assign = lines_status_num.at(output_name).assign;
+
     switch (GateType)
     {
     case Gate::Type::And:
     {
-        if ((output_line_status == 0 && input_line_status[1] == number_lineOfGate - 1) || (output_line_status == 1 && input_line_status[0] > 0))
+        if ((output_assign == 0 && inputs_lines_assign[1].size() == number_lineOfGate - 1) || (output_assign == 1 && inputs_lines_assign[0].size() > 0))
         {
-            if (output_line_status == 0)
+            if (output_assign)
             {
-                for (int i = 0; i < number_lineOfGate; i++)
-                {
-                    if (!lines_status_num.at(all_lines_current_gate[i].first).is_fixed_value)
-                    {
-                        the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
-                    }
-                }
+                conflict_line.push_back(output_name);
+                conflict_line.push_back(inputs_lines_assign[0][0]); //!!!
             }
-            else if (output_line_status == 1)
+            else
             {
-                the_name_of_conflict_line.push_back(current_gate->get_output()->num_name);
-                for (int i = 0; i < number_lineOfGate; i++)
-                {
-                    if (all_lines_current_gate[i].second == 0)
-                    {
-                        the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
-                        break;
-                    }
-                }
+                conflict_line = inputs_lines_assign[1];
+                conflict_line.push_back(output_name);
             }
             return false; // conflict
         }
-        else if (output_line_status == 0 && input_line_status[2] == 1 && input_line_status[1] == number_lineOfGate - 2)
+        else if (output_assign == 0 && inputs_lines_assign[2].size() == 1 && inputs_lines_assign[1].size() == number_lineOfGate - 2)
         {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
-            {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                    lines_status_num.at(all_lines_current_gate[i].first).level = decision_level;
-                    // update source
-
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
-        }
-        else if (output_line_status == 1 && input_line_status[2] > 0)
-        {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
-            {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
-        }
-        else if (output_line_status == -1 && input_line_status[0] > 0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines = inputs_lines_assign[1];
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
             return true;
         }
-        else if (output_line_status == -1 && input_line_status[1] == number_lineOfGate - 1)
+        else if (output_assign == 1 && inputs_lines_assign[2].size() > 0)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            for (int i = 0; i < inputs_lines_assign[2].size(); i++)
+            {
+                lines_status_num.at(inputs_lines_assign[2][i]).assign = 1;
+                lines_status_num.at(inputs_lines_assign[2][i]).level = level;
+                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(output_name);
+                bcp_que.push(inputs_lines_assign[2][i]);
+                return true;
+            }
+        }
+        else if (output_assign == -1 && inputs_lines_assign[0].size() > 0)
+        {
+            lines_status_num.at(output_name).assign = 0;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines.push_back(inputs_lines_assign[0][0]);
+            bcp_que.push(output_name);
+            return true;
+        }
+        else if (output_assign == -1 && inputs_lines_assign[1].size() == number_lineOfGate - 1)
+        {
+            lines_status_num.at(output_name).assign = 1;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines = inputs_lines_assign[1];
+            bcp_que.push(output_name);
             return true;
         }
         else
@@ -128,53 +88,54 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     }
     case Gate::Type::Nand:
     {
-        if ((output_line_status == 1 && input_line_status[1] == number_lineOfGate - 1) || (output_line_status == 0 && input_line_status[0] > 0))
+        if ((output_assign == 1 && inputs_lines_assign[1].size() == number_lineOfGate - 1) || (output_assign == 0 && inputs_lines_assign[0].size() > 0))
         {
-            std::cout << "nand" << std::endl;
-            conflict_gate = current_gate;
-            for (int i = 0; i < number_lineOfGate; i++)
+            if (!output_assign)
             {
-                if (all_lines_current_gate[i].second != -1)
-                {
-                    the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
-                }
+                conflict_line.push_back(output_name);
+                conflict_line.push_back(inputs_lines_assign[0][0]); //!!!
+            }
+            else
+            {
+                conflict_line = inputs_lines_assign[1];
+                conflict_line.push_back(output_name);
             }
             return false; // conflict
         }
-        else if (output_line_status == 1 && input_line_status[2] == 1 && input_line_status[1] == number_lineOfGate - 2)
+        else if (output_assign == 1 && inputs_lines_assign[2].size() == 1 && inputs_lines_assign[1].size() == number_lineOfGate - 2)
         {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
-            {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
-        }
-        else if (output_line_status == 0 && input_line_status[2] > 0)
-        {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
-            {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
-        }
-        else if (output_line_status == -1 && input_line_status[0] > 0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines = inputs_lines_assign[1];
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
             return true;
         }
-        else if (output_line_status == -1 && input_line_status[1] == number_lineOfGate - 1)
+        else if (output_assign == 0 && inputs_lines_assign[2].size() > 0)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            for (int i = 0; i < inputs_lines_assign[2].size(); i++)
+            {
+                lines_status_num.at(inputs_lines_assign[2][i]).assign = 1;
+                lines_status_num.at(inputs_lines_assign[2][i]).level = level;
+                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(inputs_lines_assign[2][0]);
+                bcp_que.push(inputs_lines_assign[2][i]);
+                return true;
+            }
+        }
+        else if (output_assign == -1 && inputs_lines_assign[0].size() > 0)
+        {
+            lines_status_num.at(output_name).assign = 1;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines.push_back(inputs_lines_assign[0][0]);
+            bcp_que.push(output_name);
+            return true;
+        }
+        else if (output_assign == -1 && inputs_lines_assign[1].size() == number_lineOfGate - 1)
+        {
+            lines_status_num.at(output_name).assign = 0;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines = inputs_lines_assign[1];
+            bcp_que.push(output_name);
             return true;
         }
         else
@@ -183,55 +144,54 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
         }
     case Gate::Type::Or:
     {
-
-        if ((output_line_status == 0 && input_line_status[1] > 0) ||
-            (output_line_status == 1 && input_line_status[0] == number_lineOfGate - 1))
+        if ((output_assign == 0 && inputs_lines_assign[1].size() > 0) || (output_assign == 1 && inputs_lines_assign[0].size() == number_lineOfGate - 1))
         {
-            std::cout << "or" << std::endl;
-            conflict_gate = current_gate;
-            for (int i = 0; i < all_lines_current_gate.size(); i++)
+            if (!output_assign)
             {
-                // std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
-                //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
-                the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
+                conflict_line.push_back(output_name);
+                conflict_line.push_back(inputs_lines_assign[1][0]); //!!!
             }
-            // std::cout<<"------Or-----" << std::endl;
+            else
+            {
+                conflict_line = inputs_lines_assign[0];
+                conflict_line.push_back(output_name);
+            }
             return false; // conflict
         }
-        else if (output_line_status == 0 && input_line_status[2] > 0)
+        else if (output_assign == 0 && inputs_lines_assign[2].size() > 0)
         {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
+            for (int i = 0; i < inputs_lines_assign[2].size(); i++)
             {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                }
+                lines_status_num.at(inputs_lines_assign[2][i]).assign = 0;
+                lines_status_num.at(inputs_lines_assign[2][i]).level = level;
+                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(inputs_lines_assign[2][0]);
+                bcp_que.push(inputs_lines_assign[2][i]);
             }
             return true;
         }
-        else if (output_line_status == 1 && input_line_status[0] == number_lineOfGate - 2 && input_line_status[2] == 1)
+        else if (output_assign == 1 && inputs_lines_assign[0].size() == number_lineOfGate - 2 && inputs_lines_assign[2].size() == 1)
         {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
-            {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
-        }
-        else if (output_line_status == -1 && input_line_status[0] == number_lineOfGate - 1)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(inputs_lines_assign[2][0]).assign = 1;
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines = inputs_lines_assign[0];
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
             return true;
         }
-        else if (output_line_status == -1 && input_line_status[1] > 0)
+        else if (output_assign == -1 && inputs_lines_assign[0].size() == number_lineOfGate - 1)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(output_name).assign = 0;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines = inputs_lines_assign[0];
+            bcp_que.push(output_name);
+            return true;
+        }
+        else if (output_assign == -1 && inputs_lines_assign[1].size() > 0)
+        {
+            lines_status_num.at(output_name).assign = 1;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines.push_back(inputs_lines_assign[1][0]);
+            bcp_que.push(output_name);
             return true;
         }
         else
@@ -241,53 +201,54 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     }
     case Gate::Type::Nor:
     {
-        if ((output_line_status == 1 && input_line_status[1] > 0) || (output_line_status == 0 && input_line_status[0] == number_lineOfGate - 1))
+        if ((output_assign == 1 && inputs_lines_assign[1].size() > 0) || (output_assign == 0 && inputs_lines_assign[0].size() == number_lineOfGate - 1))
         {
-            std::cout << "nor" << std::endl;
-            conflict_gate = current_gate;
-            for (int i = 0; i < all_lines_current_gate.size(); i++)
+            if (output_assign)
             {
-                // std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
-                //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
-                the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
+                conflict_line.push_back(output_name);
+                conflict_line.push_back(inputs_lines_assign[1][0]); //!!!
             }
-            // std::cout<<"------Nor-----" << std::endl;
+            else
+            {
+                conflict_line = inputs_lines_assign[0];
+                conflict_line.push_back(output_name);
+            }
             return false; // conflict
         }
-        else if (output_line_status == 0 && input_line_status[0] == number_lineOfGate - 2 && input_line_status[2] == 1)
+        else if (output_assign == 0 && inputs_lines_assign[0].size() == number_lineOfGate - 2 && inputs_lines_assign[2].size() == 1)
         {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
-            {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                    return true;
-                }
-            }
+            lines_status_num.at(inputs_lines_assign[2][0]).assign = 1;
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines = inputs_lines_assign[0];
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
+            return true;
         }
-        else if (output_line_status == 1 && input_line_status[2] > 0)
+        else if (output_assign == 1 && inputs_lines_assign[2].size() > 0)
         {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
+            for (int i = 0; i < inputs_lines_assign[2].size(); i++)
             {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                    bcp_que.push(all_lines_current_gate[i].first);
-                }
+                lines_status_num.at(inputs_lines_assign[2][i]).assign = 0;
+                lines_status_num.at(inputs_lines_assign[2][i]).level = level;
+                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(output_name);
+                bcp_que.push(inputs_lines_assign[2][i]);
             }
             return true;
         }
-        else if (output_line_status == -1 && input_line_status[0] == number_lineOfGate - 1)
+        else if (output_assign == -1 && inputs_lines_assign[0].size() == number_lineOfGate - 1)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(output_name).assign = 1;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines = inputs_lines_assign[0];
+            bcp_que.push(output_name);
             return true;
         }
-        else if (output_line_status == -1 && input_line_status[1] > 0)
+        else if (output_assign == -1 && inputs_lines_assign[1].size() > 0)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(output_name).assign = 0;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines.push_back(inputs_lines_assign[1][0]);
+            bcp_que.push(output_name);
             return true;
         }
         else
@@ -297,72 +258,66 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     }
     case Gate::Type::Xor: // two inputs
     {
-        if ((output_line_status == 0 && input_line_status[0] > 0 && input_line_status[1] > 0) ||
-            (output_line_status == 1 && (input_line_status[0] == 2 || input_line_status[1] == 2)))
+        if ((output_assign == 0 && inputs_lines_assign[0].size() > 0 && inputs_lines_assign[1].size() > 0) ||
+            (output_assign == 1 && (inputs_lines_assign[0].size() == 2 || inputs_lines_assign[1].size() == 2)))
         {
-            std::cout << "xor" << std::endl;
-            conflict_gate = current_gate;
-            for (int i = 0; i < all_lines_current_gate.size(); i++)
-            {
-                // std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
-                //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
-                the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
-            }
-            // std::cout<<"------Xor-----" << std::endl;
+            conflict_line.push_back(output_name);
+            conflict_line.push_back(current_gate->get_inputs()[0]->num_name);
+            conflict_line.push_back(current_gate->get_inputs()[1]->num_name);
             return false;
         }
-        else if (output_line_status == 0 && input_line_status[2] == 1)
+        else if (output_assign != -1 && inputs_lines_assign[2].size() == 1)
         {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
+            if (inputs_lines_assign[0].size() > 0)
             {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    if (input_line_status[0] > 0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                    if (input_line_status[1] > 0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                }
+                lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
+                lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[0][0]);
             }
-        }
-        else if (output_line_status == 1 && input_line_status[2] == 1)
-        {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
+            else // inputs_lines_assign[1].size() > 0
             {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    if (input_line_status[0] > 0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                    if (input_line_status[1] > 0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                }
+                lines_status_num.at(inputs_lines_assign[2][0]).assign = 1;
+                lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[1][0]);
             }
-        }
-        else if (output_line_status == -1 && input_line_status[0] > 0 && input_line_status[1] > 0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
             return true;
         }
-        else if (output_line_status == -1 && (input_line_status[0] == 2 || input_line_status[1] == 2))
+        else if (output_assign == 1 && inputs_lines_assign[2].size() == 1)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            if (inputs_lines_assign[0].size() > 0)
+            {
+                lines_status_num.at(inputs_lines_assign[2][0]).assign = 1;
+                lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[0][0]);
+            }
+            else // (inputs_lines_assign[1].size() > 0)
+            {
+                lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
+                lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[1][0]);
+            }
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
+            return true;
+        }
+        else if (output_assign == -1 && inputs_lines_assign[0].size() > 0 && inputs_lines_assign[1].size() > 0)
+        {
+            lines_status_num.at(output_name).assign = 1;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines.push_back(inputs_lines_assign[0][0]);
+            lines_status_num.at(output_name).source_lines.push_back(inputs_lines_assign[1][0]);
+            bcp_que.push(output_name);
+            return true;
+        }
+        else if (output_assign == -1 && (inputs_lines_assign[0].size() == 2 || inputs_lines_assign[1].size() == 2))
+        {
+            lines_status_num.at(output_name).assign = 0;
+            lines_status_num.at(output_name).level = level;
+            for (auto input_name : current_gate->get_inputs())
+            {
+                lines_status_num.at(output_name).source_lines.push_back(input_name->num_name);
+            }
+            bcp_que.push(output_name);
             return true;
         }
         else
@@ -372,72 +327,66 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     }
     case Gate::Type::Xnor: // two inputs
     {
-        if ((output_line_status == 1 && input_line_status[0] > 0 && input_line_status[1] > 0) ||
-            (output_line_status == 0 && (input_line_status[0] == 2 || input_line_status[1] == 2)))
+        if ((output_assign == 1 && inputs_lines_assign[0].size() > 0 && inputs_lines_assign[1].size() > 0) ||
+            (output_assign == 0 && (inputs_lines_assign[0].size() == 2 || inputs_lines_assign[1].size() == 2)))
         {
-            std::cout << "xnor" << std::endl;
-            conflict_gate = current_gate;
-            for (int i = 0; i < all_lines_current_gate.size(); i++)
-            {
-                // std::cout << all_lines_current_gate[i].first << " conflict:  " << all_lines_current_gate[i].second<<
-                //" source: "<<lines_status_num.at(all_lines_current_gate[i].first).source<< std::endl;
-                the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
-            }
-            // std::cout<<"------Xnor-----" << std::endl;
+            conflict_line.push_back(output_name);
+            conflict_line.push_back(current_gate->get_inputs()[0]->num_name);
+            conflict_line.push_back(current_gate->get_inputs()[1]->num_name);
             return false;
         }
-        else if (output_line_status == 1 && input_line_status[2] == 1)
+        else if (output_assign == 1 && inputs_lines_assign[2].size() == 1)
         {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
+            if (inputs_lines_assign[0].size() > 0)
             {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    if (input_line_status[0] > 0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                    if (input_line_status[1] > 0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                }
+                lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
+                lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[0][0]);
             }
-        }
-        else if (output_line_status == 0 && input_line_status[2] == 1)
-        {
-            for (int i = 0; i < number_lineOfGate - 1; i++)
+            else // (inputs_lines_assign[1].size() > 0)
             {
-                if (all_lines_current_gate[i].second == -1)
-                {
-                    if (input_line_status[0] > 0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first).assign = 1;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                    if (input_line_status[1] > 0)
-                    {
-                        lines_status_num.at(all_lines_current_gate[i].first).assign = 0;
-                        bcp_que.push(all_lines_current_gate[i].first);
-                        return true;
-                    }
-                }
+                lines_status_num.at(inputs_lines_assign[2][0]).assign = 1;
+                lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[1][0]);
             }
-        }
-        else if (output_line_status == -1 && input_line_status[0] > 0 && input_line_status[1] > 0)
-        {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
             return true;
         }
-        else if (output_line_status == -1 && (input_line_status[0] == 2 || input_line_status[1] == 2))
+        else if (output_assign == 0 && inputs_lines_assign[2].size() == 1)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            if (inputs_lines_assign[0].size() > 0)
+            {
+                lines_status_num.at(inputs_lines_assign[2][0]).assign = 1;
+                lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[0][0]);
+            }
+            else // (inputs_lines_assign[1].size() > 0)
+            {
+                lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
+                lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[1][0]);
+            }
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
+            return true;
+        }
+        else if (output_assign == -1 && inputs_lines_assign[0].size() > 0 && inputs_lines_assign[1].size() > 0)
+        {
+            lines_status_num.at(output_name).assign = 0;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[0][0]);
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[1][0]);
+            bcp_que.push(output_name);
+            return true;
+        }
+        else if (output_assign == -1 && (inputs_lines_assign[0].size() == 2 || inputs_lines_assign[1].size() == 2))
+        {
+            lines_status_num.at(output_name).assign = 1;
+            lines_status_num.at(output_name).level = level;
+            for (auto input_name : current_gate->get_inputs())
+            {
+                lines_status_num.at(output_name).source_lines.push_back(input_name->num_name);
+            }
+            bcp_que.push(output_name);
             return true;
         }
         else
@@ -447,32 +396,26 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     }
     case Gate::Type::Not:
     {
-        if ((input_line_status[0] == 1 && output_line_status == 0) || (input_line_status[1] == 1 && output_line_status == 1))
+        if ((inputs_lines_assign[0].size() == 1 && output_assign == 0) || (inputs_lines_assign[1].size() == 1 && output_assign == 1))
         {
-            std::cout << "not" << std::endl;
-            conflict_gate = current_gate;
-            for (int i = 0; i < all_lines_current_gate.size(); i++)
-            {
-                the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
-            }
+            conflict_line.push_back(output_name);
+            conflict_line.push_back(current_gate->get_inputs()[0]->num_name);
             return false;
         }
-        else if (input_line_status[0] == 1 && output_line_status == -1)
+        else if (output_assign == -1)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(output_name).assign = 1 - lines_status_num.at(current_gate->get_inputs()[0]->num_name).assign;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines.push_back(current_gate->get_inputs()[0]->num_name);
+            bcp_que.push(output_name);
             return true;
         }
-        else if (input_line_status[1] == 1 && output_line_status == -1)
+        else if (inputs_lines_assign[2].size() == 1)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
-            return true;
-        }
-        else if (input_line_status[2] == 1)
-        {
-            lines_status_num.at(all_lines_current_gate[0].first).assign = 1 - all_lines_current_gate[1].second;
-            bcp_que.push(all_lines_current_gate[0].first);
+            lines_status_num.at(inputs_lines_assign[2][0]).assign = 1 - output_assign;
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
             return true;
         }
         else
@@ -482,32 +425,26 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     }
     case Gate::Type::Buff:
     {
-        if ((input_line_status[0] == 1 && output_line_status == 1) || (input_line_status[1] == 1 && output_line_status == 0))
+        if ((inputs_lines_assign[0].size() == 1 && output_assign == 1) || (inputs_lines_assign[1].size() == 1 && output_assign == 0))
         {
-            std::cout << "buff" << std::endl;
-            conflict_gate = current_gate;
-            for (int i = 0; i < all_lines_current_gate.size(); i++)
-            {
-                the_name_of_conflict_line.push_back(all_lines_current_gate[i].first);
-            }
+            conflict_line.push_back(output_name);
+            conflict_line.push_back(current_gate->get_inputs()[0]->num_name);
             return false;
         }
-        else if (input_line_status[0] == 1 && output_line_status == -1)
+        else if (output_assign == -1)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 0;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
+            lines_status_num.at(output_name).assign = lines_status_num.at(current_gate->get_inputs()[0]->num_name).assign;
+            lines_status_num.at(output_name).level = level;
+            lines_status_num.at(output_name).source_lines.push_back(current_gate->get_inputs()[0]->num_name);
+            bcp_que.push(output_name);
             return true;
         }
-        else if (input_line_status[1] == 1 && output_line_status == -1)
+        else if (inputs_lines_assign[2].size() == 1)
         {
-            lines_status_num.at(all_lines_current_gate[number_lineOfGate - 1].first).assign = 1;
-            bcp_que.push(all_lines_current_gate[number_lineOfGate - 1].first);
-            return true;
-        }
-        else if (input_line_status[2] == 1)
-        {
-            lines_status_num.at(all_lines_current_gate[0].first).assign = all_lines_current_gate[1].second;
-            bcp_que.push(all_lines_current_gate[0].first);
+            lines_status_num.at(inputs_lines_assign[2][0]).assign = output_assign;
+            lines_status_num.at(inputs_lines_assign[2][0]).level = level;
+            lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(output_name);
+            bcp_que.push(inputs_lines_assign[2][0]);
             return true;
         }
         else
@@ -522,5 +459,49 @@ bool solver::SingleGateReasonBoost(Gate *current_gate, std::queue<int> &bcp_que,
     default:
         return true;
     }
+    }
+}
+bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line)
+{
+    number++;
+    int number_lineOfGate = current_gate->get_inputs().size();
+    std::vector<std::vector<std::pair<int, int>>> inputs_lines_assign(3);  //key---line's name; value---line's polarty
+    // traverse, and change line's polarity
+    for (int i = 0; i < current_gate->get_inputs().size(); i++)
+    {
+        int input = current_gate->inputs()[i]->num_name;
+        int convert = lines_status_num.at(input).assign;
+        if (lines_status_num.at(input).assign != -1 && current_gate->get_inputs_polarity()[i] == 0)
+        {
+            inputs_lines_assign[1 - convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
+        }
+        else if(lines_status_num.at(input).assign != -1 && current_gate->get_inputs_polarity()[i] == 1)
+        {
+            inputs_lines_assign[convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
+        }
+        else 
+            inputs_lines_assign[2].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
+    }
+    int output_name = current_gate->get_output()->num_name;
+
+    // deal with learnt gate ,it's output is fix: output.assign = 1
+    if (inputs_lines_assign[0].size() == number_lineOfGate)
+    {
+        for (auto temp : inputs_lines_assign[0])
+            conflict_line.push_back(temp.first);
+        return false; // conflict
+    }
+    else if (inputs_lines_assign[0].size() == number_lineOfGate - 1 && inputs_lines_assign[2].size() == 1)
+    {
+        lines_status_num.at(inputs_lines_assign[2][0].first).assign = 1 & inputs_lines_assign[2][0].second;
+        lines_status_num.at(inputs_lines_assign[2][0].first).level = lines_status_num.at(decision_line).level;
+        for (auto temp : inputs_lines_assign[0])
+            lines_status_num.at(inputs_lines_assign[2][0].first).source_lines.push_back(temp.first);
+        bcp_que.push(inputs_lines_assign[2][0].first);
+        return true;
+    }
+    else
+    {
+        return true;
     }
 }
