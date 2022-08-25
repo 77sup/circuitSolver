@@ -21,28 +21,28 @@ int main(int argc, char *argv[])
 	auto Structure = 0;
 	auto Solver = 0;
 	ElapsedTimer t(true);
-	CircuitGraph m_graph;
+	CircuitGraph graph;
 	Iscas89Parser parser;
-	if (!parser.parse(ifs, m_graph))
+	if (!parser.parse(ifs, graph))
 	{
 		log_error() << "can't parse file" << argv[1];
 		return 1;
 	}
-	CircuitGraph graph(m_graph);
 	Parser =  t.get_elapsed_us();
 	solver solver(graph);
-	
+	// for(auto temp:graph.get_outputs())
+	// {
+	// 	std::cout<<"  output line: "<<temp->num_name<<std::endl;
+	// }
 	Structure =  t.get_elapsed_us();
 
 	//solver.solve(graph);
 	//solver.solve(graph);
-	std::cout<<"###"<<std::endl;
 	solver.CDCLsolver(graph);
 	Solver = t.get_elapsed_us();
 	std::cout << "the time of parser:   " << 1.0 * Parser/1000 << "  ms" << std :: endl;
 	std::cout << "the time of structure:" << 1.0 * (Structure - Parser)/1000 << "  ms" << std :: endl;
 	std::cout << "the time of solver:   " << 1.0 * (Solver - Structure)/1000 << "  ms" << std :: endl;
-	
 
 	return 0;
 }

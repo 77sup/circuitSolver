@@ -54,7 +54,7 @@ private:
     Gate *conflict_gate;
     // common solving operations both cnf and circuit
     int FindDecisionTarget();
-    int conflict_backtrack(int, CircuitGraph &, std::vector<solver> &);
+    int conflict_backtrack(int, CircuitGraph &, std::vector<solver> &,std::vector<int> &);
     int second_maxDecision_line(std::vector<Line *> &);
 
     int DPLL(CircuitGraph &, int);
