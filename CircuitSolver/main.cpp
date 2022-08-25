@@ -31,9 +31,12 @@ int main(int argc, char *argv[])
 	CircuitGraph graph(m_graph);
 	Parser =  t.get_elapsed_us();
 	solver solver(graph);
+	
 	Structure =  t.get_elapsed_us();
 
 	//solver.solve(graph);
+	//solver.solve(graph);
+	std::cout<<"###"<<std::endl;
 	solver.CDCLsolver(graph);
 	Solver = t.get_elapsed_us();
 	std::cout << "the time of parser:   " << 1.0 * Parser/1000 << "  ms" << std :: endl;

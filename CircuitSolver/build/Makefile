@@ -201,54 +201,6 @@ src/circuitsolver.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/circuitsolver.cpp.s
 .PHONY : src/circuitsolver.cpp.s
 
-src/cnf.o: src/cnf.cpp.o
-.PHONY : src/cnf.o
-
-# target to build an object file
-src/cnf.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnf.cpp.o
-.PHONY : src/cnf.cpp.o
-
-src/cnf.i: src/cnf.cpp.i
-.PHONY : src/cnf.i
-
-# target to preprocess a source file
-src/cnf.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnf.cpp.i
-.PHONY : src/cnf.cpp.i
-
-src/cnf.s: src/cnf.cpp.s
-.PHONY : src/cnf.s
-
-# target to generate assembly for a file
-src/cnf.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnf.cpp.s
-.PHONY : src/cnf.cpp.s
-
-src/cnfsolver.o: src/cnfsolver.cpp.o
-.PHONY : src/cnfsolver.o
-
-# target to build an object file
-src/cnfsolver.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o
-.PHONY : src/cnfsolver.cpp.o
-
-src/cnfsolver.i: src/cnfsolver.cpp.i
-.PHONY : src/cnfsolver.i
-
-# target to preprocess a source file
-src/cnfsolver.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnfsolver.cpp.i
-.PHONY : src/cnfsolver.cpp.i
-
-src/cnfsolver.s: src/cnfsolver.cpp.s
-.PHONY : src/cnfsolver.s
-
-# target to generate assembly for a file
-src/cnfsolver.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/src/cnfsolver.cpp.s
-.PHONY : src/cnfsolver.cpp.s
-
 src/iscas89_parser.o: src/iscas89_parser.cpp.o
 .PHONY : src/iscas89_parser.o
 
@@ -339,12 +291,6 @@ help:
 	@echo "... src/circuitsolver.o"
 	@echo "... src/circuitsolver.i"
 	@echo "... src/circuitsolver.s"
-	@echo "... src/cnf.o"
-	@echo "... src/cnf.i"
-	@echo "... src/cnf.s"
-	@echo "... src/cnfsolver.o"
-	@echo "... src/cnfsolver.i"
-	@echo "... src/cnfsolver.s"
 	@echo "... src/iscas89_parser.o"
 	@echo "... src/iscas89_parser.i"
 	@echo "... src/iscas89_parser.s"

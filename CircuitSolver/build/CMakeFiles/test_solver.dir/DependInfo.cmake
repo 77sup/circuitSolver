@@ -11,8 +11,6 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/hkm/circuitSolver/CircuitSolver/main.cpp" "CMakeFiles/test_solver.dir/main.cpp.o" "gcc" "CMakeFiles/test_solver.dir/main.cpp.o.d"
   "/home/hkm/circuitSolver/CircuitSolver/src/circuit_graph.cpp" "CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o.d"
   "/home/hkm/circuitSolver/CircuitSolver/src/circuitsolver.cpp" "CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o.d"
-  "/home/hkm/circuitSolver/CircuitSolver/src/cnf.cpp" "CMakeFiles/test_solver.dir/src/cnf.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/cnf.cpp.o.d"
-  "/home/hkm/circuitSolver/CircuitSolver/src/cnfsolver.cpp" "CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o.d"
   "/home/hkm/circuitSolver/CircuitSolver/src/iscas89_parser.cpp" "CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o.d"
   "/home/hkm/circuitSolver/CircuitSolver/src/log.cpp" "CMakeFiles/test_solver.dir/src/log.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/log.cpp.o.d"
   "/home/hkm/circuitSolver/CircuitSolver/src/solver.cpp" "CMakeFiles/test_solver.dir/src/solver.cpp.o" "gcc" "CMakeFiles/test_solver.dir/src/solver.cpp.o.d"

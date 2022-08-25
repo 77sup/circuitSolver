@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include<limits.h>
+#include <limits.h>
 #include <algorithm>
 #ifndef SOLVER_H
 #define SOLVER_H
@@ -28,7 +28,7 @@ public:
     {
         this->assign = -1;
         this->weight = -1;
-        this->level = -10;
+        this->level = -1;
         this->is_fixed_value = false;
     }
 };
@@ -46,17 +46,16 @@ public:
 
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
-    std::unordered_map<int, line_information> lines_status_num;
+    std::unordered_map<int, line_information> lines_status_num; //update
     std::vector<int> sort_destination_gates;
     std::vector<int> the_name_of_input_line;
     std::vector<int> conflict_line; // conflict line's name
-    int previous_conflict;                      // record conflict gate address
+    int previous_conflict;          // record conflict gate address
     Gate *conflict_gate;
     // common solving operations both cnf and circuit
-    int FindDecisionTarget(std::unordered_map<int, line_information> &);
-    int conflict_backtrack(int, CircuitGraph &,std::vector<solver> &);
-    int second_maxDecision_line(std::vector<Line*> &);
-
+    int FindDecisionTarget();
+    int conflict_backtrack(int, CircuitGraph &, std::vector<solver> &);
+    int second_maxDecision_line(std::vector<Line *> &);
 
     int DPLL(CircuitGraph &, int);
     int BCP(CircuitGraph &, int);
@@ -72,8 +71,8 @@ private:
     // int apply_transform(cnf &f, std::queue<int> &bcp_que, int reason_line_name); // applies the value of the literal in
 
     //
-    void show_result(const CircuitGraph &, int);
-    void print_lines_source(const CircuitGraph &);
+    void show_result(CircuitGraph &, int);
+    void print_lines_source(CircuitGraph &);
 };
 
 #endif

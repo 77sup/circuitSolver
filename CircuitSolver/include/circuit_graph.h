@@ -24,19 +24,19 @@ struct Line
 	{
 		destination_gates.insert(gate);
 	}
+	Line() {}
 	Line(int output_name, bool be_output)
 	{
-		num_name=output_name;
-		is_output=be_output;
+		num_name = output_name;
+		is_output = be_output;
 	}
-	Gate *source = nullptr;   // nullptr means input port
+	Gate *source = nullptr; // nullptr means input port
 	std::set<Gate *> destination_gates;
 
 	bool is_output = false;
 
 	std::string name;
 	int num_name;
-
 };
 
 class Gate
@@ -59,8 +59,7 @@ public:
 	Gate(Type type, Line *output, std::vector<Line *> &&inputs);
 	Gate(Line *output, std::vector<Line *> &inputs);
 
-
-	Gate(const Gate &) = delete;
+	//Gate(const Gate &) = delete;
 
 	Type get_type() const { return m_type; }
 	Type &type() { return m_type; }
@@ -72,11 +71,10 @@ public:
 
 	Line *get_output() const { return m_output; }
 	Line *&output() { return m_output; }
-	//new add
-	bool get_is_learnt_gate() const { return is_learn_gate;}
+	// new add
+	bool get_is_learnt_gate() const { return is_learn_gate; }
 	const std::vector<int> &get_inputs_polarity() const { return inputs_polarity; }
 	std::vector<int> &change_inputs_polarity() { return inputs_polarity; }
-
 
 private:
 	Type m_type = Type::Undefined;
@@ -86,16 +84,16 @@ private:
 	std::vector<int> inputs_polarity;
 };
 
-class CircuitGraph{
+class CircuitGraph
+{
 public:
 	Line *add_input(const std::string &name);
 	Line *add_output(const std::string &name);
 	Line *add_learnt_output(const int &name);
 
 	Gate *add_gate(Gate::Type type, const std::vector<std::string> &input_names, const std::string &output_name);
-	Gate *add_learnt_gate(const std::vector<int> &input_names,  const int &output_name);
-	Gate *add_learnt_gate( std::vector<Line *> input_names,   Line * output_name);
-
+	Gate *add_learnt_gate(const std::vector<int> &input_names, const int &output_name);
+	Gate *add_learnt_gate(std::vector<Line *> input_names, Line *output_name);
 
 	Line *get_line(const int &name);
 
@@ -109,13 +107,13 @@ public:
 	std::unordered_map<int, Line *> m_name_to_line;
 	void get_graph_stats() const;
 	Line *ensure_line(const int &name);
-	//int change_name(std::string) const;
-	int change_name(const std::string name) 
+	// int change_name(std::string) const;
+	int change_name(const std::string name)
 	{
 		int str_len = name.size();
 		int i = 0;
 		int j = 0;
-		//std::cout<<"the name before change : "<<name<<std::endl;
+		// std::cout<<"the name before change : "<<name<<std::endl;
 		while (i < str_len)
 		{
 			if (name[i] >= '0' && name[i] <= '9')
@@ -128,11 +126,11 @@ public:
 					len++;
 				}
 				std::string num_name = name.substr(j, len); //获取子串
-				int change_name = 0;						//数字字符串转换为整型数字
+				int change_name = 0;												//数字字符串转换为整型数字
 				std::stringstream s1(num_name);
 				s1 >> change_name;
-				//std::cout<<"the name after change : ";
-				//std::cout<<change_name<<std::endl;
+				// std::cout<<"the name after change : ";
+				// std::cout<<change_name<<std::endl;
 				return change_name;
 			}
 			else
@@ -141,6 +139,7 @@ public:
 			}
 		}
 	}
+
 private:
 	// We need to avoid relocations on element addition, hence deque
 	std::deque<Line> m_lines;

@@ -10,6 +10,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     int number_lineOfGate = 1 + current_gate->get_inputs().size();
     int level = lines_status_num.at(decision_line).level;
     Gate::Type GateType = current_gate->get_type();
+    //inputs_lines_assign[0]---store value 0's number;inputs_lines_assign[1]---store value 1's number;inputs_lines_assign[2]---store value x's number
     std::vector<std::vector<int>> inputs_lines_assign(3);
     for (int i = 0; i < current_gate->get_inputs().size(); i++)
     {

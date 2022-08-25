@@ -139,24 +139,10 @@ CMakeFiles/test_solver.dir/src/solver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/solver.cpp.s"
 	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/src/solver.cpp -o CMakeFiles/test_solver.dir/src/solver.cpp.s
 
-CMakeFiles/test_solver.dir/src/cnf.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/cnf.cpp.o: /home/hkm/circuitSolver/CircuitSolver/src/cnf.cpp
-CMakeFiles/test_solver.dir/src/cnf.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/test_solver.dir/src/cnf.cpp.o"
-	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/cnf.cpp.o -MF CMakeFiles/test_solver.dir/src/cnf.cpp.o.d -o CMakeFiles/test_solver.dir/src/cnf.cpp.o -c /home/hkm/circuitSolver/CircuitSolver/src/cnf.cpp
-
-CMakeFiles/test_solver.dir/src/cnf.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/cnf.cpp.i"
-	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/CircuitSolver/src/cnf.cpp > CMakeFiles/test_solver.dir/src/cnf.cpp.i
-
-CMakeFiles/test_solver.dir/src/cnf.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/cnf.cpp.s"
-	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/src/cnf.cpp -o CMakeFiles/test_solver.dir/src/cnf.cpp.s
-
 CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o: CMakeFiles/test_solver.dir/flags.make
 CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o: /home/hkm/circuitSolver/CircuitSolver/src/circuitsolver.cpp
 CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o"
 	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o -MF CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o.d -o CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o -c /home/hkm/circuitSolver/CircuitSolver/src/circuitsolver.cpp
 
 CMakeFiles/test_solver.dir/src/circuitsolver.cpp.i: cmake_force
@@ -167,20 +153,6 @@ CMakeFiles/test_solver.dir/src/circuitsolver.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/circuitsolver.cpp.s"
 	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/src/circuitsolver.cpp -o CMakeFiles/test_solver.dir/src/circuitsolver.cpp.s
 
-CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o: CMakeFiles/test_solver.dir/flags.make
-CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o: /home/hkm/circuitSolver/CircuitSolver/src/cnfsolver.cpp
-CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o: CMakeFiles/test_solver.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o"
-	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o -MF CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o.d -o CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o -c /home/hkm/circuitSolver/CircuitSolver/src/cnfsolver.cpp
-
-CMakeFiles/test_solver.dir/src/cnfsolver.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_solver.dir/src/cnfsolver.cpp.i"
-	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hkm/circuitSolver/CircuitSolver/src/cnfsolver.cpp > CMakeFiles/test_solver.dir/src/cnfsolver.cpp.i
-
-CMakeFiles/test_solver.dir/src/cnfsolver.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_solver.dir/src/cnfsolver.cpp.s"
-	/opt/rh/devtoolset-8/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hkm/circuitSolver/CircuitSolver/src/cnfsolver.cpp -o CMakeFiles/test_solver.dir/src/cnfsolver.cpp.s
-
 # Object files for target test_solver
 test_solver_OBJECTS = \
 "CMakeFiles/test_solver.dir/main.cpp.o" \
@@ -188,9 +160,7 @@ test_solver_OBJECTS = \
 "CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o" \
 "CMakeFiles/test_solver.dir/src/log.cpp.o" \
 "CMakeFiles/test_solver.dir/src/solver.cpp.o" \
-"CMakeFiles/test_solver.dir/src/cnf.cpp.o" \
-"CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o" \
-"CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o"
+"CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o"
 
 # External object files for target test_solver
 test_solver_EXTERNAL_OBJECTS =
@@ -200,12 +170,10 @@ test_solver: CMakeFiles/test_solver.dir/src/iscas89_parser.cpp.o
 test_solver: CMakeFiles/test_solver.dir/src/circuit_graph.cpp.o
 test_solver: CMakeFiles/test_solver.dir/src/log.cpp.o
 test_solver: CMakeFiles/test_solver.dir/src/solver.cpp.o
-test_solver: CMakeFiles/test_solver.dir/src/cnf.cpp.o
 test_solver: CMakeFiles/test_solver.dir/src/circuitsolver.cpp.o
-test_solver: CMakeFiles/test_solver.dir/src/cnfsolver.cpp.o
 test_solver: CMakeFiles/test_solver.dir/build.make
 test_solver: CMakeFiles/test_solver.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable test_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable test_solver"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_solver.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

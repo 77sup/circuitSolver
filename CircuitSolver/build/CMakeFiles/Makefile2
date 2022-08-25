@@ -81,12 +81,12 @@ clean: CMakeFiles/test_solver.dir/clean
 CMakeFiles/test_solver.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_solver.dir/build.make CMakeFiles/test_solver.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target test_solver"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target test_solver"
 .PHONY : CMakeFiles/test_solver.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test_solver.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles 9
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/test_solver.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hkm/circuitSolver/CircuitSolver/build/CMakeFiles 0
 .PHONY : CMakeFiles/test_solver.dir/rule
