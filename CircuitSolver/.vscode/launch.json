@@ -5,11 +5,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "solver",
+      "name": "(gdb) 启动",
       "type": "cppdbg",
       "request": "launch",
-      "program": "/home/zhang/circuit_solver/circuitSolver/CircuitSolver/build/test_solver",
-      "args": ["/home/zhang/circuit_solver/circuitSolver/CircuitSolver/build/benchmarks/c7552.bench"],
+      "program": "/home/zhang/circuit_solver/CS2/build/test_solver",
+      "args": ["/home/zhang/circuit_solver/CS2/build/benchmarks/c17UNSAT.bench"],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],
@@ -27,7 +27,6 @@
               "ignoreFailures": true
           }
       ]
-    }
-
+    },
   ]
 }

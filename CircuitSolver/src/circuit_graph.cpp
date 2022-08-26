@@ -46,11 +46,12 @@ Gate::Gate(Gate::Type type, Line *output, std::vector<Line *> &&inputs) : m_type
 {
 }
 // for learnt gate
-Gate::Gate(Line *output, std::vector<Line *> &inputs)
+/*Gate::Gate(Line *output, std::vector<Line *> &inputs)
 {
-	m_inputs = inputs;
-	m_output = output;
-}
+	this->m_inputs = inputs;
+	this->m_output = output;
+	this->is_learn_gate = true;
+}*/
 
 std::string Gate::get_str() const
 {
@@ -168,12 +169,13 @@ Gate *CircuitGraph::add_learnt_gate(const std::vector<int> &input_names, const i
 	}
 	return &gate;
 }
-Gate *CircuitGraph::add_learnt_gate(std::vector<Line *> input_names,  Line *output_name)
+Gate *CircuitGraph::add_learnt_gate(std::vector<Line *> input_names,  Line *output_name,std::vector<int> &inputs_polarity)
 {
 	Gate::Type type = Gate::Type::Or;
 	m_gates.emplace_back(type, output_name, std::move(input_names));
 	Gate &gate = m_gates.back();
-
+	gate.change_learnt_gate(true);
+	gate.change_inputs_polarity(inputs_polarity);
 	output_name->source = &gate;
 
 	for (size_t i = 0; i < gate.get_inputs().size(); ++i)

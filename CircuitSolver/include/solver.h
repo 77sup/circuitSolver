@@ -64,9 +64,9 @@ private:
     bool SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
     bool LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
     int change_lines_information(int line_name, int level, std::vector<int> source_lines);
-    std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line);
+    std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line, const solver &);
 
-    // only for cnf solving
+    // only for cnf solvin
     // int unit_propagate(cnf &f, std::queue<int> &bcp_que, int reason_line_name);  // performs unit propagation
     // int apply_transform(cnf &f, std::queue<int> &bcp_que, int reason_line_name); // applies the value of the literal in
 

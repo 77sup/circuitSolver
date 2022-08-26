@@ -472,6 +472,7 @@ bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     {
         int input = current_gate->inputs()[i]->num_name;
         int convert = lines_status_num.at(input).assign;
+        std::cout<<" input:"<<input<<" convert: "<<convert<<" current gate size: "<<current_gate->get_inputs().size()<<std::endl;
         if (lines_status_num.at(input).assign != -1 && current_gate->get_inputs_polarity()[i] == 0)
         {
             inputs_lines_assign[1 - convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
@@ -483,7 +484,6 @@ bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
         else 
             inputs_lines_assign[2].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
     }
-    int output_name = current_gate->get_output()->num_name;
 
     // deal with learnt gate ,it's output is fix: output.assign = 1
     if (inputs_lines_assign[0].size() == number_lineOfGate)

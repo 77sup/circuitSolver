@@ -73,8 +73,9 @@ public:
 	Line *&output() { return m_output; }
 	// new add
 	bool get_is_learnt_gate() const { return is_learn_gate; }
+	void change_learnt_gate(bool is) {this->is_learn_gate = is;}
 	const std::vector<int> &get_inputs_polarity() const { return inputs_polarity; }
-	std::vector<int> &change_inputs_polarity() { return inputs_polarity; }
+	void change_inputs_polarity(std::vector<int> &inputs_polarity) {this->inputs_polarity = inputs_polarity;}
 
 private:
 	Type m_type = Type::Undefined;
@@ -93,7 +94,7 @@ public:
 
 	Gate *add_gate(Gate::Type type, const std::vector<std::string> &input_names, const std::string &output_name);
 	Gate *add_learnt_gate(const std::vector<int> &input_names, const int &output_name);
-	Gate *add_learnt_gate(std::vector<Line *> input_names, Line *output_name);
+	Gate *add_learnt_gate(std::vector<Line *> input_names, Line *output_name,std::vector<int> &inputs_polarity);
 
 	Line *get_line(const int &name);
 
