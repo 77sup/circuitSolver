@@ -22,14 +22,14 @@ public:
     int weight;
     int level;
     // only circuit output and conflict gate's output and learnt gate is one line
-    bool is_fixed_value;
+    //bool is_fixed_value;
     std::vector<int> source_lines;
     line_information()
     {
         this->assign = -1;
         this->weight = -1;
         this->level = -1;
-        this->is_fixed_value = false;
+        //this->is_fixed_value = false;
     }
 };
 

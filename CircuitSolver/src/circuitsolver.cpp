@@ -7,7 +7,7 @@ int number = 0;
 bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line)
 {
     number++;
-    int number_lineOfGate = 1 + current_gate->get_inputs().size();
+    int number_lineOfGate = current_gate->get_inputs().size();
     int level = lines_status_num.at(decision_line).level;
     Gate::Type GateType = current_gate->get_type();
     //inputs_lines_assign[0]---store value 0's number;inputs_lines_assign[1]---store value 1's number;inputs_lines_assign[2]---store value x's number
@@ -32,7 +32,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     {
     case Gate::Type::And:
     {
-        if ((output_assign == 0 && inputs_lines_assign[1].size() == number_lineOfGate - 1) || (output_assign == 1 && inputs_lines_assign[0].size() > 0))
+        if ((output_assign == 0 && inputs_lines_assign[1].size() == number_lineOfGate) || (output_assign == 1 && inputs_lines_assign[0].size() > 0))
         {
             if (output_assign)
             {
@@ -46,7 +46,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             }
             return false; // conflict
         }
-        else if (output_assign == 0 && inputs_lines_assign[2].size() == 1 && inputs_lines_assign[1].size() == number_lineOfGate - 2)
+        else if (output_assign == 0 && inputs_lines_assign[2].size() == 1 && inputs_lines_assign[1].size() == number_lineOfGate - 1)
         {
             lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
             lines_status_num.at(inputs_lines_assign[2][0]).level = level;
@@ -74,7 +74,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             bcp_que.push(output_name);
             return true;
         }
-        else if (output_assign == -1 && inputs_lines_assign[1].size() == number_lineOfGate - 1)
+        else if (output_assign == -1 && inputs_lines_assign[1].size() == number_lineOfGate)
         {
             lines_status_num.at(output_name).assign = 1;
             lines_status_num.at(output_name).level = level;
@@ -89,7 +89,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     }
     case Gate::Type::Nand:
     {
-        if ((output_assign == 1 && inputs_lines_assign[1].size() == number_lineOfGate - 1) || (output_assign == 0 && inputs_lines_assign[0].size() > 0))
+        if ((output_assign == 1 && inputs_lines_assign[1].size() == number_lineOfGate) || (output_assign == 0 && inputs_lines_assign[0].size() > 0))
         {
             if (!output_assign)
             {
@@ -103,7 +103,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             }
             return false; // conflict
         }
-        else if (output_assign == 1 && inputs_lines_assign[2].size() == 1 && inputs_lines_assign[1].size() == number_lineOfGate - 2)
+        else if (output_assign == 1 && inputs_lines_assign[2].size() == 1 && inputs_lines_assign[1].size() == number_lineOfGate - 1)
         {
             lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
             lines_status_num.at(inputs_lines_assign[2][0]).level = level;
@@ -131,7 +131,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             bcp_que.push(output_name);
             return true;
         }
-        else if (output_assign == -1 && inputs_lines_assign[1].size() == number_lineOfGate - 1)
+        else if (output_assign == -1 && inputs_lines_assign[1].size() == number_lineOfGate)
         {
             lines_status_num.at(output_name).assign = 0;
             lines_status_num.at(output_name).level = level;
@@ -145,7 +145,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
         }
     case Gate::Type::Or:
     {
-        if ((output_assign == 0 && inputs_lines_assign[1].size() > 0) || (output_assign == 1 && inputs_lines_assign[0].size() == number_lineOfGate - 1))
+        if ((output_assign == 0 && inputs_lines_assign[1].size() > 0) || (output_assign == 1 && inputs_lines_assign[0].size() == number_lineOfGate))
         {
             if (!output_assign)
             {
@@ -170,7 +170,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             }
             return true;
         }
-        else if (output_assign == 1 && inputs_lines_assign[0].size() == number_lineOfGate - 2 && inputs_lines_assign[2].size() == 1)
+        else if (output_assign == 1 && inputs_lines_assign[0].size() == number_lineOfGate - 1 && inputs_lines_assign[2].size() == 1)
         {
             lines_status_num.at(inputs_lines_assign[2][0]).assign = 1;
             lines_status_num.at(inputs_lines_assign[2][0]).level = level;
@@ -179,7 +179,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             bcp_que.push(inputs_lines_assign[2][0]);
             return true;
         }
-        else if (output_assign == -1 && inputs_lines_assign[0].size() == number_lineOfGate - 1)
+        else if (output_assign == -1 && inputs_lines_assign[0].size() == number_lineOfGate)
         {
             lines_status_num.at(output_name).assign = 0;
             lines_status_num.at(output_name).level = level;
@@ -202,7 +202,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     }
     case Gate::Type::Nor:
     {
-        if ((output_assign == 1 && inputs_lines_assign[1].size() > 0) || (output_assign == 0 && inputs_lines_assign[0].size() == number_lineOfGate - 1))
+        if ((output_assign == 1 && inputs_lines_assign[1].size() > 0) || (output_assign == 0 && inputs_lines_assign[0].size() == number_lineOfGate))
         {
             if (output_assign)
             {
@@ -216,7 +216,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             }
             return false; // conflict
         }
-        else if (output_assign == 0 && inputs_lines_assign[0].size() == number_lineOfGate - 2 && inputs_lines_assign[2].size() == 1)
+        else if (output_assign == 0 && inputs_lines_assign[0].size() == number_lineOfGate - 1 && inputs_lines_assign[2].size() == 1)
         {
             lines_status_num.at(inputs_lines_assign[2][0]).assign = 1;
             lines_status_num.at(inputs_lines_assign[2][0]).level = level;
@@ -236,7 +236,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             }
             return true;
         }
-        else if (output_assign == -1 && inputs_lines_assign[0].size() == number_lineOfGate - 1)
+        else if (output_assign == -1 && inputs_lines_assign[0].size() == number_lineOfGate)
         {
             lines_status_num.at(output_name).assign = 1;
             lines_status_num.at(output_name).level = level;
