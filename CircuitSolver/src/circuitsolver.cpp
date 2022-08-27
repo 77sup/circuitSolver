@@ -27,7 +27,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     }
     int output_name = current_gate->get_output()->num_name;
     int output_assign = lines_status_num.at(output_name).assign;
-
+    
     switch (GateType)
     {
     case Gate::Type::And:
@@ -118,7 +118,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             {
                 lines_status_num.at(inputs_lines_assign[2][i]).assign = 1;
                 lines_status_num.at(inputs_lines_assign[2][i]).level = level;
-                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(inputs_lines_assign[2][0]);
+                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(output_name);  //change
                 bcp_que.push(inputs_lines_assign[2][i]);
                 return true;
             }
@@ -165,7 +165,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             {
                 lines_status_num.at(inputs_lines_assign[2][i]).assign = 0;
                 lines_status_num.at(inputs_lines_assign[2][i]).level = level;
-                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(inputs_lines_assign[2][0]);
+                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(output_name);  //change
                 bcp_que.push(inputs_lines_assign[2][i]);
             }
             return true;
@@ -269,7 +269,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
         }
         else if (output_assign != -1 && inputs_lines_assign[2].size() == 1)
         {
-            if (inputs_lines_assign[0].size() > 0)
+            if (inputs_lines_assign[0].size() > 0 ) 
             {
                 lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
                 lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[0][0]);
@@ -472,7 +472,6 @@ bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     {
         int input = current_gate->inputs()[i]->num_name;
         int convert = lines_status_num.at(input).assign;
-        std::cout<<" input:"<<input<<" convert: "<<convert<<" current gate size: "<<current_gate->get_inputs().size()<<std::endl;
         if (lines_status_num.at(input).assign != -1 && current_gate->get_inputs_polarity()[i] == 0)
         {
             inputs_lines_assign[1 - convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
@@ -494,7 +493,7 @@ bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     }
     else if (inputs_lines_assign[0].size() == number_lineOfGate - 1 && inputs_lines_assign[2].size() == 1)
     {
-        lines_status_num.at(inputs_lines_assign[2][0].first).assign = 1 & inputs_lines_assign[2][0].second;
+        lines_status_num.at(inputs_lines_assign[2][0].first).assign = inputs_lines_assign[2][0].second;
         lines_status_num.at(inputs_lines_assign[2][0].first).level = lines_status_num.at(decision_line).level;
         for (auto temp : inputs_lines_assign[0])
             lines_status_num.at(inputs_lines_assign[2][0].first).source_lines.push_back(temp.first);
