@@ -42,7 +42,7 @@ solver::solver(CircuitGraph &graph)
     for (int i = 0; i < noPO_lines_name_size; i++)
     { // put (fanouts>3 || inputs) lines into sort_destination_gates
         Line *temp = graph.m_name_to_line.at(noPO_lines_name[i]);
-        if ((temp->destination_gates.size() > 10) || (!temp->source))
+        if ((temp->destination_gates.size() > 12) || (!temp->source))
         {
             sort_destination_gates.push_back(noPO_lines_name[i]);
             lines_status_num.at(noPO_lines_name[i]).weight = temp->destination_gates.size() + int((!temp->source)) * 1;
@@ -262,7 +262,8 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph, std::vect
     std::vector<Line *> m_learnt_inputs;
     // learnt gate initialized with origin conflict gate
     int conflict_decision_level = decision_level;
-    std::cout<<"conf_back:"<<conflict_decision_level<<std::endl;
+    std::cout<<"conflict_decision_level: "<<conflict_decision_level<<std::endl;
+    std::cout<<"conflict_line is following:"<<conflict_decision_level<<std::endl;
     std::vector<int> learnt_gate(backtrack_solver.back().conflict_line);
     for(auto temp:learnt_gate) std::cout<<temp<<"   "<<backtrack_solver.back().lines_status_num.at(temp).level<<std::endl;
     int this_level_count = 0; // number of lines from the same decision level found
@@ -319,13 +320,12 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph, std::vect
         else
             i++;
     }
-    std::cout<<"###########333"<<std::endl;
+    std::cout<<"final learnt gate is following: first---name; second---level"<<std::endl;
     for(auto temp:learnt_gate) std::cout<<temp<<"   "<<backtrack_solver.back().lines_status_num.at(temp).level<<std::endl;
     std::vector<int> polarity;
     // add learnt gate to the graph
     if (learnt_gate.size() == 1) // set is_fixed_value, backtrack to level 0
     {
-        std::cout<<"learnt_"<<std::endl;
         int temp_assign = backtrack_solver.back().lines_status_num.at(learnt_gate[0]).assign;
         // backtrack to 0 level
         backtrack_solver.erase(backtrack_solver.begin() + 1, backtrack_solver.end());
@@ -359,11 +359,6 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph, std::vect
         int second_level = backtrack_solver.back().lines_status_num.at(second_max_level_line).level;
         int decision = decision_line_name[second_level];
         int assign = backtrack_solver.back().lines_status_num.at(decision).assign;
-        for(int i=1;i<decision_line_name.size();++i)
-        {
-            std::cout<<decision_line_name[i]<<" "<<backtrack_solver.back().lines_status_num.at(decision_line_name[i]).assign<<"------";
-        }
-        std::cout<<std::endl;
         decision_line_name.erase(decision_line_name.begin() + second_level, decision_line_name.end());
         decision_line_name.push_back(decision);
         backtrack_solver.erase(backtrack_solver.begin() + second_level + 1, backtrack_solver.end());
