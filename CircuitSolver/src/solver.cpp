@@ -45,7 +45,7 @@ solver::solver(CircuitGraph &graph)
         if ((temp->destination_gates.size() > 10) || (!temp->source))
         {
             sort_destination_gates.push_back(noPO_lines_name[i]);
-            lines_status_num.at(noPO_lines_name[i]).weight = temp->destination_gates.size() + int((!temp->source)) * 100;
+            lines_status_num.at(noPO_lines_name[i]).weight = temp->destination_gates.size() + int((!temp->source)) * 1;
         }
     }
 }
@@ -359,6 +359,11 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph, std::vect
         int second_level = backtrack_solver.back().lines_status_num.at(second_max_level_line).level;
         int decision = decision_line_name[second_level];
         int assign = backtrack_solver.back().lines_status_num.at(decision).assign;
+        for(int i=1;i<decision_line_name.size();++i)
+        {
+            std::cout<<decision_line_name[i]<<" "<<backtrack_solver.back().lines_status_num.at(decision_line_name[i]).assign<<"------";
+        }
+        std::cout<<std::endl;
         decision_line_name.erase(decision_line_name.begin() + second_level, decision_line_name.end());
         decision_line_name.push_back(decision);
         backtrack_solver.erase(backtrack_solver.begin() + second_level + 1, backtrack_solver.end());

@@ -3,6 +3,7 @@
 #include "include/Time.h"
 #include <string>
 #include <fstream>
+#include<time.h>
 
 int main(int argc, char *argv[])
 {
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	Parser =  t.get_elapsed_us();
+	srand(time(NULL));
 	solver solver(graph);
 	// for(auto temp:graph.get_outputs())
 	// {
