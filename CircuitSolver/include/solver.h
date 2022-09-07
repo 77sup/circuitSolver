@@ -21,7 +21,6 @@ public:
     int assign;
     int weight;
     int level;
-    // only circuit output and conflict gate's output and learnt gate is one line
     //bool is_fixed_value;
     std::vector<int> source_lines;
     line_information()
@@ -52,11 +51,15 @@ private:
     std::vector<int> conflict_line; // conflict line's name
     int previous_conflict;          // record conflict gate address
     Gate *conflict_gate;
+    std::vector<std::vector<int>> watching0;  
+	std::vector<std::vector<int>> watching1;
     // common solving operations both cnf and circuit
     int FindDecisionTarget();
     int conflict_backtrack(int, CircuitGraph &, std::vector<solver> &,std::vector<int> &);
     int second_maxDecision_line(std::vector<Line *> &);
 
+    void delete_not_and_buff(CircuitGraph &);
+    void structural_implication_map(CircuitGraph &);
     int DPLL(CircuitGraph &, int);
     int BCP(CircuitGraph &, int);
 
@@ -65,7 +68,7 @@ private:
     bool LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
     int change_lines_information(int line_name, int level, std::vector<int> source_lines);
     std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line, const solver &);
-
+    Gate::Type tran_type(Gate::Type is,Gate::Type other);
     // only for cnf solvin
     // int unit_propagate(cnf &f, std::queue<int> &bcp_que, int reason_line_name);  // performs unit propagation
     // int apply_transform(cnf &f, std::queue<int> &bcp_que, int reason_line_name); // applies the value of the literal in

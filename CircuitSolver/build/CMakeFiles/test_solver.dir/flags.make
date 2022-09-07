@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/hkm/circuitSolver/CircuitSolver/include
 
-CXX_FLAGS = -g   -Wall -g
+CXX_FLAGS = -g   -g
 

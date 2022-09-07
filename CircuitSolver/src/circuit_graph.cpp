@@ -223,6 +223,11 @@ const std::deque<Gate> &CircuitGraph::get_gates() const
 {
 	return m_gates;
 }
+std::deque<Gate> &CircuitGraph::get_gates()
+{
+	return m_gates;
+	
+}
 
 const std::deque<Line> &CircuitGraph::get_lines() const
 {

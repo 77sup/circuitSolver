@@ -4,6 +4,6 @@ project(SOIDIERFIRE)
 #绝对路径写法：include_directories(${CMAKE_SOURCE_DIR/include}),#CMAKE_SOURCE_DIR等价于根目录
 include_directories(${CMAKE_SOURCE_DIR}/include)
 set(CMAKE_BUILD_TYPE "DEBUG")
-add_definitions("-Wall -g")
+add_definitions("-g")
 add_executable(test_solver main.cpp src/iscas89_parser.cpp src/circuit_graph.cpp src/log.cpp src/solver.cpp
  src/circuitsolver.cpp)

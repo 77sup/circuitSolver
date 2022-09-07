@@ -76,6 +76,7 @@ public:
 	void change_learnt_gate(bool is) {this->is_learn_gate = is;}
 	const std::vector<int> &get_inputs_polarity() const { return inputs_polarity; }
 	void change_inputs_polarity(std::vector<int> &inputs_polarity) {this->inputs_polarity = inputs_polarity;}
+	void change_inputs_polarity(int idx,int polarity) {this->inputs_polarity[idx] = polarity;}
 
 private:
 	Type m_type = Type::Undefined;
@@ -83,6 +84,9 @@ private:
 	Line *m_output = nullptr;
 	bool is_learn_gate = false;
 	std::vector<int> inputs_polarity;
+	std::vector<int> dir_imp0;   //design for direction implication graph
+	std::vector<int> dir_imp1;
+
 };
 
 class CircuitGraph
@@ -102,9 +106,13 @@ public:
 
 	const std::vector<Line *> &get_inputs() const;
 	const std::vector<Line *> &get_outputs() const;
+  std::vector<Line *> &outputs() {return m_outputs;}
 
 	const std::deque<Gate> &get_gates() const;
+	std::deque<Gate> &get_gates();
+
 	const std::deque<Line> &get_lines() const;
+	std::deque<Line> &lines() {return m_lines;}
 	std::unordered_map<int, Line *> m_name_to_line;
 	void get_graph_stats() const;
 	Line *ensure_line(const int &name);
@@ -148,6 +156,7 @@ private:
 
 	std::vector<Line *> m_inputs;
 	std::vector<Line *> m_outputs;
+
 };
 
 #endif
