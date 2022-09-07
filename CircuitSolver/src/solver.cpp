@@ -56,33 +56,33 @@ solver::solver(CircuitGraph &graph)
 
 void solver::delete_not_and_buff(CircuitGraph &graph)
 {
-    //初始化所有的门的输入线的极性都为1（首先为了给inputs_polarity容器开辟空间，其次这么做之后只需要遇到not的时候单独修改）
+    //initialize all gate's inputs polarity to 1, aims:1.open space for inputs_polarit vector, 2.only when encounter NOT change it
     for (auto gate : graph.get_gates())
     {
         std::vector<int> inputs_polarity(gate.get_inputs().size(), 1);
         gate.change_inputs_polarity(inputs_polarity);
     }
-    for (unsigned int i = 0; i < graph.get_gates().size(); ++i)
+    for (unsigned int i = 0; i < graph.get_gates().size(); ++i)  //traverse all gates
     {
-        auto type = graph.get_gates()[i].get_type();
+        auto type = graph.get_gates()[i].get_type();   //acquire current gate's type
         if (type == Gate::Type::Not || type == Gate::Type::Buff)
         {
             std::cout << "gate inputs size:" << graph.get_gates()[i].get_inputs().size() << std::endl;
-            Line *temp_input = graph.get_gates()[i].get_inputs()[0];
-            Line *temp_output = graph.get_gates()[i].get_output();
-            // updat temp_input's destination_gates
-            temp_input->destination_gates.erase(&graph.get_gates()[i]);
-            for (auto d_gate : temp_output->destination_gates) // get not/buff's all output
+            Line *temp_input = graph.get_gates()[i].get_inputs()[0];  //not and buff only have one input
+            Line *temp_output = graph.get_gates()[i].get_output();    //all gates only have one output
+            // update temp_input's destination_gates
+            temp_input->destination_gates.erase(&graph.get_gates()[i]);   //delete current not/buff
+            for (auto d_gate : temp_output->destination_gates)   // get current not/buff's all destination gate
             {
-                temp_input->destination_gates.insert(d_gate); // add not/buff's all output into this input's destination
-                //若d_gate为反相器或者缓冲器 则不改变输入极性直接改变gate的类型
+                temp_input->destination_gates.insert(d_gate); // add not/buff's destination gate into this input's destination
+                //if d_gate is not/buff,don't change d_gate's input polarity,instead change d_gate' type
                 if (d_gate->get_type() == Gate::Type::Not || d_gate->get_type() == Gate::Type::Buff)
                 {
                     d_gate->inputs()[0] = temp_input;
-                    d_gate->type() = tran_type(d_gate->get_type(), type);
-                    continue;
+                    d_gate->type() = tran_type(d_gate->get_type(), type);  //type is current gate's type
+                    continue;  //skip to next time loop
                 }
-                //改变对应的极性
+                //d_gate isn't not/buff, change its input's polarity
                 for (unsigned int t = 0; t < d_gate->inputs().size(); t++)
                 {
                     if (d_gate->inputs()[t] == temp_output)
@@ -90,22 +90,22 @@ void solver::delete_not_and_buff(CircuitGraph &graph)
                         d_gate->inputs()[t] = temp_input;
                         if (type == Gate::Type::Not)
                             d_gate->change_inputs_polarity(t, 0);
-                        continue;
+                        break;
                     }
                 }
             }
-            //如果该门的输出线是原始输出，需要修改图的m_output容器；
+            //if current gate's output is PO,need to change graph's m_output vector
             if (temp_output->is_output)
             {
                 auto flag = std::find(graph.outputs().begin(), graph.outputs().end(), temp_output);
                 (*flag) = temp_input;
-                temp_input->is_output = true;
+                (*flag)->is_output=true;
                 lines_status_num.at(temp_input->num_name) = lines_status_num.at(temp_output->num_name);
                 if (type == Gate::Type::Not)
                     lines_status_num.at(temp_input->num_name).assign = 1 - lines_status_num.at(temp_input->num_name).assign;
             }
             graph.get_gates().erase(graph.get_gates().begin() + i); // delete not/buff from graph
-            lines_status_num.erase(temp_output->num_name);          // 删除两个map容器中的信息
+            lines_status_num.erase(temp_output->num_name);          // delete current buff/not output line infomation
             graph.m_name_to_line.erase(temp_output->num_name);
             for (unsigned int p = 0; p < graph.lines().size(); ++p)
             {
@@ -115,11 +115,12 @@ void solver::delete_not_and_buff(CircuitGraph &graph)
                     break;
                 }
             }
-            //若删除一个节点，则查找指针不变
+            //recover seek pointer
             i--;
         }
     }
 }
+
 void solver::structural_implication_map(CircuitGraph &graph)
 {
     for (auto gate : graph.get_gates())
@@ -138,18 +139,6 @@ Gate::Type solver::tran_type(Gate::Type is, Gate::Type other)
     {
         switch (is)
         {
-        case Gate::Type::And:
-            return Gate::Type::Nand;
-        case Gate::Type::Nand:
-            return Gate::Type::And;
-        case Gate::Type::Nor:
-            return Gate::Type::Or;
-        case Gate::Type::Or:
-            return Gate::Type::Nor;
-        case Gate::Type::Xor:
-            return Gate::Type::Xnor;
-        case Gate::Type::Xnor:
-            return Gate::Type::Xor;
         case Gate::Type::Buff:
             return Gate::Type::Not;
         case Gate::Type::Not:
@@ -198,9 +187,7 @@ void solver::solve(CircuitGraph &graph)
     std::cout << " DPLL operation over" << std::endl;
 }
 
-int solver::DPLL(CircuitGraph &graph,
-                 int decision_line) // return 0---unsat;return 1---sat,but this
-                                    // not related to solver's solution
+int solver::DPLL(CircuitGraph &graph,int decision_line) // return 0---unsat;return 1---sat,but this not related to solver's solution
 {
     int bcp_result = BCP(graph, decision_line);
     if (bcp_result == 0)
