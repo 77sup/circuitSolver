@@ -42,6 +42,7 @@ public:
     void solve(CircuitGraph &);
     int CDCLsolver(CircuitGraph &);
     void test(CircuitGraph &);
+    void structural_implication_map(CircuitGraph &);
 
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
@@ -59,9 +60,16 @@ private:
     int second_maxDecision_line(std::vector<Line *> &);
 
     void delete_not_and_buff(CircuitGraph &);
-    void structural_implication_map(CircuitGraph &);
+    //void structural_implication_map(CircuitGraph &);
     int DPLL(CircuitGraph &, int);
     int BCP(CircuitGraph &, int);
+
+    //for two-literal watch to struct direct and indirect implicaiton graph
+    void structural_and(Gate&, int );
+    void structural_nand(Gate&, int );
+    void structural_or(Gate&, int );
+    void structural_nor(Gate&, int );
+    void structural_xor_or_nxor(Gate&, int );
 
     // only for circuit solving
     bool SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);

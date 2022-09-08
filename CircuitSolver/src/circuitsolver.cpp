@@ -10,7 +10,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     int number_lineOfGate = current_gate->get_inputs().size();
     int level = lines_status_num.at(decision_line).level;
     Gate::Type GateType = current_gate->get_type();
-    //inputs_lines_assign[0]---store value 0's number;inputs_lines_assign[1]---store value 1's number;inputs_lines_assign[2]---store value x's number
+    // inputs_lines_assign[0]---store value 0's number;inputs_lines_assign[1]---store value 1's number;inputs_lines_assign[2]---store value x's number
     std::vector<std::vector<int>> inputs_lines_assign(3);
     for (int i = 0; i < current_gate->get_inputs().size(); i++)
     {
@@ -27,7 +27,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     }
     int output_name = current_gate->get_output()->num_name;
     int output_assign = lines_status_num.at(output_name).assign;
-    
+
     switch (GateType)
     {
     case Gate::Type::And:
@@ -118,7 +118,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             {
                 lines_status_num.at(inputs_lines_assign[2][i]).assign = 1;
                 lines_status_num.at(inputs_lines_assign[2][i]).level = level;
-                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(output_name);  //change
+                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(output_name); // change
                 bcp_que.push(inputs_lines_assign[2][i]);
                 return true;
             }
@@ -165,7 +165,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
             {
                 lines_status_num.at(inputs_lines_assign[2][i]).assign = 0;
                 lines_status_num.at(inputs_lines_assign[2][i]).level = level;
-                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(output_name);  //change
+                lines_status_num.at(inputs_lines_assign[2][i]).source_lines.push_back(output_name); // change
                 bcp_que.push(inputs_lines_assign[2][i]);
             }
             return true;
@@ -269,7 +269,7 @@ bool solver::SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
         }
         else if (output_assign != -1 && inputs_lines_assign[2].size() == 1)
         {
-            if (inputs_lines_assign[0].size() > 0 ) 
+            if (inputs_lines_assign[0].size() > 0)
             {
                 lines_status_num.at(inputs_lines_assign[2][0]).assign = 0;
                 lines_status_num.at(inputs_lines_assign[2][0]).source_lines.push_back(inputs_lines_assign[0][0]);
@@ -466,7 +466,7 @@ bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
 {
     number++;
     int number_lineOfGate = current_gate->get_inputs().size();
-    std::vector<std::vector<std::pair<int, int>>> inputs_lines_assign(3);  //key---line's name; value---line's polarty
+    std::vector<std::vector<std::pair<int, int>>> inputs_lines_assign(3); // key---line's name; value---line's polarty
     // traverse, and change line's polarity
     for (int i = 0; i < current_gate->get_inputs().size(); i++)
     {
@@ -476,11 +476,11 @@ bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
         {
             inputs_lines_assign[1 - convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
         }
-        else if(lines_status_num.at(input).assign != -1 && current_gate->get_inputs_polarity()[i] == 1)
+        else if (lines_status_num.at(input).assign != -1 && current_gate->get_inputs_polarity()[i] == 1)
         {
             inputs_lines_assign[convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
         }
-        else 
+        else
             inputs_lines_assign[2].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
     }
 
@@ -504,4 +504,58 @@ bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
     {
         return true;
     }
+}
+
+void solver::structural_and(Gate &gate, int gate_index)
+{
+    //direct implication
+    std::pair <int,int> des_output;
+    for(auto temp:gate.get_output()->destination_gates) //for dir_imp0 with destination gates,with source gate is NULL
+    {
+        if(temp->get_type()==Gate::Type::And){
+            des_output=std::make_pair(temp->get_output()->num_name,0);
+            gate.get_dir_imp0().push_back(des_output);
+        }
+        else if(temp->get_type()==Gate::Type::Nand){
+            des_output=std::make_pair(temp->get_output()->num_name,1);
+            gate.get_dir_imp0().push_back(des_output);
+        }
+    }
+    for(auto temp:gate.get_output()->destination_gates) //for dir_imp1 with destination gates
+    {
+        if(temp->get_type()==Gate::Type::Or){
+            des_output=std::make_pair(temp->get_output()->num_name,1);
+            gate.get_dir_imp1().push_back(des_output);
+        }
+        else if(temp->get_type()==Gate::Type::Nor){
+            des_output=std::make_pair(temp->get_output()->num_name,0);
+            gate.get_dir_imp1().push_back(des_output);
+        }
+    }
+    for(int i=0;i<gate.get_inputs().size();i++)  //for dir_imp1 with source gates
+    {
+        des_output=std::make_pair(gate.get_inputs()[i]->num_name,gate.get_inputs_polarity()[i]);
+        gate.get_dir_imp1().push_back(des_output);
+    }
+    //indirect implication
+    
+
+
+}
+
+void solver::structural_nand(Gate &gate, int gate_index)
+{
+
+}
+void solver::structural_or(Gate &gate, int gate_index)
+{
+
+}
+void solver::structural_nor(Gate &gate, int gate_index)
+{
+
+}
+void solver::structural_xor_or_nxor(Gate &gate, int gate_index)
+{
+
 }

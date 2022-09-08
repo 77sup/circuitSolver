@@ -58,7 +58,7 @@ public:
 
 	Gate(Type type, Line *output, std::vector<Line *> &&inputs);
 	Gate(Line *output, std::vector<Line *> &inputs);
-
+	
 	//Gate(const Gate &) = delete;
 
 	Type get_type() const { return m_type; }
@@ -77,6 +77,8 @@ public:
 	const std::vector<int> &get_inputs_polarity() const { return inputs_polarity; }
 	void change_inputs_polarity(std::vector<int> &inputs_polarity) {this->inputs_polarity = inputs_polarity;}
 	void change_inputs_polarity(int idx,int polarity) {this->inputs_polarity[idx] = polarity;}
+	std::vector<std::pair<int,int>>& get_dir_imp0(){ return dir_imp0;}
+	std::vector<std::pair<int,int>>& get_dir_imp1(){ return dir_imp1;}
 
 private:
 	Type m_type = Type::Undefined;
@@ -84,8 +86,8 @@ private:
 	Line *m_output = nullptr;
 	bool is_learn_gate = false;
 	std::vector<int> inputs_polarity;
-	std::vector<int> dir_imp0;   //design for direction implication graph
-	std::vector<int> dir_imp1;
+	std::vector<std::pair<int,int>> dir_imp0;   //design for direction implication graph
+	std::vector<std::pair<int,int>> dir_imp1;
 
 };
 
@@ -106,7 +108,7 @@ public:
 
 	const std::vector<Line *> &get_inputs() const;
 	const std::vector<Line *> &get_outputs() const;
-  std::vector<Line *> &outputs() {return m_outputs;}
+  	std::vector<Line *> &outputs() {return m_outputs;}
 
 	const std::deque<Gate> &get_gates() const;
 	std::deque<Gate> &get_gates();
@@ -135,12 +137,7 @@ public:
 					len++;
 				}
 				std::string num_name = name.substr(j, len); //获取子串
-				int change_name = 0;												//数字字符串转换为整型数字
-				std::stringstream s1(num_name);
-				s1 >> change_name;
-				// std::cout<<"the name after change : ";
-				// std::cout<<change_name<<std::endl;
-				return change_name;
+				return std::stoi(num_name);  //数字字符串转换为整型数字
 			}
 			else
 			{

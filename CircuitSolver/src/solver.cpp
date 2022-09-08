@@ -9,42 +9,28 @@ solver::solver(CircuitGraph &graph)
     std::vector<int> output;          // store PIs
     std::cout << "the number of all lines:";
     std::cout << graph.m_name_to_line.size() << std::endl;
-    // assign POs to 1
-    for (int i = 0; i < output.size(); i++)
+    for (auto &line : graph.lines())
     {
         line_information temp;
-        temp.assign = 1;
-        temp.level = 0;
-        lines_status_num.emplace(output[i], temp);
-    }
-    for (int i = 0; i < graph.get_lines().size(); i++)
-    {
-        if (graph.get_lines()[i].is_output)
+        if (line.is_output)
         {
-            output.push_back(graph.get_lines()[i].num_name);
+            temp.level = 0;
+            temp.assign = 1;
         }
-        else
-        {
-            noPO_lines_name.push_back(graph.get_lines()[i].num_name);
-        }
+        lines_status_num.emplace(line.num_name, temp);
     }
-    for (int i = 0; i < noPO_lines_name.size(); i++)
-    {
-        line_information temp;
-        lines_status_num.emplace(noPO_lines_name[i], temp);
-        // find PIs to store
-        if (!graph.m_name_to_line.at(noPO_lines_name[i])->source)
-        {
-            the_name_of_input_line.push_back(noPO_lines_name[i]);
-        }
-    }
-    //化简图结构
     delete_not_and_buff(graph);
+    for (unsigned int i = 0; i < graph.lines().size(); ++i)
+    {
+        if (graph.lines()[i].is_output)
+            output.push_back(graph.lines()[i].num_name);
+        else
+            noPO_lines_name.push_back(graph.lines()[i].num_name);
+    }
     // according to fan_outs numbers to order(max->min)
     int noPO_lines_name_size = noPO_lines_name.size();
-    for (int i = 0; i < noPO_lines_name_size;
-         i++)
-    { // put (fanouts>3 || inputs) lines into sort_destination_gates
+    for (int i = 0; i < noPO_lines_name_size; i++)
+    { // put (fanouts>12 || inputs) lines into sort_destination_gates
         Line *temp = graph.m_name_to_line.at(noPO_lines_name[i]);
         if ((temp->destination_gates.size() > 12) || (!temp->source))
         {
@@ -52,54 +38,58 @@ solver::solver(CircuitGraph &graph)
             lines_status_num.at(noPO_lines_name[i]).weight = temp->destination_gates.size() + int((!temp->source)) * 1;
         }
     }
+    std::cout << "out" << std::endl;
 }
 
 void solver::delete_not_and_buff(CircuitGraph &graph)
 {
-    //initialize all gate's inputs polarity to 1, aims:1.open space for inputs_polarit vector, 2.only when encounter NOT change it
-    for (auto gate : graph.get_gates())
+    // initialize all gate's inputs polarity to 1, aims:1.open space for inputs_polarit vector, 2.only when encounter NOT change it
+    for (auto &gate : graph.get_gates())
     {
         std::vector<int> inputs_polarity(gate.get_inputs().size(), 1);
         gate.change_inputs_polarity(inputs_polarity);
     }
-    for (unsigned int i = 0; i < graph.get_gates().size(); ++i)  //traverse all gates
+    for (unsigned int i = 0; i < graph.get_gates().size(); ++i) // traverse all gates
     {
-        auto type = graph.get_gates()[i].get_type();   //acquire current gate's type
+        auto type = graph.get_gates()[i].get_type(); // acquire current gate's type
         if (type == Gate::Type::Not || type == Gate::Type::Buff)
         {
             std::cout << "gate inputs size:" << graph.get_gates()[i].get_inputs().size() << std::endl;
-            Line *temp_input = graph.get_gates()[i].get_inputs()[0];  //not and buff only have one input
-            Line *temp_output = graph.get_gates()[i].get_output();    //all gates only have one output
+            Line *temp_input = graph.get_gates()[i].get_inputs()[0]; // not and buff only have one input
+            Line *temp_output = graph.get_gates()[i].get_output();   // all gates only have one output
             // update temp_input's destination_gates
-            temp_input->destination_gates.erase(&graph.get_gates()[i]);   //delete current not/buff
-            for (auto d_gate : temp_output->destination_gates)   // get current not/buff's all destination gate
+            temp_input->destination_gates.erase(&graph.get_gates()[i]); // delete current not/buff
+            for (auto d_gate : temp_output->destination_gates)          // get current not/buff's all destination gate
             {
                 temp_input->destination_gates.insert(d_gate); // add not/buff's destination gate into this input's destination
-                //if d_gate is not/buff,don't change d_gate's input polarity,instead change d_gate' type
+                // if d_gate is not/buff,don't change d_gate's input polarity,instead change d_gate' type
+
                 if (d_gate->get_type() == Gate::Type::Not || d_gate->get_type() == Gate::Type::Buff)
                 {
                     d_gate->inputs()[0] = temp_input;
-                    d_gate->type() = tran_type(d_gate->get_type(), type);  //type is current gate's type
-                    continue;  //skip to next time loop
+                    d_gate->type() = tran_type(d_gate->get_type(), type); // type is current gate's type
+                    continue;                                             // skip to next time loop
                 }
-                //d_gate isn't not/buff, change its input's polarity
+                // d_gate isn't not/buff, change its input's polarity
                 for (unsigned int t = 0; t < d_gate->inputs().size(); t++)
                 {
                     if (d_gate->inputs()[t] == temp_output)
                     {
                         d_gate->inputs()[t] = temp_input;
                         if (type == Gate::Type::Not)
+                        {
                             d_gate->change_inputs_polarity(t, 0);
+                        }
                         break;
                     }
                 }
             }
-            //if current gate's output is PO,need to change graph's m_output vector
+            // if current gate's output is PO,need to change graph's m_output vector
             if (temp_output->is_output)
             {
                 auto flag = std::find(graph.outputs().begin(), graph.outputs().end(), temp_output);
                 (*flag) = temp_input;
-                (*flag)->is_output=true;
+                (*flag)->is_output = true;
                 lines_status_num.at(temp_input->num_name) = lines_status_num.at(temp_output->num_name);
                 if (type == Gate::Type::Not)
                     lines_status_num.at(temp_input->num_name).assign = 1 - lines_status_num.at(temp_input->num_name).assign;
@@ -109,13 +99,13 @@ void solver::delete_not_and_buff(CircuitGraph &graph)
             graph.m_name_to_line.erase(temp_output->num_name);
             for (unsigned int p = 0; p < graph.lines().size(); ++p)
             {
-                if (&graph.lines()[p] == temp_output)
+                if (graph.lines()[p].num_name == temp_output->num_name)
                 {
                     graph.lines().erase(graph.lines().begin() + p);
                     break;
                 }
             }
-            //recover seek pointer
+            // recover seek pointer
             i--;
         }
     }
@@ -123,12 +113,44 @@ void solver::delete_not_and_buff(CircuitGraph &graph)
 
 void solver::structural_implication_map(CircuitGraph &graph)
 {
-    for (auto gate : graph.get_gates())
+    // open up space for watching-0 and watching-1 vector,first find max num_name
+    int max_num_name = 0;
+    for (auto temp : lines_status_num)
     {
-        Gate::Type type = gate.get_type();
-        Line *output = gate.get_output();
+        if (temp.first > max_num_name)
+        {
+            max_num_name = temp.first;
+        }
+    }
+    std::cout << "max_num_name: " << max_num_name << std::endl;
+    watching0.resize(max_num_name);
+    watching1.resize(max_num_name);
+
+    for (unsigned int i = 0; i < graph.get_gates().size(); ++i)
+    {
+        Gate::Type type = graph.get_gates()[i].get_type();
+        Line *output = graph.get_gates()[i].get_output();
         // 1:判断门的类型并结合门的输入的极性，随机找监视指针并确定监视值
-        // 2:根据门周围的门的信息和极性构造显式蕴含图
+
+        // 2:根据门周围的门的信息和极性构造蕴含图
+        switch (type)
+        {
+        case Gate::Type::And: //输入线监视值为1 输出线监视值为0
+            structural_and(graph.get_gates()[i], i);
+            break;
+        case Gate::Type::Nand: //输入线监视值为1 输出线监视值为1
+            structural_nand(graph.get_gates()[i], i);
+            break;
+        case Gate::Type::Or: //输入线监视值为0 输出线监视值为1
+            structural_or(graph.get_gates()[i], i);
+            break;
+        case Gate::Type::Nor: //输入线监视值为0 输出线监视值为0
+            structural_nor(graph.get_gates()[i], i);
+            break;
+        default: // xor and xnor需要两个监视指针 监视值未知
+            structural_xor_or_nxor(graph.get_gates()[i], i);
+            break;
+        }
     }
 }
 Gate::Type solver::tran_type(Gate::Type is, Gate::Type other)
@@ -187,7 +209,7 @@ void solver::solve(CircuitGraph &graph)
     std::cout << " DPLL operation over" << std::endl;
 }
 
-int solver::DPLL(CircuitGraph &graph,int decision_line) // return 0---unsat;return 1---sat,but this not related to solver's solution
+int solver::DPLL(CircuitGraph &graph, int decision_line) // return 0---unsat;return 1---sat,but this not related to solver's solution
 {
     int bcp_result = BCP(graph, decision_line);
     if (bcp_result == 0)
