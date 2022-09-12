@@ -27,6 +27,8 @@ solver::solver(CircuitGraph &graph)
         else
             noPO_lines_name.push_back(graph.lines()[i].num_name);
     }
+    structural_implication_map(graph);
+    std::cout<<" END structural_implication_map(graph)"<<std::endl;
     // according to fan_outs numbers to order(max->min)
     int noPO_lines_name_size = noPO_lines_name.size();
     for (int i = 0; i < noPO_lines_name_size; i++)
@@ -52,6 +54,7 @@ void solver::delete_not_and_buff(CircuitGraph &graph)
     for (unsigned int i = 0; i < graph.get_gates().size(); ++i) // traverse all gates
     {
         auto type = graph.get_gates()[i].get_type(); // acquire current gate's type
+        int not_buff_sum=0;
         if (type == Gate::Type::Not || type == Gate::Type::Buff)
         {
             std::cout << "gate inputs size:" << graph.get_gates()[i].get_inputs().size() << std::endl;
@@ -123,35 +126,19 @@ void solver::structural_implication_map(CircuitGraph &graph)
         }
     }
     std::cout << "max_num_name: " << max_num_name << std::endl;
-    watching0.resize(max_num_name);
-    watching1.resize(max_num_name);
+    watching0.resize(max_num_name+1);
+    watching1.resize(max_num_name+1);
+    std::cout<<"********: "<<graph.get_gates().size()<<std::endl;
 
     for (unsigned int i = 0; i < graph.get_gates().size(); ++i)
     {
-        Gate::Type type = graph.get_gates()[i].get_type();
-        Line *output = graph.get_gates()[i].get_output();
-        // 1:判断门的类型并结合门的输入的极性，随机找监视指针并确定监视值
-
-        // 2:根据门周围的门的信息和极性构造蕴含图
-        switch (type)
-        {
-        case Gate::Type::And: //输入线监视值为1 输出线监视值为0
-            structural_and(graph.get_gates()[i], i);
-            break;
-        case Gate::Type::Nand: //输入线监视值为1 输出线监视值为1
-            structural_nand(graph.get_gates()[i], i);
-            break;
-        case Gate::Type::Or: //输入线监视值为0 输出线监视值为1
-            structural_or(graph.get_gates()[i], i);
-            break;
-        case Gate::Type::Nor: //输入线监视值为0 输出线监视值为0
-            structural_nor(graph.get_gates()[i], i);
-            break;
-        default: // xor and xnor需要两个监视指针 监视值未知
-            structural_xor_or_nxor(graph.get_gates()[i], i);
-            break;
-        }
+        //struct dir/indir implicaiton,initialize two pointer, decide watch value
+        std::cout<<"%%%%%%%%%%%%%"<<std::endl;
+        struct_implication(graph.get_gates()[i], i);
+        std::cout<<"222222"<<std::endl;
+        std::cout<<"i: "<<i<<std::endl;
     }
+        //std::cout<<"1111111"<<std::endl;
 }
 Gate::Type solver::tran_type(Gate::Type is, Gate::Type other)
 {
@@ -584,4 +571,12 @@ void solver::print_lines_source(CircuitGraph &garph)
     for (auto temp : garph.get_lines())
         std::cout << temp.num_name << "   "
                   << lines_status_num[temp.num_name].assign << std::endl;
+}
+
+
+void solver::test(CircuitGraph & graph)
+{
+    
+
+
 }

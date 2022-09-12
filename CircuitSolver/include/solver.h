@@ -42,7 +42,7 @@ public:
     void solve(CircuitGraph &);
     int CDCLsolver(CircuitGraph &);
     void test(CircuitGraph &);
-    void structural_implication_map(CircuitGraph &);
+    
 
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
@@ -54,10 +54,11 @@ private:
     Gate *conflict_gate;
     std::vector<std::vector<int>> watching0;  
 	std::vector<std::vector<int>> watching1;
-    // common solving operations both cnf and circuit
+    
     int FindDecisionTarget();
     int conflict_backtrack(int, CircuitGraph &, std::vector<solver> &,std::vector<int> &);
     int second_maxDecision_line(std::vector<Line *> &);
+    void structural_implication_map(CircuitGraph &);
 
     void delete_not_and_buff(CircuitGraph &);
     //void structural_implication_map(CircuitGraph &);
@@ -65,11 +66,9 @@ private:
     int BCP(CircuitGraph &, int);
 
     //for two-literal watch to struct direct and indirect implicaiton graph
-    void structural_and(Gate&, int );
-    void structural_nand(Gate&, int );
-    void structural_or(Gate&, int );
-    void structural_nor(Gate&, int );
-    void structural_xor_or_nxor(Gate&, int );
+    void struct_implication(Gate &, int );
+    
+
 
     // only for circuit solving
     bool SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
