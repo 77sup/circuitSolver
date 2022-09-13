@@ -46,11 +46,11 @@ public:
 	{
 		And,
 		Nand,
-		Not,
 		Or,
 		Nor,
 		Xor,
 		Xnor,
+		Not,
 		Buff,
 
 		Undefined,

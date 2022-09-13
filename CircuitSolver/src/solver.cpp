@@ -9,7 +9,6 @@ solver::solver(CircuitGraph &graph)
     std::vector<int> output;          // store PIs
     std::cout << "the number of all lines:";
     std::cout << graph.m_name_to_line.size() << std::endl;
-    std::cout << "-------------" << std::endl;
     for (auto &line : graph.lines())
     {
         line_information temp;
@@ -20,9 +19,7 @@ solver::solver(CircuitGraph &graph)
         }
         else
         {
-            std::cout << "-------------" << std::endl;
             temp.weight = compute_wight(graph, line.num_name);
-            std::cout << "-------------" << std::endl;
         }
         lines_status_num.emplace(line.num_name, temp);
     }
@@ -33,9 +30,7 @@ solver::solver(CircuitGraph &graph)
         else
             noPO_lines_name.push_back(graph.lines()[i].num_name);
     }
-    std::cout << "-------------" << std::endl;
     structural_implication_map(graph);
-    std::cout << " END structural_implication_map(graph)" << std::endl;
     // according to fan_outs numbers to order(max->min)
     int noPO_lines_name_size = noPO_lines_name.size();
     for (int i = 0; i < noPO_lines_name_size; i++)
@@ -47,7 +42,6 @@ solver::solver(CircuitGraph &graph)
             lines_status_num.at(noPO_lines_name[i]).weight = temp->destination_gates.size() + int((!temp->source)) * 1;
         }
     }
-    std::cout << "out" << std::endl;
 }
 
 void solver::structural_implication_map(CircuitGraph &graph)
@@ -64,15 +58,14 @@ void solver::structural_implication_map(CircuitGraph &graph)
     std::cout << "max_num_name: " << max_num_name << std::endl;
     watching0.resize(max_num_name + 1);
     watching1.resize(max_num_name + 1);
-    std::cout << "********: " << graph.get_gates().size() << std::endl;
+    std::cout << "graph.get_gates().size(): " << graph.get_gates().size() << std::endl;
 
     for (unsigned int i = 0; i < graph.get_gates().size(); ++i)
     {
         // struct dir/indir implicaiton,initialize two pointer, decide watch value
         std::cout << "%%%%%%%%%%%%%" << std::endl;
         struct_implication(graph.get_gates()[i], i);
-        std::cout << "222222" << std::endl;
-        std::cout << "i: " << i << std::endl;
+        std::cout << "graph.get_gates index i: " << i << std::endl;
     }
     // std::cout<<"1111111"<<std::endl;
 }

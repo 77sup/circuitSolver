@@ -509,37 +509,38 @@ bool solver::LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int 
 void solver::struct_implication(Gate &gate, int gate_index)
 {
     // direct implication; all types gate's destination dir_imp0 and dir_imp1 is identical.xor and xnor don'd have direct implication
-    std::cout << "!!!!!!!!!!" << std::endl;
     for (const auto &temp : gate.get_output()->destination_gates) // for dir_imp0 and dir_imp1 with destination gates
     {
-        std::cout << "gate.get_output()->destination_gate: " << gate.get_output()->destination_gates.size() << std::endl;
-        std::cout << temp->get_output()->is_output << std::endl;
-        std::cout << int(temp->get_type()) << std::endl;
+        std::cout<<"current gate name: "<<gate.get_output()->num_name<<std::endl;
+        std::cout << "gate.get_output()->destination_gate size: " << gate.get_output()->destination_gates.size() << std::endl;
+        std::cout<<"destination gate nume: "<<temp->get_output()->num_name<<std::endl;
+        std::cout << "temp->get_output()->is_output? "<<temp->get_output()->is_output << std::endl;
+        std::cout <<"temp's type is: " <<int(temp->get_type()) << std::endl;
         switch (temp->get_type())
         {
         case Gate::Type::And: // input watch_value is 1,output watch_value is 0
-            std::cout << "-----------And" << std::endl;
+            std::cout << "-----------dir_imp_And" << std::endl;
             gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 0));
             break;
         case Gate::Type::Nand: // input watch_value is 1,output watch_value is 1
-            std::cout << "-----------Nand" << std::endl;
+            std::cout << "-----------dir_imp_Nand" << std::endl;
             gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 1));
             break;
         case Gate::Type::Or: // input watch_value is 0,output watch_value is 1
-            std::cout << "-----------Or" << std::endl;
+            std::cout << "-----------dir_imp_Or" << std::endl;
             gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 1));
             break;
         case Gate::Type::Nor: // input watch_value is 0,output watch_value is 0
-            std::cout << "-----------Nor" << std::endl;
+            std::cout << "-----------dir_imp_Nor" << std::endl;
             gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 0));
             break;
         case Gate::Type::Not: // input watch_value is x,output watch_value is -x
-            std::cout << "-----------Not" << std::endl;
+            std::cout << "-----------dir_imp_Not" << std::endl;
             gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 1));
             gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 0));
             break;
         case Gate::Type::Buff: // input watch_value is 0,output watch_value is 0
-            std::cout << "-----------Nor" << std::endl;
+            std::cout << "-----------dir_imp_Nor" << std::endl;
             gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 0));
             gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 1));
             break;
@@ -547,9 +548,9 @@ void solver::struct_implication(Gate &gate, int gate_index)
             std::cout << "-----------default" << std::endl;
             break;
         }
-        std::cout << "@@@@@@@@@" << std::endl;
+        std::cout << "@@@@@@@@@complete once direct implicaiton " << std::endl;
     }
-    std::cout << "-----------!!!!!!!!!!" << std::endl;
+    std::cout << "--------------finish this gate all direct implicaton" << std::endl;
     std::pair<int, int> des_output;
     int line_index_output = gate.get_output()->num_name;    // initialize pointer 1
     int line_index_input0 = gate.get_inputs()[0]->num_name; // initialize pointer 2
@@ -559,7 +560,7 @@ void solver::struct_implication(Gate &gate, int gate_index)
     {
         for (int i = 0; i < gate.get_inputs().size(); i++) // for dir_imp1 with source gates
         {
-            des_output = std::make_pair(gate.get_inputs()[i]->num_name, gate.get_inputs_polarity()[i]);
+            des_output = std::make_pair(gate.get_inputs()[i]->num_name, 1);
             gate.get_dir_imp1().push_back(des_output);
         }
         // indirect implication
@@ -570,9 +571,10 @@ void solver::struct_implication(Gate &gate, int gate_index)
     }
     case Gate::Type::Nand: // NAND, dir_imp1 source gate is NULL
     {
-        for (int i = 0; i < gate.get_inputs().size(); i++) // for dir_imp1 with source gates
+        for (int i = 0; i < gate.get_inputs().size(); i++) // for dir_imp0 with source gates
         {
-            des_output = std::make_pair(gate.get_inputs()[i]->num_name, gate.get_inputs_polarity()[i]);
+            std::cout<<"gate.get_inputs()[i]->num_name: "<<gate.get_inputs()[i]->num_name<<std::endl;
+            des_output = std::make_pair(gate.get_inputs()[i]->num_name, 1);
             gate.get_dir_imp0().push_back(des_output);
         }
         // indirect implication
@@ -585,7 +587,7 @@ void solver::struct_implication(Gate &gate, int gate_index)
     {
         for (int i = 0; i < gate.get_inputs().size(); i++) // for dir_imp0 with source gates
         {
-            des_output = std::make_pair(gate.get_inputs()[i]->num_name, 1 - gate.get_inputs_polarity()[i]);
+            des_output = std::make_pair(gate.get_inputs()[i]->num_name, 0);
             gate.get_dir_imp0().push_back(des_output);
         }
         // indirect implication
@@ -598,8 +600,8 @@ void solver::struct_implication(Gate &gate, int gate_index)
     {
         for (int i = 0; i < gate.get_inputs().size(); i++) // for dir_imp1 with source gates
         {
-            des_output = std::make_pair(gate.get_inputs()[i]->num_name, 1 - gate.get_inputs_polarity()[i]);
-            gate.get_dir_imp0().push_back(des_output);
+            des_output = std::make_pair(gate.get_inputs()[i]->num_name, 0);
+            gate.get_dir_imp1().push_back(des_output);
         }
         // indirect implication
         watching0[line_index_output].push_back(gate_index); // NOR's output watch value is 0
