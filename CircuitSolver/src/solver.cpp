@@ -9,6 +9,7 @@ solver::solver(CircuitGraph &graph)
     std::vector<int> output;          // store PIs
     std::cout << "the number of all lines:";
     std::cout << graph.m_name_to_line.size() << std::endl;
+    std::cout << "-------------" << std::endl;
     for (auto &line : graph.lines())
     {
         line_information temp;
@@ -17,9 +18,14 @@ solver::solver(CircuitGraph &graph)
             temp.level = 0;
             temp.assign = 1;
         }
+        else
+        {
+            std::cout << "-------------" << std::endl;
+            temp.weight = compute_wight(graph, line.num_name);
+            std::cout << "-------------" << std::endl;
+        }
         lines_status_num.emplace(line.num_name, temp);
     }
-    delete_not_and_buff(graph);
     for (unsigned int i = 0; i < graph.lines().size(); ++i)
     {
         if (graph.lines()[i].is_output)
@@ -27,8 +33,9 @@ solver::solver(CircuitGraph &graph)
         else
             noPO_lines_name.push_back(graph.lines()[i].num_name);
     }
+    std::cout << "-------------" << std::endl;
     structural_implication_map(graph);
-    std::cout<<" END structural_implication_map(graph)"<<std::endl;
+    std::cout << " END structural_implication_map(graph)" << std::endl;
     // according to fan_outs numbers to order(max->min)
     int noPO_lines_name_size = noPO_lines_name.size();
     for (int i = 0; i < noPO_lines_name_size; i++)
@@ -43,77 +50,6 @@ solver::solver(CircuitGraph &graph)
     std::cout << "out" << std::endl;
 }
 
-void solver::delete_not_and_buff(CircuitGraph &graph)
-{
-    // initialize all gate's inputs polarity to 1, aims:1.open space for inputs_polarit vector, 2.only when encounter NOT change it
-    for (auto &gate : graph.get_gates())
-    {
-        std::vector<int> inputs_polarity(gate.get_inputs().size(), 1);
-        gate.change_inputs_polarity(inputs_polarity);
-    }
-    for (unsigned int i = 0; i < graph.get_gates().size(); ++i) // traverse all gates
-    {
-        auto type = graph.get_gates()[i].get_type(); // acquire current gate's type
-        int not_buff_sum=0;
-        if (type == Gate::Type::Not || type == Gate::Type::Buff)
-        {
-            std::cout << "gate inputs size:" << graph.get_gates()[i].get_inputs().size() << std::endl;
-            Line *temp_input = graph.get_gates()[i].get_inputs()[0]; // not and buff only have one input
-            Line *temp_output = graph.get_gates()[i].get_output();   // all gates only have one output
-            // update temp_input's destination_gates
-            temp_input->destination_gates.erase(&graph.get_gates()[i]); // delete current not/buff
-            for (auto d_gate : temp_output->destination_gates)          // get current not/buff's all destination gate
-            {
-                temp_input->destination_gates.insert(d_gate); // add not/buff's destination gate into this input's destination
-                // if d_gate is not/buff,don't change d_gate's input polarity,instead change d_gate' type
-
-                if (d_gate->get_type() == Gate::Type::Not || d_gate->get_type() == Gate::Type::Buff)
-                {
-                    d_gate->inputs()[0] = temp_input;
-                    d_gate->type() = tran_type(d_gate->get_type(), type); // type is current gate's type
-                    continue;                                             // skip to next time loop
-                }
-                // d_gate isn't not/buff, change its input's polarity
-                for (unsigned int t = 0; t < d_gate->inputs().size(); t++)
-                {
-                    if (d_gate->inputs()[t] == temp_output)
-                    {
-                        d_gate->inputs()[t] = temp_input;
-                        if (type == Gate::Type::Not)
-                        {
-                            d_gate->change_inputs_polarity(t, 0);
-                        }
-                        break;
-                    }
-                }
-            }
-            // if current gate's output is PO,need to change graph's m_output vector
-            if (temp_output->is_output)
-            {
-                auto flag = std::find(graph.outputs().begin(), graph.outputs().end(), temp_output);
-                (*flag) = temp_input;
-                (*flag)->is_output = true;
-                lines_status_num.at(temp_input->num_name) = lines_status_num.at(temp_output->num_name);
-                if (type == Gate::Type::Not)
-                    lines_status_num.at(temp_input->num_name).assign = 1 - lines_status_num.at(temp_input->num_name).assign;
-            }
-            graph.get_gates().erase(graph.get_gates().begin() + i); // delete not/buff from graph
-            lines_status_num.erase(temp_output->num_name);          // delete current buff/not output line infomation
-            graph.m_name_to_line.erase(temp_output->num_name);
-            for (unsigned int p = 0; p < graph.lines().size(); ++p)
-            {
-                if (graph.lines()[p].num_name == temp_output->num_name)
-                {
-                    graph.lines().erase(graph.lines().begin() + p);
-                    break;
-                }
-            }
-            // recover seek pointer
-            i--;
-        }
-    }
-}
-
 void solver::structural_implication_map(CircuitGraph &graph)
 {
     // open up space for watching-0 and watching-1 vector,first find max num_name
@@ -126,37 +62,38 @@ void solver::structural_implication_map(CircuitGraph &graph)
         }
     }
     std::cout << "max_num_name: " << max_num_name << std::endl;
-    watching0.resize(max_num_name+1);
-    watching1.resize(max_num_name+1);
-    std::cout<<"********: "<<graph.get_gates().size()<<std::endl;
+    watching0.resize(max_num_name + 1);
+    watching1.resize(max_num_name + 1);
+    std::cout << "********: " << graph.get_gates().size() << std::endl;
 
     for (unsigned int i = 0; i < graph.get_gates().size(); ++i)
     {
-        //struct dir/indir implicaiton,initialize two pointer, decide watch value
-        std::cout<<"%%%%%%%%%%%%%"<<std::endl;
+        // struct dir/indir implicaiton,initialize two pointer, decide watch value
+        std::cout << "%%%%%%%%%%%%%" << std::endl;
         struct_implication(graph.get_gates()[i], i);
-        std::cout<<"222222"<<std::endl;
-        std::cout<<"i: "<<i<<std::endl;
+        std::cout << "222222" << std::endl;
+        std::cout << "i: " << i << std::endl;
     }
-        //std::cout<<"1111111"<<std::endl;
+    // std::cout<<"1111111"<<std::endl;
 }
-Gate::Type solver::tran_type(Gate::Type is, Gate::Type other)
+
+int solver::compute_wight(const CircuitGraph &grahp, int line_name)
 {
-    if (other == Gate::Type::Buff)
-        return is;
-    else
+    Line *line = grahp.m_name_to_line.at(line_name);
+    int weight = 0;
+    weight = line->destination_gates.size();
+    if(line->source)
+        weight += line->source->get_inputs().size();
+    for (const auto &temp : line->destination_gates)
     {
-        switch (is)
+        if (temp->get_type() == Gate::Type::Not || temp->get_type() == Gate::Type::Buff)
         {
-        case Gate::Type::Buff:
-            return Gate::Type::Not;
-        case Gate::Type::Not:
-            return Gate::Type::Buff;
-        default:
-            return is;
+            weight = weight + temp->get_output()->destination_gates.size() - 1;
         }
     }
+    return weight;
 }
+
 // choose a line to assign(decision),according to ordered fan_outs numbers
 int solver::FindDecisionTarget()
 {
@@ -573,10 +510,6 @@ void solver::print_lines_source(CircuitGraph &garph)
                   << lines_status_num[temp.num_name].assign << std::endl;
 }
 
-
-void solver::test(CircuitGraph & graph)
+void solver::test(CircuitGraph &graph)
 {
-    
-
-
 }

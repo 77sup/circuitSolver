@@ -45,13 +45,7 @@ const char *make_gate_name(Gate::Type type)
 Gate::Gate(Gate::Type type, Line *output, std::vector<Line *> &&inputs) : m_type(type), m_inputs(inputs), m_output(output)
 {
 }
-// for learnt gate
-/*Gate::Gate(Line *output, std::vector<Line *> &inputs)
-{
-	this->m_inputs = inputs;
-	this->m_output = output;
-	this->is_learn_gate = true;
-}*/
+
 
 std::string Gate::get_str() const
 {

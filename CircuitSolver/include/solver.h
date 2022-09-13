@@ -21,14 +21,12 @@ public:
     int assign;
     int weight;
     int level;
-    //bool is_fixed_value;
     std::vector<int> source_lines;
     line_information()
     {
         this->assign = -1;
         this->weight = -1;
         this->level = -1;
-        //this->is_fixed_value = false;
     }
 };
 
@@ -55,32 +53,27 @@ private:
     std::vector<std::vector<int>> watching0;  
 	std::vector<std::vector<int>> watching1;
     
+    int compute_wight(const CircuitGraph &grahp,int line_name);
     int FindDecisionTarget();
     int conflict_backtrack(int, CircuitGraph &, std::vector<solver> &,std::vector<int> &);
     int second_maxDecision_line(std::vector<Line *> &);
-    void structural_implication_map(CircuitGraph &);
 
-    void delete_not_and_buff(CircuitGraph &);
-    //void structural_implication_map(CircuitGraph &);
     int DPLL(CircuitGraph &, int);
     int BCP(CircuitGraph &, int);
 
     //for two-literal watch to struct direct and indirect implicaiton graph
+    void structural_implication_map(CircuitGraph &graph);
     void struct_implication(Gate &, int );
     
-
-
     // only for circuit solving
     bool SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
     bool LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
     int change_lines_information(int line_name, int level, std::vector<int> source_lines);
     std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line, const solver &);
     Gate::Type tran_type(Gate::Type is,Gate::Type other);
-    // only for cnf solvin
-    // int unit_propagate(cnf &f, std::queue<int> &bcp_que, int reason_line_name);  // performs unit propagation
-    // int apply_transform(cnf &f, std::queue<int> &bcp_que, int reason_line_name); // applies the value of the literal in
 
-    //
+
+
     void show_result(CircuitGraph &, int);
     void print_lines_source(CircuitGraph &);
 };
