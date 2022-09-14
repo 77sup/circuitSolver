@@ -574,6 +574,7 @@ void solver::struct_implication(Gate &gate, int gate_index)
         for (int i = 0; i < gate.get_inputs().size(); i++) // for dir_imp0 with source gates
         {
             std::cout<<"gate.get_inputs()[i]->num_name: "<<gate.get_inputs()[i]->num_name<<std::endl;
+            std::cout <<gate.get_inputs_polarity()[i] << std::endl;
             des_output = std::make_pair(gate.get_inputs()[i]->num_name, 1);
             gate.get_dir_imp0().push_back(des_output);
         }

@@ -52,7 +52,6 @@ public:
 		Xnor,
 		Not,
 		Buff,
-
 		Undefined,
 	};
 
