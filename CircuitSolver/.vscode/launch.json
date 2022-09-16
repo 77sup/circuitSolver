@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "/home/hkm/circuitSolver/CircuitSolver/build/test_solver",
-      "args": ["/home/hkm/circuitSolver/CircuitSolver/build/benchmarks/demo.bench"],
+      "args": ["/home/hkm/circuitSolver/CircuitSolver/build/benchmarks/demo1.bench"],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],

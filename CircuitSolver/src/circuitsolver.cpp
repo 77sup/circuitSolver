@@ -550,7 +550,7 @@ void solver::struct_implication(Gate &gate, int gate_index)
         }
         std::cout << "@@@@@@@@@complete once direct implicaiton " << std::endl;
     }
-    std::cout << "--------------finish this gate all direct implicaton" << std::endl;
+    std::cout << "--------------finish this gate all destination direct implicaton" << std::endl;
     std::pair<int, int> des_output;
     int line_index_output = gate.get_output()->num_name;    // initialize pointer 1
     int line_index_input0 = gate.get_inputs()[0]->num_name; // initialize pointer 2
@@ -574,13 +574,12 @@ void solver::struct_implication(Gate &gate, int gate_index)
         for (int i = 0; i < gate.get_inputs().size(); i++) // for dir_imp0 with source gates
         {
             std::cout<<"gate.get_inputs()[i]->num_name: "<<gate.get_inputs()[i]->num_name<<std::endl;
-            std::cout <<gate.get_inputs_polarity()[i] << std::endl;
             des_output = std::make_pair(gate.get_inputs()[i]->num_name, 1);
             gate.get_dir_imp0().push_back(des_output);
         }
         // indirect implication
         watching1[line_index_output].push_back(gate_index); // NAND's output watch value is 1
-        watching0[line_index_input0].push_back(gate_index); // NAND's input watch value is 0
+        watching1[line_index_input0].push_back(gate_index); // NAND's input watch value is 0
         std::cout << "NAND indirect implication" << std::endl;
         break;
     }
