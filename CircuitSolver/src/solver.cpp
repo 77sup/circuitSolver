@@ -63,9 +63,11 @@ void solver::structural_implication_map(CircuitGraph &graph)
     for (unsigned int i = 0; i < graph.get_gates().size(); ++i)
     {
         // struct dir/indir implicaiton,initialize two pointer, decide watch value
+        std::cout << "%%%%%%%%%%%%%" << std::endl;
         struct_implication(graph.get_gates()[i], i);
         std::cout << "graph.get_gates index i: " << i << std::endl;
     }
+    // std::cout<<"1111111"<<std::endl;
 }
 
 int solver::compute_wight(const CircuitGraph &grahp, int line_name)

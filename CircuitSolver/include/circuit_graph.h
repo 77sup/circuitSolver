@@ -52,12 +52,13 @@ public:
 		Xnor,
 		Not,
 		Buff,
+		Input,
 		Undefined,
 	};
 
 	Gate(Type type, Line *output, std::vector<Line *> &&inputs);
 	Gate(Line *output, std::vector<Line *> &inputs);
-	
+	Gate(Line *output);
 	//Gate(const Gate &) = delete;
 
 	Type get_type() const { return m_type; }
@@ -76,7 +77,7 @@ public:
 	const std::vector<int> &get_inputs_polarity() const { return inputs_polarity; }
 	void change_inputs_polarity(std::vector<int> &inputs_polarity) {this->inputs_polarity = inputs_polarity;}
 	void change_inputs_polarity(int idx,int polarity) {this->inputs_polarity[idx] = polarity;}
-	std::vector<std::pair<int,int>>& get_dir_imp0(){ return dir_imp0;} //first--line_name,secon--assignment
+	std::vector<std::pair<int,int>>& get_dir_imp0(){ return dir_imp0;}
 	std::vector<std::pair<int,int>>& get_dir_imp1(){ return dir_imp1;}
 
 private:

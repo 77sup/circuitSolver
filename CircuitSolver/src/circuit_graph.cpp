@@ -42,10 +42,12 @@ const char *make_gate_name(Gate::Type type)
 	return "???";
 }
 
-Gate::Gate(Gate::Type type, Line *output, std::vector<Line *> &&inputs) : m_type(type), m_inputs(inputs), m_output(output)
+Gate::Gate(Gate::Type type, Line *output, std::vector<Line *> &&inputs) : m_type(type), m_inputs(inputs), m_output(output){}
+Gate::Gate(Line *output)
 {
+	this->m_type = Gate::Type::Input;
+	this->m_output = output;
 }
-
 
 std::string Gate::get_str() const
 {
@@ -68,6 +70,10 @@ Line *CircuitGraph::add_input(const std::string &name)
 	assert(p_line);
 
 	m_inputs.push_back(p_line);
+	m_gates.emplace_back(p_line);
+	Gate &gate = m_gates.back();
+	p_line->source = &gate;
+	
 	return p_line;
 }
 
