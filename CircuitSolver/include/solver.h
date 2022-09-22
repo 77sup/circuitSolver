@@ -24,7 +24,7 @@ public:
     std::vector<int> source_lines;
     line_information()
     {
-        this->assign = -1;
+        this->assign = 2;
         this->weight = -1;
         this->level = -1;
     }
@@ -33,6 +33,7 @@ public:
 class solver
 {
 public:
+    using watching_type = std::vector<std::vector<int>>;
     int learnt_gate_num = 0;
     // constructor function initialize literals and literal_frequency;output = 1
     solver(CircuitGraph &);
@@ -40,8 +41,6 @@ public:
     void solve(CircuitGraph &);
     int CDCLsolver(CircuitGraph &);
     void test(CircuitGraph &);
-    
-
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
     std::unordered_map<int, line_information> lines_status_num; //update
@@ -50,16 +49,15 @@ private:
     std::vector<int> conflict_line; // conflict line's name
     int previous_conflict;          // record conflict gate address
     Gate *conflict_gate;
-    std::vector<std::vector<int>> watching0;  
-	std::vector<std::vector<int>> watching1;
-    
+    std::vector<watching_type> watching_list;
+
+
     int compute_wight(const CircuitGraph &grahp,int line_name);
     int FindDecisionTarget();
     int conflict_backtrack(int, CircuitGraph &, std::vector<solver> &,std::vector<int> &);
     int second_maxDecision_line(std::vector<Line *> &);
 
-    int DPLL(CircuitGraph &, int);
-    int BCP(CircuitGraph &, int);
+    int watch_BCP(CircuitGraph &, int);
 
     //for two-literal watch to struct direct and indirect implicaiton graph
     void structural_implication_map(CircuitGraph &graph);
@@ -72,7 +70,10 @@ private:
     std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line, const solver &);
     Gate::Type tran_type(Gate::Type is,Gate::Type other);
 
-
+    bool single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line);
+    int single_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int watch_name_idx, int gate_idx);
+    int x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int watch_name_idx, int gate_idx);
+    bool learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line);
 
     void show_result(CircuitGraph &, int);
     void print_lines_source(CircuitGraph &);

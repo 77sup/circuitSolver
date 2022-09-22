@@ -1,0 +1,107 @@
+{
+	"kind" : "toolchains",
+	"toolchains" : 
+	[
+		{
+			"compiler" : 
+			{
+				"id" : "GNU",
+				"implicit" : 
+				{
+					"includeDirectories" : 
+					[
+						"/opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8/include",
+						"/usr/local/include",
+						"/opt/rh/devtoolset-8/root/usr/include",
+						"/usr/include"
+					],
+					"linkDirectories" : 
+					[
+						"/opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8",
+						"/opt/rh/devtoolset-8/root/usr/lib64",
+						"/lib64",
+						"/usr/lib64",
+						"/opt/rh/devtoolset-8/root/usr/lib"
+					],
+					"linkFrameworkDirectories" : [],
+					"linkLibraries" : 
+					[
+						"gcc",
+						"gcc_s",
+						"c",
+						"gcc",
+						"gcc_s"
+					]
+				},
+				"path" : "/opt/rh/devtoolset-8/root/usr/bin/cc",
+				"version" : "8.3.1"
+			},
+			"language" : "C",
+			"sourceFileExtensions" : 
+			[
+				"c",
+				"m"
+			]
+		},
+		{
+			"compiler" : 
+			{
+				"id" : "GNU",
+				"implicit" : 
+				{
+					"includeDirectories" : 
+					[
+						"/opt/rh/devtoolset-8/root/usr/include/c++/8",
+						"/opt/rh/devtoolset-8/root/usr/include/c++/8/x86_64-redhat-linux",
+						"/opt/rh/devtoolset-8/root/usr/include/c++/8/backward",
+						"/opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8/include",
+						"/usr/local/include",
+						"/opt/rh/devtoolset-8/root/usr/include",
+						"/usr/include"
+					],
+					"linkDirectories" : 
+					[
+						"/opt/rh/devtoolset-8/root/usr/lib/gcc/x86_64-redhat-linux/8",
+						"/opt/rh/devtoolset-8/root/usr/lib64",
+						"/lib64",
+						"/usr/lib64",
+						"/opt/rh/devtoolset-8/root/usr/lib"
+					],
+					"linkFrameworkDirectories" : [],
+					"linkLibraries" : 
+					[
+						"stdc++",
+						"m",
+						"gcc_s",
+						"gcc",
+						"c",
+						"gcc_s",
+						"gcc"
+					]
+				},
+				"path" : "/opt/rh/devtoolset-8/root/usr/bin/c++",
+				"version" : "8.3.1"
+			},
+			"language" : "CXX",
+			"sourceFileExtensions" : 
+			[
+				"C",
+				"M",
+				"c++",
+				"cc",
+				"cpp",
+				"cxx",
+				"mm",
+				"mpp",
+				"CPP",
+				"ixx",
+				"cppm"
+			]
+		}
+	],
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

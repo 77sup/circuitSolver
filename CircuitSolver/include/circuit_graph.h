@@ -59,7 +59,7 @@ public:
 	Gate(Type type, Line *output, std::vector<Line *> &&inputs);
 	Gate(Line *output, std::vector<Line *> &inputs);
 	Gate(Line *output);
-	//Gate(const Gate &) = delete;
+	// Gate(const Gate &) = delete;
 
 	Type get_type() const { return m_type; }
 	Type &type() { return m_type; }
@@ -73,12 +73,13 @@ public:
 	Line *&output() { return m_output; }
 	// new add
 	bool get_is_learnt_gate() const { return is_learn_gate; }
-	void change_learnt_gate(bool is) {this->is_learn_gate = is;}
+	void change_learnt_gate(bool is) { this->is_learn_gate = is; }
 	const std::vector<int> &get_inputs_polarity() const { return inputs_polarity; }
-	void change_inputs_polarity(std::vector<int> &inputs_polarity) {this->inputs_polarity = inputs_polarity;}
-	void change_inputs_polarity(int idx,int polarity) {this->inputs_polarity[idx] = polarity;}
-	std::vector<std::pair<int,int>>& get_dir_imp0(){ return dir_imp0;}
-	std::vector<std::pair<int,int>>& get_dir_imp1(){ return dir_imp1;}
+	void change_inputs_polarity(std::vector<int> &inputs_polarity) { this->inputs_polarity = inputs_polarity; }
+	void change_inputs_polarity(int idx, int polarity) { this->inputs_polarity[idx] = polarity; }
+	std::vector<std::pair<int, int>> &get_dir_imp0() { return dir_imp0; }
+	std::vector<std::pair<int, int>> &get_dir_imp1() { return dir_imp1; }
+	std::pair<int, int> &get_pointers() { return pointers_name; }
 
 private:
 	Type m_type = Type::Undefined;
@@ -86,9 +87,9 @@ private:
 	Line *m_output = nullptr;
 	bool is_learn_gate = false;
 	std::vector<int> inputs_polarity;
-	std::vector<std::pair<int,int>> dir_imp0;   //design for direction implication graph
-	std::vector<std::pair<int,int>> dir_imp1;
-
+	std::vector<std::pair<int, int>> dir_imp0; // design for direction implication graph
+	std::vector<std::pair<int, int>> dir_imp1;
+	std::pair<int, int> pointers_name;
 };
 
 class CircuitGraph
@@ -100,7 +101,7 @@ public:
 
 	Gate *add_gate(Gate::Type type, const std::vector<std::string> &input_names, const std::string &output_name);
 	Gate *add_learnt_gate(const std::vector<int> &input_names, const int &output_name);
-	Gate *add_learnt_gate(std::vector<Line *> input_names, Line *output_name,std::vector<int> &inputs_polarity);
+	Gate *add_learnt_gate(std::vector<Line *> input_names, Line *output_name, std::vector<int> &inputs_polarity);
 
 	Line *get_line(const int &name);
 
@@ -108,13 +109,13 @@ public:
 
 	const std::vector<Line *> &get_inputs() const;
 	const std::vector<Line *> &get_outputs() const;
-  	std::vector<Line *> &outputs() {return m_outputs;}
+	std::vector<Line *> &outputs() { return m_outputs; }
 
 	const std::deque<Gate> &get_gates() const;
 	std::deque<Gate> &get_gates();
 
 	const std::deque<Line> &get_lines() const;
-	std::deque<Line> &lines() {return m_lines;}
+	std::deque<Line> &lines() { return m_lines; }
 	std::unordered_map<int, Line *> m_name_to_line;
 	void get_graph_stats() const;
 	Line *ensure_line(const int &name);
@@ -137,7 +138,7 @@ public:
 					len++;
 				}
 				std::string num_name = name.substr(j, len); //获取子串
-				return std::stoi(num_name);  //数字字符串转换为整型数字
+				return std::stoi(num_name);									//数字字符串转换为整型数字
 			}
 			else
 			{
@@ -153,7 +154,6 @@ private:
 
 	std::vector<Line *> m_inputs;
 	std::vector<Line *> m_outputs;
-
 };
 
 #endif
