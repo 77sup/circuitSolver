@@ -1,7 +1,7 @@
 ---
 # BasedOnStyle:  LLVM
 AccessModifierOffset: -2
-ConstructorInitializerIndentWidth: 4
+ConstructorInitializerIndentWidth: 2
 AlignEscapedNewlinesLeft: false
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
@@ -32,7 +32,7 @@ SpacesBeforeTrailingComments: 1
 Cpp11BracedListStyle: false
 Standard:        Cpp03
 IndentWidth:     2
-TabWidth:        8
+TabWidth:        2
 UseTab:          Never
 BreakBeforeBraces: Attach
 IndentFunctionDeclarationAfterType: false

@@ -43,7 +43,7 @@ public:
     void test(CircuitGraph &);
 private:
     //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
-    std::unordered_map<int, line_information> lines_status_num; //update
+    std::unordered_map<int, line_information> ls; //update
     std::vector<int> sort_destination_gates;
     std::vector<int> the_name_of_input_line;
     std::vector<int> conflict_line; // conflict line's name
@@ -51,29 +51,27 @@ private:
     Gate *conflict_gate;
     std::vector<watching_type> watching_list;
 
-
     int compute_wight(const CircuitGraph &grahp,int line_name);
-    int FindDecisionTarget();
-    int conflict_backtrack(int, CircuitGraph &, std::vector<solver> &,std::vector<int> &);
-    int second_maxDecision_line(std::vector<Line *> &);
-
-    int watch_BCP(CircuitGraph &, int);
-
     //for two-literal watch to struct direct and indirect implicaiton graph
     void structural_implication_map(CircuitGraph &graph);
     void struct_implication(Gate &, int );
-    
+
+    int FindDecisionTarget();
+    int watch_BCP(CircuitGraph &, int);
+    int conflict_backtrack(int, CircuitGraph &, std::vector<int> &);
+    void cancel_assignment(int decision_line_level);
+    int second_maxDecision_line(std::vector<Line *> &);
+    void update_wight(const std::vector<int> &input_line);
+
     // only for circuit solving
-    bool SingleGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
-    bool LearntGateReason(Gate *current_gate, std::queue<int> &bcp_que, int decision_line);
     int change_lines_information(int line_name, int level, std::vector<int> source_lines);
-    std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line, const solver &);
+    std::vector<int> &update_learnt_gate(std::vector<int> &update_gate, int trace_line);
     Gate::Type tran_type(Gate::Type is,Gate::Type other);
 
     bool single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line);
-    int single_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int watch_name_idx, int gate_idx);
-    int x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int watch_name_idx, int gate_idx);
-    bool learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line);
+    int single_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int bcp_idx, int list_idx);
+    int x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int bcp_idx, int list_idx);
+    int learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int bcp_idx, int list_idx);
 
     void show_result(CircuitGraph &, int);
     void print_lines_source(CircuitGraph &);

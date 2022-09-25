@@ -38,9 +38,7 @@ int main(int argc, char *argv[])
 	// }
 	Structure =  t.get_elapsed_us();
 
-	//solver.solve(graph);
-	//solver.CDCLsolver(graph);
-	//solver.structural_implication_map(graph);
+	solver.CDCLsolver(graph);
 	Solver = t.get_elapsed_us();
 	std::cout << "the time of parser:   " << 1.0 * Parser/1000 << "  ms" << std :: endl;
 	std::cout << "the time of structure:" << 1.0 * (Structure - Parser)/1000 << "  ms" << std :: endl;
