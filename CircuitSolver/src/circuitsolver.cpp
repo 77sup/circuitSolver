@@ -32,13 +32,12 @@ void solver::struct_implication(Gate &gate, int gate_index) {
       break;
     }
   }
-  if (gate.get_type() == Gate::Type::Input)
-    ;
-  else {
+  if (gate.get_type() != Gate::Type::Input) 
+  {
     std::pair<int, int> des_output;
     int line_index_output = gate.get_output()->num_name;    // initialize pointer 1
     int line_index_input0 = gate.get_inputs()[0]->num_name; // initialize pointer 2
-    gate.get_pointers() = std::make_pair(gate.get_output()->num_name, gate.get_inputs()[0]->num_name);
+    gate.get_pointers() = std::make_pair(line_index_output, line_index_input0);
     switch (gate.get_type()) // for dir_imp0 and dir_imp1 with source gates
     {
     case Gate::Type::And: // AND, dir_imp0 source gate is NULL
@@ -120,7 +119,7 @@ bool solver::single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   int output_name = current_gate->get_output()->num_name;
   int this_level = ls.at(decision_line).level;
   int assign = ls.at(output_name).assign;
-  std::vector<std::pair<int, int> > *dir;
+  std::vector<std::pair<int, int>> *dir;
   if (assign == 1)
     dir = &current_gate->get_dir_imp1();
   else
@@ -132,6 +131,7 @@ bool solver::single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int 
       //直接蕴含的source就是该门的输出线
       ls.at(temp.first).source_lines.push_back(output_name);
       bcp_vec.push_back(temp.first);
+
       continue;
     } else if (ls.at(temp.first).assign == temp.second)
       continue;
@@ -145,8 +145,7 @@ bool solver::single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   return 1;
 }
 //如果推出冲突 return 0；如果门什么都推不出来 return 1；如果门能推出一根线的赋值 return 2；
-int solver::single_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int bcp_idx, int list_idx) {
-  assert(current_gate);
+int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int bcp_idx, int list_idx,int i) {
   int inputs_watch;
   int output_watch;
   int this_level = ls.at(decision_line).level;
@@ -168,11 +167,12 @@ int solver::single_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int
     output_watch = 0;
     break;
   default: // xor xnor
+    std::cout<<"xor________________xnor"<<std::endl;
     return x_gate_indir(current_gate, bcp_vec, decision_line, bcp_idx, list_idx);
   }
   //搜集gate的详细信息: 0: =监视值  1: 为x
-  int f = current_gate->get_pointers().first;
-  int s = current_gate->get_pointers().second;
+  int f = current_gate->get_pointers().first;      //pointer1's name
+  int s = current_gate->get_pointers().second;     //pointer2's name
   int number_lines = current_gate->get_inputs().size() + 1;
   std::vector<std::vector<int>> lines_assign(2);
   for (auto temp : current_gate->get_inputs()) {
@@ -190,7 +190,6 @@ int solver::single_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int
     lines_assign[1].push_back(output_name);
   else
     return 1;
-  
   // 以下情况不会出现某根线的赋值为非监视值
   // 1:所有线的赋值都为门的监视值，则发生间接蕴含冲突，该门的监视指针不变
   if (lines_assign[0].size() == number_lines) {
@@ -252,10 +251,11 @@ int solver::single_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int
       else
         watching_list[inputs_watch][new_pointer].push_back(gate_idx);
     }
-    else
+    else if(ls.at(s).assign != 2)
     {
       auto temp = std::find(watching_list[ls.at(s).assign][s].begin(), watching_list[ls.at(s).assign][s].end(), gate_idx);
-      watching_list[ls.at(s).assign][s].erase(temp);
+      if(temp != watching_list[ls.at(s).assign][s].end())
+        watching_list[ls.at(s).assign][s].erase(temp);
       current_gate->get_pointers().second = new_pointer;
       if(new_pointer == output_name) 
         watching_list[output_watch][new_pointer].push_back(gate_idx);
@@ -270,6 +270,8 @@ int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int deci
   x_states[0] = std::make_pair(current_gate->output()->num_name, ls.at(current_gate->output()->num_name).assign);
   x_states[1] = std::make_pair(current_gate->inputs()[0]->num_name, ls.at(current_gate->inputs()[0]->num_name).assign);
   x_states[2] = std::make_pair(current_gate->inputs()[1]->num_name, ls.at(current_gate->inputs()[1]->num_name).assign);
+  std::cout<<"x_gate_indir:"<<std::endl;
+  std::cout<<x_states[0].second<<":"<<x_states[1].second<<":"<<x_states[2].second<<std::endl;
   std::vector<int> unassigned_name;
   std::vector<int> assigned_name;
   for (const auto &temp : x_states) {
@@ -284,8 +286,12 @@ int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int deci
   if (assigned_name.size() == 3) {
     int flag = x_states[0].second + x_states[1].second + x_states[2].second;
     if (flag % 2 != gate_type)
+    {
+      std::cout<<"return1"<<std::endl;
       return 1;
+    }
     else {
+      std::cout<<"return2"<<std::endl;
       for (const auto &temp : x_states)
         conflict_line.push_back(temp.first);
       return 0;

@@ -1,8 +1,7 @@
 #include "../include/solver.h"
-
+#include "../include/circuit_graph.h"
 #include <cmath>
 
-#include "../include/circuit_graph.h"
 solver::solver(CircuitGraph &graph) {
   std::vector<int> noPO_lines_name; // store no-P0s
   std::vector<int> output;          // store PIs
@@ -10,13 +9,17 @@ solver::solver(CircuitGraph &graph) {
   std::cout << graph.m_name_to_line.size() << std::endl;
   for (const auto &line : graph.lines()) {
     line_information temp;
-    if (line.is_output) {
+    if (line.is_output) 
+    {
       temp.level = 0;
       temp.assign = 1;
-    } else {
+      temp.source_lines.push_back(line.num_name);
+    } 
+    else 
+    {
       temp.weight = compute_wight(graph, line.num_name);
     }
-    ls.emplace(line.num_name, temp);
+    this->ls.emplace(line.num_name, temp);
   }
   for (unsigned int i = 0; i < graph.lines().size(); ++i) {
     if (graph.lines()[i].is_output)
@@ -31,11 +34,8 @@ solver::solver(CircuitGraph &graph) {
   { 
     Line *temp = graph.m_name_to_line.at(noPO_lines_name[i]);
     // put (fanouts>12 || inputs) lines into sort_destination_gates
-    if ((temp->destination_gates.size() > 12) || (temp->source->get_type() == Gate::Type::Input)) 
-    {
+    if ((temp->destination_gates.size() > 0) || (temp->source->get_type() == Gate::Type::Input)) 
       sort_destination_gates.push_back(noPO_lines_name[i]);
-      ls.at(noPO_lines_name[i]).weight = temp->destination_gates.size() + int((!temp->source)) * 1;
-    }
   }
 }
 
@@ -47,7 +47,7 @@ void solver::structural_implication_map(CircuitGraph &graph) {
       max_num_name = temp.first;
     }
   }
-  watching_list.reserve(2);
+  watching_list.resize(2);
   watching_list[0].resize(max_num_name + 1);
   watching_list[1].resize(max_num_name + 1);
   for (unsigned int i = 0; i < graph.get_gates().size(); ++i) {
@@ -80,15 +80,12 @@ int solver::FindDecisionTarget() {
       max_weight = ls.at(sort_destination_gates[i]).weight;
     }
   }
-  if (Target != -1)
-    ls.at(Target).weight = -1;
-
   return Target;
 }
 
 int solver::watch_BCP(CircuitGraph &graph, int decision_line) 
 {
-  assert(decision_line);
+  std::cout<<"enter_bcp,decision line name:assign     "<<decision_line<<":"<<ls.at(decision_line).assign<<std::endl;
   if (decision_line == -1)
     return 1;
   std::vector<int> bcp_vec;
@@ -98,7 +95,8 @@ int solver::watch_BCP(CircuitGraph &graph, int decision_line)
   while (dir_idx < bcp_vec.size() && indir_idx < bcp_vec.size()) 
   {
     //直接蕴含的所有推理
-    while (dir_idx < bcp_vec.size()) {
+    while (dir_idx < bcp_vec.size()) 
+    {
       Gate *gate = graph.m_name_to_line.at(bcp_vec[dir_idx])->source;
       //单个门的直接蕴含
       int result = single_gate_dir(gate, bcp_vec, decision_line);
@@ -114,10 +112,14 @@ int solver::watch_BCP(CircuitGraph &graph, int decision_line)
       int this_assign = ls.at(line_name).assign;
       int flag = 0;
       //遍历以该线当前的赋值作为监视指针和监视值的所有gate
-      for (unsigned int i = watching_list[this_assign][line_name].size(); i >= 0;) 
+      for (unsigned int i = 0; i < watching_list[this_assign][line_name].size();) 
       {
         int gate_idx = watching_list[this_assign][line_name][i];
-        int result = single_gate_indir(&graph.get_gates()[gate_idx], bcp_vec, decision_line, indir_idx, i);
+        int result;
+        if(graph.get_gates()[gate_idx].get_is_learnt_gate())
+          result = learn_gate_indir(&graph.get_gates()[gate_idx], bcp_vec, decision_line, indir_idx, i);
+        else
+          result = single_gate_indir(graph,&graph.get_gates()[gate_idx], bcp_vec, decision_line, indir_idx, i,gate_idx);
         if (result == 0)
           return 0;
         else if (result == 1)
@@ -132,13 +134,13 @@ int solver::watch_BCP(CircuitGraph &graph, int decision_line)
       ++indir_idx;
     }
   }
-  return 0;
+  return 1;
 }
 void solver::show_result(CircuitGraph &graph, int dpll_result) {
   if (dpll_result) {
     std::cout << "SAT" << std::endl;
-    for (int i = 0; i < graph.get_inputs().size(); i++) {
-      int line_name = graph.get_inputs()[i]->num_name;
+    for (int i = 0; i < graph.get_lines().size(); i++) {
+      int line_name = graph.get_lines()[i].num_name;
       std::cout << line_name << "  " << ls.at(line_name).assign << std::endl;
     }
   } else {
@@ -165,8 +167,10 @@ int solver::CDCLsolver(CircuitGraph &graph) {
       return 1; // SAT, output reason out all lines
     }
     // randomly choose left or right node to decide assignment
-    ls.at(decision_line).assign = rand() % 2;
+    Gate *gate = graph.m_name_to_line.at(decision_line)->source;
+    ls.at(decision_line).assign = int(gate->get_dir_imp1().size() > gate->get_dir_imp0().size());
     ls.at(decision_line).level = decision_line_name.size();
+    ls.at(decision_line).source_lines.clear();
     ls.at(decision_line).source_lines.push_back(decision_line);
     while (true) {
       int bcp_result = watch_BCP(graph, decision_line);
@@ -192,6 +196,7 @@ int solver::CDCLsolver(CircuitGraph &graph) {
 }
 // conflict analysis,add learnt clause,and backtrack
 int solver::conflict_backtrack(int decision_line, CircuitGraph &graph,  std::vector<int> &decision_line_name) {
+  std::cout<<"enter function: conflict_backtrack"<<std::endl;
   int decision_level = ls.at(decision_line).level;
   std::vector<Line *> m_learnt_inputs;
   // learnt gate initialized with origin conflict gate
@@ -210,7 +215,7 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph,  std::vec
         learnt_gate.erase(learnt_gate.begin() + i);
         i--;
         // if learnt_gate size=0, UNSAT
-        if (learnt_gate.size() == 0) // UNSAT
+        if (learnt_gate.size() == 0)
         {
           return -2;
         }
@@ -251,12 +256,15 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph,  std::vec
     // backtrack to 0 level
     decision_line_name.clear();
     cancel_assignment(0);
-    ls.at(learnt_gate[0]).level = 0;
+    //ls.at(learnt_gate[0]).level = 0;
     ls.at(learnt_gate[0]).assign = 1 - temp_assign;
+    ls.at(learnt_gate[0]).source_lines.clear();
+    std::cout<<"learnt_gate.size() == 1, backtrack to level 0"<<std::endl;
     return learnt_gate[0]; // which is be_fixed_value
   } else                   // learnt_gate.size()>1
   {
     // add output to graph
+    std::cout<<"get a learnt gate, size: "<<learnt_gate.size()<<std::endl;
     learnt_gate_num++;
     Line output_line(-abs(learnt_gate_num), true);
     graph.ensure_line(-abs(learnt_gate_num));
@@ -268,7 +276,9 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph,  std::vec
     }
     update_wight(learnt_gate);
     // add complete learnt_gate into graph
-    graph.add_learnt_gate(m_learnt_inputs, output, polarity);
+    auto this_gate = graph.add_learnt_gate(m_learnt_inputs, output, polarity);
+    watching_list[1 - this_gate->get_inputs_polarity()[0]][this_gate->get_inputs()[0]->num_name].push_back(graph.get_gates().size() - 1);
+    watching_list[1 - this_gate->get_inputs_polarity()[1]][this_gate->get_inputs()[1]->num_name].push_back(graph.get_gates().size() - 1);
 
     // backtrack
     int second_max_level_line = second_maxDecision_line(m_learnt_inputs);
@@ -277,10 +287,13 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph,  std::vec
     decision_line_name.erase(decision_line_name.begin() + second_level - 1, decision_line_name.end());
     cancel_assignment(decision_line_name.size());
     int decision = FindDecisionTarget();
-    ls.at(decision).assign = rand() % 2;
+    Gate *gate = graph.m_name_to_line.at(decision_line)->source;
+    ls.at(decision).assign = int(gate->get_dir_imp1().size() > gate->get_dir_imp0().size());
     ls.at(decision).level = second_level;
     ls.at(decision).source_lines.clear();
+    ls.at(decision).source_lines.push_back(decision);
     decision_line_name.push_back(decision);
+    std::cout<<"finish once leant gate : conflict_backtrack"<<std::endl;
     return decision; // return second_max_level line's name
   }
 }

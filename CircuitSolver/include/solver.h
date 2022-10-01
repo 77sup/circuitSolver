@@ -69,7 +69,7 @@ private:
     Gate::Type tran_type(Gate::Type is,Gate::Type other);
 
     bool single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line);
-    int single_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int bcp_idx, int list_idx);
+    int single_gate_indir(CircuitGraph &graph,Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int bcp_idx, int list_idx,int i);
     int x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line , int bcp_idx, int list_idx);
     int learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int bcp_idx, int list_idx);
 

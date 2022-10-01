@@ -32,13 +32,10 @@ int main(int argc, char *argv[])
 	Parser =  t.get_elapsed_us();
 	srand(time(NULL));
 	solver solver(graph);
-	// for(auto temp:graph.get_outputs())
-	// {
-	// 	std::cout<<"  output line: "<<temp->num_name<<std::endl;
-	// }
 	Structure =  t.get_elapsed_us();
 
 	solver.CDCLsolver(graph);
+	std::cout<<"end function CDCLsolver"<<std::endl;
 	Solver = t.get_elapsed_us();
 	std::cout << "the time of parser:   " << 1.0 * Parser/1000 << "  ms" << std :: endl;
 	std::cout << "the time of structure:" << 1.0 * (Structure - Parser)/1000 << "  ms" << std :: endl;
