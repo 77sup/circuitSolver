@@ -177,7 +177,6 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   int s = current_gate->get_pointers().second;     //pointer2's name
   std::cout<<"f: "<<f<<" s: "<<s<<std::endl;
   int number_lines = current_gate->get_inputs().size() + 1;
-  std::cout<<"number_lines: "<<number_lines<<std::endl;
   // lines_assign[0]:存放当前gate中赋值==监视值的line's name
   std::vector<std::vector<int>> lines_assign(2);
   //collect gate's lines information
@@ -357,8 +356,9 @@ int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   // gate_type = Or, inputs watch value = 0;
   int inputs_number = current_gate->get_inputs().size();
   std::vector<std::vector<std::pair<int, int> > > lg_inputs_state(3); // pair:first---line's name; second---line's polarty
-  std::cout<<"learn_gate_indir inputs_number: "<<inputs_number<<std::endl;
-  for (int i = 0; i < inputs_number; i++) {
+  std::cout<<"learn_gate_indir inputs_number: "<<bcp_vec[bcp_idx]<<std::endl;
+  for (int i = 0; i < inputs_number; i++) 
+  {
     std::cout<<"current_gate->inputs()[i].name:"<<current_gate->inputs()[i]->num_name<<std::endl;
     int input = current_gate->inputs()[i]->num_name;
     int convert = ls.at(input).assign;
@@ -371,7 +371,8 @@ int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int 
       lg_inputs_state[2].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
   }
   // 1:all lines are assigned watching value: conflict
-  if (lg_inputs_state[0].size() == inputs_number) {
+  if (lg_inputs_state[0].size() == inputs_number)
+  {
     for (const auto &input : lg_inputs_state[0])
       conflict_line.push_back(input.first);
     return 0;
@@ -380,7 +381,8 @@ int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   if (lg_inputs_state[1].size() > 0)
     return 1;
   // 3:can get indirect
-  if (lg_inputs_state[2].size() == 1) {
+  if (lg_inputs_state[2].size() == 1) 
+  {
     int line_name = lg_inputs_state[2][0].first;
     int polarity = lg_inputs_state[2][0].second;
     ls.at(line_name).assign = lg_inputs_state[2][0].second;
@@ -391,7 +393,8 @@ int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int 
     return 2;
   }
   // 4:有不小于两根线未赋值，其余线都为监视值,更换监视指针
-  if (lg_inputs_state[2].size() >= 2) {
+  if (lg_inputs_state[2].size() >= 2)
+   {
     std::vector<std::pair<int, int> > need_change;
     for (unsigned int i = 0; i < lg_inputs_state[0].size(); ++i) {
       if (lg_inputs_state[0][i].first == current_gate->get_pointers().first || lg_inputs_state[0][i].first == current_gate->get_pointers().second) 

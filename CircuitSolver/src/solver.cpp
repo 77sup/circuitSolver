@@ -270,7 +270,7 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph, std::vect
     ls.at(learnt_gate[0]).assign = 1 - temp_assign;
     ls.at(learnt_gate[0]).level = 0;
     ls.at(learnt_gate[0]).source_lines.clear();
-    decision_line_name[0] = learnt_gate[0];
+    decision_line_name.push_back(learnt_gate[0]);
     return learnt_gate[0]; // which is be_fixed_value
   } else  // learnt_gate.size()>1
   {
@@ -360,6 +360,6 @@ void solver::cancel_assignment(int decision_line_level) {
 }
 void solver::update_wight(const std::vector<int> &input_line) {
   for (const auto &input : input_line) {
-    ls.at(input).weight++;
+    ls.at(input).weight += 100;
   }
 }
