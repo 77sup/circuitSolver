@@ -124,18 +124,19 @@ bool solver::single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int 
     dir = &current_gate->get_dir_imp1();
   else
     dir = &current_gate->get_dir_imp0();
-  for (const auto &temp : (*dir)) {
-    if (ls.at(temp.first).assign == 2) {
+  for (const auto &temp : (*dir)) 
+  {   //update ls,with newly direct implication value
+    if (ls.at(temp.first).assign == 2) 
+    {
       ls.at(temp.first).assign = temp.second;
       ls.at(temp.first).level = this_level;
-      //直接蕴含的source就是该门的输出线
+      //direct implication's source is output of this gate
       ls.at(temp.first).source_lines.push_back(output_name);
       bcp_vec.push_back(temp.first);
-
       continue;
-    } else if (ls.at(temp.first).assign == temp.second)
+    } else if (ls.at(temp.first).assign == temp.second)  //before have been assigned
       continue;
-    else //直接蕴含的冲突定义为同一变量被赋值为不同的值
+    else //occur direct implication confilict,means same line with two different assignment
     {
       conflict_line = ls.at(temp.first).source_lines;
       conflict_line.push_back(output_name);
@@ -146,6 +147,7 @@ bool solver::single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int 
 }
 //如果推出冲突 return 0；如果门什么都推不出来 return 1；如果门能推出一根线的赋值 return 2；
 int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int bcp_idx, int list_idx,int i) {
+  number++;
   int inputs_watch;
   int output_watch;
   int this_level = ls.at(decision_line).level;
@@ -173,9 +175,14 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   //搜集gate的详细信息: 0: =监视值  1: 为x
   int f = current_gate->get_pointers().first;      //pointer1's name
   int s = current_gate->get_pointers().second;     //pointer2's name
+  std::cout<<"f: "<<f<<" s: "<<s<<std::endl;
   int number_lines = current_gate->get_inputs().size() + 1;
+  std::cout<<"number_lines: "<<number_lines<<std::endl;
+  // lines_assign[0]:存放当前gate中赋值==监视值的line's name
   std::vector<std::vector<int>> lines_assign(2);
-  for (auto temp : current_gate->get_inputs()) {
+  //collect gate's lines information
+  for (auto temp : current_gate->get_inputs()) 
+  {
     if (ls.at(temp->num_name).assign == inputs_watch) 
       lines_assign[0].push_back(temp->num_name);
     else if (ls.at(temp->num_name).assign == 2)
@@ -194,7 +201,6 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   // 1:所有线的赋值都为门的监视值，则发生间接蕴含冲突，该门的监视指针不变
   if (lines_assign[0].size() == number_lines) {
     conflict_line = lines_assign[0];
-    conflict_line.push_back(output_name);
     return 0;
   }
   // 2:可以产生间接蕴含
@@ -214,6 +220,7 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   // 3：唯一需要更改pointer的情况 需要修改一个或两个
   if(lines_assign[1].size() > 1)
   {
+    std::cout<<"---------------change pointer--------------"<<std::endl;
     for(unsigned int i = 0; i < lines_assign[1].size(); ++i)
     {
       if(lines_assign[1][i] == f || lines_assign[1][i] == s)
@@ -227,6 +234,8 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     int gate_idx = watching_list[this_assign][bcp_vec[bcp_idx]][list_idx];
     watching_list[this_assign][bcp_vec[bcp_idx]].erase(watching_list[this_assign][bcp_vec[bcp_idx]].begin() + list_idx);
     int new_pointer = lines_assign[1].back();
+    std::cout<<"new_pointer: "<<new_pointer<<std::endl;
+    std::cout<<"bcp_vec[bcp_idx]: "<<bcp_vec[bcp_idx]<<std::endl;
     //修改监视指针
     if(bcp_vec[bcp_idx] == f)
       current_gate->get_pointers().first = new_pointer;
@@ -238,8 +247,12 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     else
       watching_list[inputs_watch][new_pointer].push_back(gate_idx);
     //另一个监视指针可能要修改
+    std::cout<<"lines_assign[1] size: "<<lines_assign[1].size()<<std::endl;
+    if(lines_assign[1].size()<2) return 1;
     lines_assign[1].pop_back();
-    new_pointer = lines_assign[1].back();
+    new_pointer = lines_assign[1].back();  //update another pointer
+    std::cout<<"lines_assign[1].back(): "<<lines_assign[1].back()<<std::endl;
+    std::cout<<"pointer1 name: "<<f<<std::endl;
     if(ls.at(f).assign != 2)
     {
       auto temp = std::find(watching_list[ls.at(f).assign][f].begin(), watching_list[ls.at(f).assign][f].end(), gate_idx);
@@ -257,15 +270,20 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
       if(temp != watching_list[ls.at(s).assign][s].end())
         watching_list[ls.at(s).assign][s].erase(temp);
       current_gate->get_pointers().second = new_pointer;
+      std::cout<<"current_gate->get_pointers().second: "<<current_gate->get_pointers().second<<std::endl;
       if(new_pointer == output_name) 
         watching_list[output_watch][new_pointer].push_back(gate_idx);
       else
         watching_list[inputs_watch][new_pointer].push_back(gate_idx);
     }
   }
+  int f1 = current_gate->get_pointers().first;      //pointer1's name
+  int s1 = current_gate->get_pointers().second;     //pointer2's name
+  std::cout<<"---------------- f1: "<<f1<<" s1: "<<s1<<std::endl;
   return 1;
 }
 int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int watch_name_idx, int list_idx) {
+  number++;
   std::vector<std::pair<int, int> > x_states(3);
   x_states[0] = std::make_pair(current_gate->output()->num_name, ls.at(current_gate->output()->num_name).assign);
   x_states[1] = std::make_pair(current_gate->inputs()[0]->num_name, ls.at(current_gate->inputs()[0]->num_name).assign);
@@ -339,12 +357,15 @@ int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   // gate_type = Or, inputs watch value = 0;
   int inputs_number = current_gate->get_inputs().size();
   std::vector<std::vector<std::pair<int, int> > > lg_inputs_state(3); // pair:first---line's name; second---line's polarty
+  std::cout<<"learn_gate_indir inputs_number: "<<inputs_number<<std::endl;
   for (int i = 0; i < inputs_number; i++) {
+    std::cout<<"current_gate->inputs()[i].name:"<<current_gate->inputs()[i]->num_name<<std::endl;
     int input = current_gate->inputs()[i]->num_name;
     int convert = ls.at(input).assign;
-    if (ls.at(input).assign != -1 && current_gate->get_inputs_polarity()[i] == 0) {
+    std::cout<<"*********convert:"<<convert<<std::endl;
+    if (ls.at(input).assign != 2 && current_gate->get_inputs_polarity()[i] == 0) {
       lg_inputs_state[1 - convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
-    } else if (ls.at(input).assign != -1 && current_gate->get_inputs_polarity()[i] == 1) {
+    } else if (ls.at(input).assign != 2 && current_gate->get_inputs_polarity()[i] == 1) {
       lg_inputs_state[convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
     } else
       lg_inputs_state[2].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));

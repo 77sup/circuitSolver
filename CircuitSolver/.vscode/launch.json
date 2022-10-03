@@ -10,7 +10,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "/home/hkm/circuitSolver/CircuitSolver/build/test_solver",
-      "args": ["/home/hkm/circuitSolver/CircuitSolver/build/benchmarks/c17UNSAT.bench"],
+      "args": ["/home/hkm/circuitSolver/CircuitSolver/build/benchmarks/c432.bench"],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
       "environment": [],

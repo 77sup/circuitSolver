@@ -178,6 +178,7 @@ Gate *CircuitGraph::add_learnt_gate(std::vector<Line *> input_names,  Line *outp
 	gate.change_inputs_polarity(inputs_polarity);
 	gate.get_pointers().first = gate.get_inputs()[0]->num_name;
 	gate.get_pointers().second = gate.get_inputs()[1]->num_name;
+	std::cout<<"learnt gate:  first pointer: "<<gate.get_pointers().first<<" second pointer: "<<gate.get_pointers().second<<std::endl;
 	output_name->source = &gate;
 
 	for (size_t i = 0; i < gate.get_inputs().size(); ++i)
