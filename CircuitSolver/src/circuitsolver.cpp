@@ -175,7 +175,7 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   //搜集gate的详细信息: 0: =监视值  1: 为x
   int f = current_gate->get_pointers().first;      //pointer1's name
   int s = current_gate->get_pointers().second;     //pointer2's name
-  std::cout<<"f: "<<f<<" s: "<<s<<std::endl;
+  //std::cout<<"f: "<<f<<" s: "<<s<<std::endl;
   int number_lines = current_gate->get_inputs().size() + 1;
   // lines_assign[0]:存放当前gate中赋值==监视值的line's name
   std::vector<std::vector<int>> lines_assign(2);
@@ -219,7 +219,7 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   // 3：唯一需要更改pointer的情况 需要修改一个或两个
   if(lines_assign[1].size() > 1)
   {
-    std::cout<<"---------------change pointer--------------"<<std::endl;
+    //std::cout<<"---------------change pointer--------------"<<std::endl;
     for(unsigned int i = 0; i < lines_assign[1].size(); ++i)
     {
       if(lines_assign[1][i] == f || lines_assign[1][i] == s)
@@ -233,8 +233,8 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     int gate_idx = watching_list[this_assign][bcp_vec[bcp_idx]][list_idx];
     watching_list[this_assign][bcp_vec[bcp_idx]].erase(watching_list[this_assign][bcp_vec[bcp_idx]].begin() + list_idx);
     int new_pointer = lines_assign[1].back();
-    std::cout<<"new_pointer: "<<new_pointer<<std::endl;
-    std::cout<<"bcp_vec[bcp_idx]: "<<bcp_vec[bcp_idx]<<std::endl;
+    //std::cout<<"new_pointer: "<<new_pointer<<std::endl;
+    //std::cout<<"bcp_vec[bcp_idx]: "<<bcp_vec[bcp_idx]<<std::endl;
     //修改监视指针
     if(bcp_vec[bcp_idx] == f)
       current_gate->get_pointers().first = new_pointer;
@@ -246,12 +246,12 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     else
       watching_list[inputs_watch][new_pointer].push_back(gate_idx);
     //另一个监视指针可能要修改
-    std::cout<<"lines_assign[1] size: "<<lines_assign[1].size()<<std::endl;
+    //std::cout<<"lines_assign[1] size: "<<lines_assign[1].size()<<std::endl;
     if(lines_assign[1].size()<2) return 1;
     lines_assign[1].pop_back();
     new_pointer = lines_assign[1].back();  //update another pointer
-    std::cout<<"lines_assign[1].back(): "<<lines_assign[1].back()<<std::endl;
-    std::cout<<"pointer1 name: "<<f<<std::endl;
+    //std::cout<<"lines_assign[1].back(): "<<lines_assign[1].back()<<std::endl;
+    //std::cout<<"pointer1 name: "<<f<<std::endl;
     if(ls.at(f).assign != 2)
     {
       auto temp = std::find(watching_list[ls.at(f).assign][f].begin(), watching_list[ls.at(f).assign][f].end(), gate_idx);
@@ -269,7 +269,7 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
       if(temp != watching_list[ls.at(s).assign][s].end())
         watching_list[ls.at(s).assign][s].erase(temp);
       current_gate->get_pointers().second = new_pointer;
-      std::cout<<"current_gate->get_pointers().second: "<<current_gate->get_pointers().second<<std::endl;
+      //std::cout<<"current_gate->get_pointers().second: "<<current_gate->get_pointers().second<<std::endl;
       if(new_pointer == output_name) 
         watching_list[output_watch][new_pointer].push_back(gate_idx);
       else
@@ -278,7 +278,7 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   }
   int f1 = current_gate->get_pointers().first;      //pointer1's name
   int s1 = current_gate->get_pointers().second;     //pointer2's name
-  std::cout<<"---------------- f1: "<<f1<<" s1: "<<s1<<std::endl;
+  //std::cout<<"---------------- f1: "<<f1<<" s1: "<<s1<<std::endl;
   return 1;
 }
 int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int watch_name_idx, int list_idx) {
@@ -287,8 +287,8 @@ int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int deci
   x_states[0] = std::make_pair(current_gate->output()->num_name, ls.at(current_gate->output()->num_name).assign);
   x_states[1] = std::make_pair(current_gate->inputs()[0]->num_name, ls.at(current_gate->inputs()[0]->num_name).assign);
   x_states[2] = std::make_pair(current_gate->inputs()[1]->num_name, ls.at(current_gate->inputs()[1]->num_name).assign);
-  std::cout<<"x_gate_indir:"<<std::endl;
-  std::cout<<x_states[0].second<<":"<<x_states[1].second<<":"<<x_states[2].second<<std::endl;
+  // std::cout<<"x_gate_indir:"<<std::endl;
+  // std::cout<<x_states[0].second<<":"<<x_states[1].second<<":"<<x_states[2].second<<std::endl;
   std::vector<int> unassigned_name;
   std::vector<int> assigned_name;
   for (const auto &temp : x_states) {
@@ -304,11 +304,11 @@ int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int deci
     int flag = x_states[0].second + x_states[1].second + x_states[2].second;
     if (flag % 2 != gate_type)
     {
-      std::cout<<"return1"<<std::endl;
+      //std::cout<<"return1"<<std::endl;
       return 1;
     }
     else {
-      std::cout<<"return2"<<std::endl;
+      //std::cout<<"return2"<<std::endl;
       for (const auto &temp : x_states)
         conflict_line.push_back(temp.first);
       return 0;
@@ -356,13 +356,13 @@ int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   // gate_type = Or, inputs watch value = 0;
   int inputs_number = current_gate->get_inputs().size();
   std::vector<std::vector<std::pair<int, int> > > lg_inputs_state(3); // pair:first---line's name; second---line's polarty
-  std::cout<<"learn_gate_indir inputs_number: "<<bcp_vec[bcp_idx]<<std::endl;
+  //std::cout<<"learn_gate_indir inputs_number: "<<bcp_vec[bcp_idx]<<std::endl;
   for (int i = 0; i < inputs_number; i++) 
   {
-    std::cout<<"current_gate->inputs()[i].name:"<<current_gate->inputs()[i]->num_name<<std::endl;
+    //std::cout<<"current_gate->inputs()[i].name:"<<current_gate->inputs()[i]->num_name<<std::endl;
     int input = current_gate->inputs()[i]->num_name;
     int convert = ls.at(input).assign;
-    std::cout<<"*********convert:"<<convert<<std::endl;
+    //std::cout<<"*********convert:"<<convert<<std::endl;
     if (ls.at(input).assign != 2 && current_gate->get_inputs_polarity()[i] == 0) {
       lg_inputs_state[1 - convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
     } else if (ls.at(input).assign != 2 && current_gate->get_inputs_polarity()[i] == 1) {
