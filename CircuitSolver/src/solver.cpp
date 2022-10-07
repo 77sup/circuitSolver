@@ -60,7 +60,7 @@ int solver::compute_wight(const CircuitGraph &grahp, int line_name) {
   if (line->source)
     weight += line->source->get_inputs().size();
   if(line->source->get_type() ==  Gate::Type::Input)
-    weight += 2;
+    weight += 1;
   for (const auto &temp : line->destination_gates) {
     if (temp->get_type() == Gate::Type::Not || temp->get_type() == Gate::Type::Buff) {
       weight = weight + temp->get_output()->destination_gates.size() - 1;
@@ -79,6 +79,8 @@ int solver::FindDecisionTarget() {
       max_weight = ls.at(sort_destination_gates[i]).weight;
     }
   }
+  // if (Target != -1)
+  //       ls.at(Target).weight = -1;
   return Target;
 }
 
@@ -147,6 +149,7 @@ void solver::show_result(CircuitGraph &graph, int dpll_result) {
 
 int solver::CDCLsolver(CircuitGraph &graph) {
   int decision_nums=0;
+  int confict_nums=0;
   int bcp_result = 0;
   for (int i = 0; i < graph.get_outputs().size(); i++) {
     bcp_result = watch_BCP(graph, graph.get_outputs()[i]->num_name);
@@ -161,10 +164,14 @@ int solver::CDCLsolver(CircuitGraph &graph) {
   while (true) {
     decision_line = FindDecisionTarget();
     decision_nums++;
+    // if(decision_nums%200==0)
+    //   multiplication_q(9,10);
     decision_line_name.push_back(decision_line);
     if (decision_line == -1) {
+      std::cout<<sort_destination_gates.size()<<std::endl;
       show_result(graph, 1);
       std::cout<<"decision_nums: "<<decision_nums<<std::endl;
+      std::cout<<"confict_nums: "<<confict_nums<<std::endl;
       return 1; // SAT, output reason out all lines
     }
     // randomly choose left or right node to decide assignment
@@ -180,13 +187,17 @@ int solver::CDCLsolver(CircuitGraph &graph) {
         if (ls.at(decision_line).level == 0) // UNSAT
         {
           show_result(graph, 0);
+          std::cout<<"decision_nums: "<<decision_nums<<std::endl;
+          std::cout<<"confict_nums: "<<confict_nums<<std::endl;
           return 0;
         }
-        decision_line = conflict_backtrack(decision_line, graph, decision_line_name);
+        decision_line = conflict_backtrack(decision_line, graph, decision_line_name, confict_nums);
+        confict_nums++;
         if (decision_line == -2) // special use for learnt_gate size==0
         {
           show_result(graph, 0);
           std::cout<<"decision_nums: "<<decision_nums<<std::endl;
+          std::cout<<"confict_nums: "<<confict_nums<<std::endl;
           return 0;
         }
       } 
@@ -198,7 +209,7 @@ int solver::CDCLsolver(CircuitGraph &graph) {
   }
 }
 // conflict analysis,add learnt clause,and backtrack
-int solver::conflict_backtrack(int decision_line, CircuitGraph &graph, std::vector<int> &decision_line_name) {
+int solver::conflict_backtrack(int decision_line, CircuitGraph &graph, std::vector<int> &decision_line_name, int confict_nums) {
   //std::cout << "enter function: conflict_backtrack" << std::endl;
   int decision_level = ls.at(decision_line).level;
   //std::cout << "current decision line:  "<<decision_line<<"   level: " << decision_level << std::endl;
@@ -292,7 +303,7 @@ int solver::conflict_backtrack(int decision_line, CircuitGraph &graph, std::vect
       m_learnt_inputs.push_back(graph.m_name_to_line.at(learnt_gate[i]));
       polarity.push_back(1 - ls.at(learnt_gate[i]).assign);
     }
-    update_wight(learnt_gate);
+    update_wight(learnt_gate,confict_nums);
     // add complete learnt_gate into graph
     auto this_gate = graph.add_learnt_gate(m_learnt_inputs, output, polarity);
     watching_list[1 - this_gate->get_inputs_polarity()[0]][this_gate->get_inputs()[0]->num_name].push_back(graph.get_gates().size() - 1);
@@ -365,8 +376,16 @@ void solver::cancel_assignment(int decision_line_level) {
     }
   }
 }
-void solver::update_wight(const std::vector<int> &input_line) {
+void solver::update_wight(const std::vector<int> &input_line, int confict_nums) {
   for (const auto &input : input_line) {
-    ls.at(input).weight += 1;
+    int temp=ls.at(input).weight;
+    int level= ls.at(input).level;
+    ls.at(input).weight = temp/2+confict_nums/(temp*level);
+  }
+}
+
+void solver::multiplication_q(int p, int q ) {
+  for ( auto temp : sort_destination_gates) {
+    ls.at(temp).weight = ls.at(temp).weight * p / q;
   }
 }

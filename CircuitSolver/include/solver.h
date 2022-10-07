@@ -42,7 +42,7 @@ public:
     int CDCLsolver(CircuitGraph &);
     void test(CircuitGraph &);
 private:
-    //存储lines的赋值，其中-1 - unassigned；0 - false； 1 - true
+    //存储lines的赋值，其中2 - unassigned；0 - false； 1 - true
     std::unordered_map<int, line_information> ls; //update
     std::vector<int> sort_destination_gates;
     std::vector<int> the_name_of_input_line;
@@ -58,10 +58,11 @@ private:
 
     int FindDecisionTarget();
     int watch_BCP(CircuitGraph &, int);
-    int conflict_backtrack(int, CircuitGraph &, std::vector<int> &);
+    int conflict_backtrack(int, CircuitGraph &, std::vector<int> &, int);
     void cancel_assignment(int decision_line_level);
     int second_maxDecision_line(std::vector<Line *> &);
-    void update_wight(const std::vector<int> &input_line);
+    void update_wight(const std::vector<int> &input_line, int);
+    void multiplication_q(int, int);
 
     // only for circuit solving
     int change_lines_information(int line_name, int level, std::vector<int> source_lines);
