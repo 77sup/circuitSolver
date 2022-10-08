@@ -10,15 +10,19 @@ void solver::struct_implication(Gate &gate, int gate_index) {
     switch (temp->get_type()) {
     case Gate::Type::And: // input watch_value is 1,output watch_value is 0
       gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 0));
+      ls.at(gate.get_output()->num_name).weight +=5;
       break;
     case Gate::Type::Nand: // input watch_value is 1,output watch_value is 1
       gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 1));
+      ls.at(gate.get_output()->num_name).weight +=5;
       break;
     case Gate::Type::Or: // input watch_value is 0,output watch_value is 1
       gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 1));
+      ls.at(gate.get_output()->num_name).weight +=5;
       break;
     case Gate::Type::Nor: // input watch_value is 0,output watch_value is 0
       gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 0));
+      ls.at(gate.get_output()->num_name).weight +=5;
       break;
     case Gate::Type::Not: // input watch_value is x,output watch_value is -x
       gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 1));
@@ -46,6 +50,7 @@ void solver::struct_implication(Gate &gate, int gate_index) {
       {
         des_output = std::make_pair(gate.get_inputs()[i]->num_name, 1);
         gate.get_dir_imp1().push_back(des_output);
+        ls.at(gate.get_output()->num_name).weight +=5;
       }
       // indirect implication
       watching_list[0][line_index_output].push_back(gate_index); // AND's output watch value is 0
@@ -58,6 +63,7 @@ void solver::struct_implication(Gate &gate, int gate_index) {
       {
         des_output = std::make_pair(gate.get_inputs()[i]->num_name, 1);
         gate.get_dir_imp0().push_back(des_output);
+        ls.at(gate.get_output()->num_name).weight +=5;
       }
       // indirect implication
       watching_list[1][line_index_output].push_back(gate_index); // NAND's output watch value is 1
@@ -70,6 +76,7 @@ void solver::struct_implication(Gate &gate, int gate_index) {
       {
         des_output = std::make_pair(gate.get_inputs()[i]->num_name, 0);
         gate.get_dir_imp0().push_back(des_output);
+        ls.at(gate.get_output()->num_name).weight +=5;
       }
       // indirect implication
       watching_list[1][line_index_output].push_back(gate_index); // OR's output watch value is 1
@@ -82,7 +89,7 @@ void solver::struct_implication(Gate &gate, int gate_index) {
       {
         des_output = std::make_pair(gate.get_inputs()[i]->num_name, 0);
         gate.get_dir_imp1().push_back(des_output);
-
+        ls.at(gate.get_output()->num_name).weight +=5;
         // indirect implication
         watching_list[0][line_index_output].push_back(gate_index); // NOR's output watch value is 0
         watching_list[0][line_index_input0].push_back(gate_index); // NOR's input watch value is 0
