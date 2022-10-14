@@ -348,9 +348,9 @@ int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int deci
       other_unassign = 0;
     int new_watching_name = unassigned_name[other_unassign];
     if (current_gate->get_pointers().first == assigned_name[0])
-      current_gate->get_pointers().first == new_watching_name;
+      current_gate->get_pointers().first = new_watching_name;
     else
-      current_gate->get_pointers().second == new_watching_name;
+      current_gate->get_pointers().second = new_watching_name;
     // 3:change watching pointer and add xiangguan information to watching list
     watching_list[this_assign][new_watching_name].push_back(this_gate);
     watching_list[1 - this_assign][new_watching_name].push_back(this_gate);
