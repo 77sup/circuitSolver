@@ -176,7 +176,7 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     output_watch = 0;
     break;
   default: // xor xnor
-    std::cout<<"xor________________xnor"<<std::endl;
+    //std::cout<<"xor________________xnor"<<std::endl;
     return x_gate_indir(current_gate, bcp_vec, decision_line, bcp_idx, list_idx);
   }
   //搜集gate的详细信息: 0: =监视值  1: 为x
