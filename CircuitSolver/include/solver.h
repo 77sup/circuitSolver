@@ -60,7 +60,7 @@ private:
     int watch_BCP(CircuitGraph &, int);
     int conflict_backtrack(int, CircuitGraph &, std::vector<int> &, int);
     void cancel_assignment(int decision_line_level);
-    int second_maxDecision_line(std::vector<Line *> &);
+    std::tuple<int, int, int> second_maxDecision_line(std::vector<Line *> &);
     void update_wight(const std::vector<int> &input_line, int);
     void multiplication_q(int, int);
 

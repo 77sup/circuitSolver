@@ -56,9 +56,9 @@ public:
 		Undefined,
 	};
 
-	Gate(Type type, Line *output, std::vector<Line *> &&inputs);
-	Gate(Line *output, std::vector<Line *> &inputs);
-	Gate(Line *output);
+	Gate(Type type, Line *output, std::vector<Line *> &&inputs); //构造一般gate
+	Gate(Type type, std::vector<Line *> &&inputs); // 构造learn gate
+	Gate(Line *output); //构造input
 	// Gate(const Gate &) = delete;
 
 	Type get_type() const { return m_type; }
@@ -100,8 +100,7 @@ public:
 	Line *add_learnt_output(const int &name);
 
 	Gate *add_gate(Gate::Type type, const std::vector<std::string> &input_names, const std::string &output_name);
-	Gate *add_learnt_gate(const std::vector<int> &input_names, const int &output_name);
-	Gate *add_learnt_gate(std::vector<Line *> input_names, Line *output_name, std::vector<int> &inputs_polarity);
+	Gate *add_learnt_gate(std::vector<Line *> input_names, std::vector<int> &inputs_polarity);
 
 	Line *get_line(const int &name);
 

@@ -3,32 +3,33 @@
 #include <vector>
 #include <queue>
 int number = 0;
-void solver::struct_implication(Gate &gate, int gate_index) {
+void solver::struct_implication(Gate &gate, int gate_index) 
+{
   // direct implication; all types gate's destination dir_imp0 and dir_imp1 is identical.xor and xnor don'd have direct implication
   for (const auto &temp : gate.get_output()->destination_gates) // for dir_imp0 and dir_imp1 with destination gates
   {
     switch (temp->get_type()) {
-    case Gate::Type::And: // input watch_value is 1,output watch_value is 0
+    case Gate::Type::And: 
       gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 0));
       ls.at(gate.get_output()->num_name).weight +=5;
       break;
-    case Gate::Type::Nand: // input watch_value is 1,output watch_value is 1
+    case Gate::Type::Nand:
       gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 1));
       ls.at(gate.get_output()->num_name).weight +=5;
       break;
-    case Gate::Type::Or: // input watch_value is 0,output watch_value is 1
+    case Gate::Type::Or: 
       gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 1));
       ls.at(gate.get_output()->num_name).weight +=5;
       break;
-    case Gate::Type::Nor: // input watch_value is 0,output watch_value is 0
+    case Gate::Type::Nor: 
       gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 0));
       ls.at(gate.get_output()->num_name).weight +=5;
       break;
-    case Gate::Type::Not: // input watch_value is x,output watch_value is -x
+    case Gate::Type::Not: 
       gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 1));
       gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 0));
       break;
-    case Gate::Type::Buff: // input watch_value is 0,output watch_value is 0
+    case Gate::Type::Buff: 
       gate.get_dir_imp0().push_back(std::make_pair(temp->get_output()->num_name, 0));
       gate.get_dir_imp1().push_back(std::make_pair(temp->get_output()->num_name, 1));
       break;
@@ -90,11 +91,11 @@ void solver::struct_implication(Gate &gate, int gate_index) {
         des_output = std::make_pair(gate.get_inputs()[i]->num_name, 0);
         gate.get_dir_imp1().push_back(des_output);
         ls.at(gate.get_output()->num_name).weight +=5;
-        // indirect implication
-        watching_list[0][line_index_output].push_back(gate_index); // NOR's output watch value is 0
-        watching_list[0][line_index_input0].push_back(gate_index); // NOR's input watch value is 0
-        break;
       }
+      // indirect implication
+      watching_list[0][line_index_output].push_back(gate_index); // NOR's output watch value is 0
+      watching_list[0][line_index_input0].push_back(gate_index); // NOR's input watch value is 0
+      break;
     }
     case Gate::Type::Not: // NOT, dir_imp0 source gate is NULL
     {
@@ -127,12 +128,12 @@ bool solver::single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   int this_level = ls.at(decision_line).level;
   int assign = ls.at(output_name).assign;
   std::vector<std::pair<int, int>> *dir;
-  if (assign == 1)
+  if(assign == 1)
     dir = &current_gate->get_dir_imp1();
   else
     dir = &current_gate->get_dir_imp0();
   for (const auto &temp : (*dir)) 
-  {   //update ls,with newly direct implication value
+  { //update ls,with newly direct implication value
     if (ls.at(temp.first).assign == 2) 
     {
       ls.at(temp.first).assign = temp.second;
@@ -141,7 +142,8 @@ bool solver::single_gate_dir(Gate *current_gate, std::vector<int> &bcp_vec, int 
       ls.at(temp.first).source_lines.push_back(output_name);
       bcp_vec.push_back(temp.first);
       continue;
-    } else if (ls.at(temp.first).assign == temp.second)  //before have been assigned
+    } 
+    else if (ls.at(temp.first).assign == temp.second)  //before have been assigned
       continue;
     else //occur direct implication confilict,means same line with two different assignment
     {
@@ -176,7 +178,6 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     output_watch = 0;
     break;
   default: // xor xnor
-    //std::cout<<"xor________________xnor"<<std::endl;
     return x_gate_indir(current_gate, bcp_vec, decision_line, bcp_idx, list_idx);
   }
   //搜集gate的详细信息: 0: =监视值  1: 为x
@@ -205,7 +206,8 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     return 1;
   // 以下情况不会出现某根线的赋值为非监视值
   // 1:所有线的赋值都为门的监视值，则发生间接蕴含冲突，该门的监视指针不变
-  if (lines_assign[0].size() == number_lines) {
+  if (lines_assign[0].size() == number_lines) 
+  {
     conflict_line = lines_assign[0];
     return 0;
   }
@@ -226,7 +228,6 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   // 3：唯一需要更改pointer的情况 需要修改一个或两个
   if(lines_assign[1].size() > 1)
   {
-    //std::cout<<"---------------change pointer--------------"<<std::endl;
     for(unsigned int i = 0; i < lines_assign[1].size(); ++i)
     {
       if(lines_assign[1][i] == f || lines_assign[1][i] == s)
@@ -240,29 +241,31 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     int gate_idx = watching_list[this_assign][bcp_vec[bcp_idx]][list_idx];
     watching_list[this_assign][bcp_vec[bcp_idx]].erase(watching_list[this_assign][bcp_vec[bcp_idx]].begin() + list_idx);
     int new_pointer = lines_assign[1].back();
-    //std::cout<<"new_pointer: "<<new_pointer<<std::endl;
-    //std::cout<<"bcp_vec[bcp_idx]: "<<bcp_vec[bcp_idx]<<std::endl;
     //修改监视指针
     if(bcp_vec[bcp_idx] == f)
+    {
       current_gate->get_pointers().first = new_pointer;
+      f = new_pointer;
+    }
     else
+    {
       current_gate->get_pointers().second = new_pointer;
+      s = new_pointer;
+    }
     //修改监视列表
     if(new_pointer == output_name) 
       watching_list[output_watch][new_pointer].push_back(gate_idx);
     else
       watching_list[inputs_watch][new_pointer].push_back(gate_idx);
     //另一个监视指针可能要修改
-    //std::cout<<"lines_assign[1] size: "<<lines_assign[1].size()<<std::endl;
-    if(lines_assign[1].size()<2) return 1;
+    if(lines_assign[1].size() < 2) 
+      return 1;
     lines_assign[1].pop_back();
     new_pointer = lines_assign[1].back();  //update another pointer
-    //std::cout<<"lines_assign[1].back(): "<<lines_assign[1].back()<<std::endl;
-    //std::cout<<"pointer1 name: "<<f<<std::endl;
     if(ls.at(f).assign != 2)
     {
       auto temp = std::find(watching_list[ls.at(f).assign][f].begin(), watching_list[ls.at(f).assign][f].end(), gate_idx);
-      if(temp != watching_list[ls.at(f).assign][f].end())
+      //if(temp != watching_list[ls.at(f).assign][f].end())
         watching_list[ls.at(f).assign][f].erase(temp);
       current_gate->get_pointers().first = new_pointer;
       if(new_pointer == output_name) 
@@ -273,7 +276,7 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
     else if(ls.at(s).assign != 2)
     {
       auto temp = std::find(watching_list[ls.at(s).assign][s].begin(), watching_list[ls.at(s).assign][s].end(), gate_idx);
-      if(temp != watching_list[ls.at(s).assign][s].end())
+      //if(temp != watching_list[ls.at(s).assign][s].end())
         watching_list[ls.at(s).assign][s].erase(temp);
       current_gate->get_pointers().second = new_pointer;
       //std::cout<<"current_gate->get_pointers().second: "<<current_gate->get_pointers().second<<std::endl;
@@ -285,17 +288,15 @@ int solver::single_gate_indir(CircuitGraph &graph, Gate *current_gate, std::vect
   }
   int f1 = current_gate->get_pointers().first;      //pointer1's name
   int s1 = current_gate->get_pointers().second;     //pointer2's name
-  //std::cout<<"---------------- f1: "<<f1<<" s1: "<<s1<<std::endl;
   return 1;
 }
+
 int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int watch_name_idx, int list_idx) {
   number++;
   std::vector<std::pair<int, int> > x_states(3);
   x_states[0] = std::make_pair(current_gate->output()->num_name, ls.at(current_gate->output()->num_name).assign);
   x_states[1] = std::make_pair(current_gate->inputs()[0]->num_name, ls.at(current_gate->inputs()[0]->num_name).assign);
   x_states[2] = std::make_pair(current_gate->inputs()[1]->num_name, ls.at(current_gate->inputs()[1]->num_name).assign);
-  // std::cout<<"x_gate_indir:"<<std::endl;
-  // std::cout<<x_states[0].second<<":"<<x_states[1].second<<":"<<x_states[2].second<<std::endl;
   std::vector<int> unassigned_name;
   std::vector<int> assigned_name;
   for (const auto &temp : x_states) {
@@ -307,29 +308,31 @@ int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int deci
   //=1:xor   =0:xnor
   int gate_type = int(current_gate->get_type() == Gate::Type::Xor);
   // 3根线全部有赋值 冲突或满足 不改变监视指针
-  if (assigned_name.size() == 3) {
+  if (assigned_name.size() == 3) 
+  {
     int flag = x_states[0].second + x_states[1].second + x_states[2].second;
     if (flag % 2 != gate_type)
     {
-      //std::cout<<"return1"<<std::endl;
       return 1;
     }
-    else {
-      //std::cout<<"return2"<<std::endl;
+    else 
+    {
       for (const auto &temp : x_states)
         conflict_line.push_back(temp.first);
       return 0;
     }
   }
   // 2根线有赋值 得到间接蕴含 不改变监视指针
-  else if (assigned_name.size() == 2) {
+  else if (assigned_name.size() == 2) 
+  {
     int temp = ls.at(assigned_name[0]).assign + ls.at(assigned_name[1]).assign;
     ls.at(unassigned_name[0]).assign = int(temp % 2 == gate_type);
     ls.at(unassigned_name[0]).level = ls.at(decision_line).level;
     ls.at(unassigned_name[0]).source_lines = assigned_name;
     bcp_vec.push_back(unassigned_name[0]);
     return 2;
-  } else // only one line is assigned, change watching pointer
+  } 
+  else // only one line is assigned, change watching pointer
   {
     // we need to know: if only one line is assigned,this line must a watching pointer
     // we want to do:
@@ -338,7 +341,7 @@ int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int deci
     int this_gate = watching_list[this_assign][assigned_name[0]][list_idx];
     watching_list[this_assign][assigned_name[0]].erase(watching_list[this_assign][assigned_name[0]].begin() + list_idx);
     auto iterator = std::find(watching_list[1 - this_assign][assigned_name[0]].begin(), watching_list[1 - this_assign][assigned_name[0]].end(), this_gate);
-    if(iterator != watching_list[1 - this_assign][assigned_name[0]].end())
+    //if(iterator != watching_list[1 - this_assign][assigned_name[0]].end())
       watching_list[1 - this_assign][assigned_name[0]].erase(iterator);
     // 2:change gate's watching pointer
     int other_unassign;
@@ -361,21 +364,25 @@ int solver::x_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int deci
 
 int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int decision_line, int bcp_idx, int list_idx) {
   // gate_type = Or, inputs watch value = 0;
+  number ++;
   int inputs_number = current_gate->get_inputs().size();
   std::vector<std::vector<std::pair<int, int> > > lg_inputs_state(3); // pair:first---line's name; second---line's polarty
-  //std::cout<<"learn_gate_indir inputs_number: "<<bcp_vec[bcp_idx]<<std::endl;
   for (int i = 0; i < inputs_number; i++) 
   {
-    //std::cout<<"current_gate->inputs()[i].name:"<<current_gate->inputs()[i]->num_name<<std::endl;
     int input = current_gate->inputs()[i]->num_name;
     int convert = ls.at(input).assign;
-    //std::cout<<"*********convert:"<<convert<<std::endl;
-    if (ls.at(input).assign != 2 && current_gate->get_inputs_polarity()[i] == 0) {
+    if (ls.at(input).assign != 2 && current_gate->get_inputs_polarity()[i] == 0) 
+    {
       lg_inputs_state[1 - convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
-    } else if (ls.at(input).assign != 2 && current_gate->get_inputs_polarity()[i] == 1) {
+    } 
+    else if (ls.at(input).assign != 2 && current_gate->get_inputs_polarity()[i] == 1) 
+    {
       lg_inputs_state[convert].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
-    } else
+    } 
+    else
+    {
       lg_inputs_state[2].push_back(std::make_pair(input, current_gate->get_inputs_polarity()[i]));
+    }
   }
   // 1:all lines are assigned watching value: conflict
   if (lg_inputs_state[0].size() == inputs_number)
@@ -386,10 +393,13 @@ int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   }
   // 2:the gate can't get indirect or conflict
   if (lg_inputs_state[1].size() > 0)
+  {
     return 1;
+  }
   // 3:can get indirect
   if (lg_inputs_state[2].size() == 1) 
   {
+    //std::cout << "---------------" << std::endl;
     int line_name = lg_inputs_state[2][0].first;
     int polarity = lg_inputs_state[2][0].second;
     ls.at(line_name).assign = lg_inputs_state[2][0].second;
@@ -401,21 +411,42 @@ int solver::learn_gate_indir(Gate *current_gate, std::vector<int> &bcp_vec, int 
   }
   // 4:有不小于两根线未赋值，其余线都为监视值,更换监视指针
   if (lg_inputs_state[2].size() >= 2)
-   {
+  {
+    for (int i = 0; i < inputs_number; i++) 
+    {
+      int input = current_gate->inputs()[i]->num_name;
+    }
+
     std::vector<std::pair<int, int> > need_change;
-    for (unsigned int i = 0; i < lg_inputs_state[0].size(); ++i) {
+    for (unsigned int i = 0; i < lg_inputs_state[0].size(); ++i)
+    {
       if (lg_inputs_state[0][i].first == current_gate->get_pointers().first || lg_inputs_state[0][i].first == current_gate->get_pointers().second) 
         need_change.push_back(lg_inputs_state[0][i]);
     }
-    for (unsigned int i = 0; i < lg_inputs_state[2].size(); ++i) {
+    for (unsigned int i = 0; i < lg_inputs_state[2].size();) 
+    {
       if (lg_inputs_state[2][i].first == current_gate->get_pointers().first || lg_inputs_state[2][i].first == current_gate->get_pointers().second) 
+      {
         lg_inputs_state[2].erase(lg_inputs_state[2].begin() + i);
+        continue;
+      }
+      i++;
     }
+
     int this_gate = watching_list[ls.at(bcp_vec[bcp_idx]).assign][bcp_vec[bcp_idx]][list_idx];
-    for (unsigned int i = 0; i < need_change.size(); ++i) {
+    for (unsigned int i = 0; i < need_change.size(); ++i) 
+    {
       int this_assign = ls.at(need_change[i].first).assign;
       auto iterator = std::find(watching_list[this_assign][need_change[i].first].begin(), watching_list[this_assign][need_change[i].first].end(), this_gate);
-      watching_list[this_assign][need_change[i].first].erase(iterator);
+      // std::cout << "this_gate: " << this_gate<<std::endl;
+      // for(const auto& t : watching_list[this_assign][need_change[i].first])
+      //   std::cout << t << " ^ ";
+      // std::cout << std::endl;
+      // for(const auto& t : watching_list[1 - this_assign][need_change[i].first])
+      //   std::cout << t << " ^ ";
+      // std::cout << std::endl;
+      //if(iterator != watching_list[this_assign][need_change[i].first].end())
+        watching_list[this_assign][need_change[i].first].erase(iterator);
       if (need_change[i].first == current_gate->get_pointers().first)
         current_gate->get_pointers().first = lg_inputs_state[2][i].first;
       else
