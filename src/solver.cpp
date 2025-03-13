@@ -350,7 +350,7 @@ uint8_t solver::IndirectImplication(std::vector<uint32_t>& watch_list, const int
     const auto& temp = assign_info2[0];
     DeleteNodeToJf(cur_gate, m_cur_level);
     AddNodeToJf(temp.first, m_cur_level);
-    m_val_info[temp.first].m_val = 1 - wv[temp.second];
+    m_val_info[temp.first].m_val = 1 - temp.second;
     m_val_info[temp.first].m_level = m_cur_level;
     m_val_info[temp.first].m_source = assign_info1;
     bcp_vec.push_back(temp.first);
